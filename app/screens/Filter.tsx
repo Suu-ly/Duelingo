@@ -1,10 +1,13 @@
 import React from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {View, StyleSheet, Button} from 'react-native';
+
 import Colors from '../common/constants/Colors';
 import Label from '../common/Label';
 import TextStyles from '../common/constants/TextStyles';
 import CustomStatusBar from '../common/CustomStatusBar';
+import CustomButton from '../common/CustomButton';
+import Constants from '../common/constants/Constants';
 
 interface FilterProps {
   route: any;
@@ -20,11 +23,15 @@ const Filter = (props: FilterProps) => {
         <Label
           title={'Filter'}
           color={Colors.black}
-          style={TextStyles.bodyLarge}
+          style={TextStyles.headlineLarge}
         />
-        <Button
+        <CustomButton
           title={'Go to Home'}
           onPress={() => navigation.navigate('Home')}
+          backgroundColor={'indigo'}
+          textColor={Colors.white}
+          icon={true}
+          iconName={'map-marker-outline'}
         />
       </View>
     </View>
@@ -42,5 +49,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    gap: Constants.defaultGap,
+    paddingHorizontal: Constants.edgePadding,
   },
 });

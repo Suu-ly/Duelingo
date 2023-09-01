@@ -5,6 +5,8 @@ import Colors from '../common/constants/Colors';
 import Label from '../common/Label';
 import TextStyles from '../common/constants/TextStyles';
 import CustomStatusBar from '../common/CustomStatusBar';
+import CustomButton from '../common/CustomButton';
+import Constants from '../common/constants/Constants';
 
 interface HomeProps {
   route: any;
@@ -21,11 +23,15 @@ const Home = (props: HomeProps) => {
         <Label
           title={'Home Screen'}
           color={Colors.black}
-          style={TextStyles.bodyLarge}
+          style={TextStyles.headlineLarge}
         />
-        <Button
+        <CustomButton
           title={'Go to filter'}
           onPress={() => navigation.navigate('Filter')}
+          backgroundColor={'darkblue'}
+          textColor={Colors.white}
+          icon={true}
+          iconName={'bag-suitcase-outline'}
         />
       </View>
     </View>
@@ -43,5 +49,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    gap: Constants.defaultGap,
+    paddingHorizontal: Constants.edgePadding,
   },
 });
