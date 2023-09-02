@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleProp, Text, TextStyle, useColorScheme} from 'react-native';
+import {StyleProp, Text, TextStyle} from 'react-native';
 
 interface LabelProps {
   title?: string;

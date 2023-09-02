@@ -1,12 +1,9 @@
 import React from 'react';
-import {useNavigation} from '@react-navigation/native';
-import {View, StyleSheet, Button} from 'react-native';
+import {View, StyleSheet} from 'react-native';
+import {Button, Text} from 'react-native-paper';
+import theme from '../common/constants/theme.json';
 
-import Colors from '../common/constants/Colors';
-import Label from '../common/Label';
-import TextStyles from '../common/constants/TextStyles';
 import CustomStatusBar from '../common/CustomStatusBar';
-import CustomButton from '../common/CustomButton';
 import Constants from '../common/constants/Constants';
 
 interface FilterProps {
@@ -20,19 +17,13 @@ const Filter = (props: FilterProps) => {
     <View style={styles.mainContainer}>
       <CustomStatusBar />
       <View style={styles.container}>
-        <Label
-          title={'Filter'}
-          color={Colors.black}
-          style={TextStyles.headlineLarge}
-        />
-        <CustomButton
-          title={'Go to Home'}
-          onPress={() => navigation.navigate('Home')}
-          backgroundColor={'indigo'}
-          textColor={Colors.white}
-          icon={true}
-          iconName={'map-marker-outline'}
-        />
+        <Text variant={'headlineLarge'}>Filter</Text>
+        <Button
+          icon="map-marker-outline"
+          mode="contained"
+          onPress={() => navigation.navigate('Home')}>
+          Go to Home
+        </Button>
       </View>
     </View>
   );
@@ -43,13 +34,15 @@ export default Filter;
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    backgroundColor: 'thistle',
+    backgroundColor: theme.colors.background,
+    paddingHorizontal: Constants.edgePadding,
+    justifyContent: 'center',
   },
   container: {
-    flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
     gap: Constants.defaultGap,
-    paddingHorizontal: Constants.edgePadding,
+    paddingVertical: 24,
+    borderRadius: 28,
+    backgroundColor: theme.colors.elevation.level1,
   },
 });

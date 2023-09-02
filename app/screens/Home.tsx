@@ -1,11 +1,8 @@
 import React from 'react';
-import {View, StyleSheet, Button} from 'react-native';
+import {View, StyleSheet} from 'react-native';
+import {Button, Text} from 'react-native-paper';
 
-import Colors from '../common/constants/Colors';
-import Label from '../common/Label';
-import TextStyles from '../common/constants/TextStyles';
 import CustomStatusBar from '../common/CustomStatusBar';
-import CustomButton from '../common/CustomButton';
 import Constants from '../common/constants/Constants';
 
 interface HomeProps {
@@ -20,19 +17,13 @@ const Home = (props: HomeProps) => {
     <View style={styles.mainContainer}>
       <CustomStatusBar />
       <View style={styles.container}>
-        <Label
-          title={'Home Screen'}
-          color={Colors.black}
-          style={TextStyles.headlineLarge}
-        />
-        <CustomButton
-          title={'Go to filter'}
-          onPress={() => navigation.navigate('Filter')}
-          backgroundColor={'darkblue'}
-          textColor={Colors.white}
-          icon={true}
-          iconName={'bag-suitcase-outline'}
-        />
+        <Text variant={'headlineLarge'}>Home Screen</Text>
+        <Button
+          icon="map-marker-outline"
+          mode="outlined"
+          onPress={() => navigation.navigate('Filter')}>
+          Go to Filter
+        </Button>
       </View>
     </View>
   );
@@ -43,7 +34,7 @@ export default Home;
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    backgroundColor: Colors.white,
+    backgroundColor: 'white',
   },
   container: {
     flex: 1,
