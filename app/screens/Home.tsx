@@ -32,6 +32,7 @@ const Home = (props: HomeProps) => {
           textColor={Colors.white}
           icon={true}
           iconName={'bag-suitcase-outline'}
+          outlined={true}
         />
       </View>
     </View>
