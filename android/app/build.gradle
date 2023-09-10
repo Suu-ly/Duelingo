@@ -73,9 +73,9 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace "com.comfare"
+    namespace "com.Duelingo"
     defaultConfig {
-        applicationId "com.comfare"
+        applicationId "com.Duelingo"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "ComFare.app"
-               BlueprintName = "ComFare"
-               ReferencedContainer = "container:ComFare.xcodeproj">
+               BuildableName = "Duelingo.app"
+               BlueprintName = "Duelingo"
+               ReferencedContainer = "container:Duelingo.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "ComFareTests.xctest"
-               BlueprintName = "ComFareTests"
-               ReferencedContainer = "container:ComFare.xcodeproj">
+               BuildableName = "DuelingoTests.xctest"
+               BlueprintName = "DuelingoTests"
+               ReferencedContainer = "container:Duelingo.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "ComFare.app"
-            BlueprintName = "ComFare"
-            ReferencedContainer = "container:ComFare.xcodeproj">
+            BuildableName = "Duelingo.app"
+            BlueprintName = "Duelingo"
+            ReferencedContainer = "container:Duelingo.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "ComFare.app"
-            BlueprintName = "ComFare"
-            ReferencedContainer = "container:ComFare.xcodeproj">
+            BuildableName = "Duelingo.app"
+            BlueprintName = "Duelingo"
+            ReferencedContainer = "container:Duelingo.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

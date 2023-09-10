@@ -34,7 +34,7 @@ export default Filter;
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    backgroundColor: theme.colors.background,
+    backgroundColor: theme.colors.surface,
     paddingHorizontal: Constants.edgePadding,
     justifyContent: 'center',
   },
