@@ -46,9 +46,9 @@
       "level5": "rgb(227, 232, 234)"
     },
     "surfaceDisabled": "rgba(29, 27, 32, 0.12)",
-    "surfaceDisabledInvert": "rgba(226, 228, 220, 0.88)",
+    "surfaceDisabledInvert": "rgb(223, 223, 225)",
     "onSurfaceDisabled": "rgba(24, 28, 28, 0.38)",
-    "onSurfaceDisabledInvert": "rgba(231, 227, 227, 0.62)",
+    "onSurfaceDisabledInvert": "rgb(147, 148, 150)",
     "backdrop": "rgba(46, 50, 40, 0.4)"
   }
 }

@@ -2,7 +2,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import * as React from 'react';
 
 import Home from '../screens/Home';
-import Filter from '../screens/Filter';
+import Quiz from '../screens/Quiz';
 
 const Stack = createNativeStackNavigator();
 
@@ -13,7 +13,7 @@ const StackNavigator = () => {
         headerShown: false,
       }}>
       <Stack.Screen name="Home" component={Home} />
-      <Stack.Screen name="Filter" component={Filter} />
+      <Stack.Screen name="Quiz" component={Quiz} />
     </Stack.Navigator>
   );
 };

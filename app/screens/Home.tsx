@@ -23,8 +23,14 @@ const Home = (props: HomeProps) => {
         <Button
           icon="map-marker-outline"
           mode="outlined"
-          onPress={() => navigation.navigate('Filter')}>
-          Go to Filter
+          onPress={() =>
+            navigation.navigate('Quiz', {
+              language: 'chinese',
+              difficulty: 'easy',
+              questionNo: 0,
+            })
+          }>
+          Go to Quiz
         </Button>
         <View style={styles.rowContainer}>
           <DuoButton
