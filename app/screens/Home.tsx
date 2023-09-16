@@ -4,6 +4,8 @@ import {Button, Text} from 'react-native-paper';
 
 import CustomStatusBar from '../common/CustomStatusBar';
 import Constants from '../common/constants/Constants';
+import DuoButton from '../common/DuoButton';
+import theme from '../common/constants/theme.json';
 
 interface HomeProps {
   route: any;
@@ -24,6 +26,16 @@ const Home = (props: HomeProps) => {
           onPress={() => navigation.navigate('Filter')}>
           Go to Filter
         </Button>
+        <DuoButton
+          icon={'account-plus-outline'}
+          filled={false}
+          disabled={true}
+          backgroundColor="white"
+          borderColor={theme.colors.primary}
+          textColor={theme.colors.onSurface}
+          onPress={() => console.log('Pressed')}>
+          Label
+        </DuoButton>
       </View>
     </View>
   );
