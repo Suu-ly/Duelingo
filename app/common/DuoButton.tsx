@@ -9,14 +9,16 @@ interface ButtonProps {
   backgroundColor: string;
   backgroundDark?: string;
   disabled?: boolean;
+  inactive?: boolean;
   filled?: boolean;
   borderColor?: string;
   icon?: string;
   stretch?: boolean;
+  height?: number;
   children?: React.ReactNode;
   textVariant?: VariantProp<never>;
-  textColor?: string;
-  onPress: () => void;
+  textColor: string;
+  onPress: (callback?: () => void) => void;
 }
 
 const DuoButton = (props: ButtonProps) => {
@@ -24,24 +26,26 @@ const DuoButton = (props: ButtonProps) => {
     backgroundColor,
     backgroundDark,
     disabled = false,
+    inactive = false,
     filled = true,
     borderColor,
     icon,
     stretch = false,
+    height = Constants.buttonSize,
     children,
     textVariant = 'labelLarge',
-    textColor = theme.colors.onPrimary,
+    textColor,
     onPress,
   } = props;
   return (
     <AwesomeButton
-      height={Constants.buttonSize}
+      height={height}
       width={children ? null : Constants.buttonSize}
-      disabled={disabled}
+      disabled={disabled || inactive}
       borderRadius={Constants.radiusSmall}
       paddingHorizontal={Constants.mediumGap}
       stretch={stretch}
-      onPress={onPress}
+      onPressedIn={onPress}
       springRelease={false}
       backgroundShadow="transparent"
       raiseLevel={disabled ? 0 : filled ? 4 : 2}

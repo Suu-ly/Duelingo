@@ -34,6 +34,7 @@ const Home = (props: HomeProps) => {
             backgroundColor={theme.colors.primary}
             backgroundDark={theme.colors.primaryDark}
             borderColor={theme.colors.primary}
+            textColor={theme.colors.onPrimary}
             onPress={() => console.log('Pressed first')}>
             First
           </DuoButton>
@@ -42,6 +43,7 @@ const Home = (props: HomeProps) => {
             filled={true}
             disabled={true}
             backgroundColor={theme.colors.primary}
+            textColor={theme.colors.onPrimary}
             onPress={() => console.log('Pressed disabled')}>
             First
           </DuoButton>
@@ -60,6 +62,7 @@ const Home = (props: HomeProps) => {
             filled={false}
             disabled={true}
             backgroundColor={'white'}
+            textColor={theme.colors.secondary}
             onPress={() => console.log('Pressed second disbled')}>
             Second
           </DuoButton>
