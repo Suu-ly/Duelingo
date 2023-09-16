@@ -2,16 +2,18 @@ import AwesomeButton from 'react-native-really-awesome-button';
 import {Text} from 'react-native-paper';
 import {VariantProp} from 'react-native-paper/lib/typescript/components/Typography/types';
 import theme from './constants/theme.json';
-import {View} from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Constants from './constants/Constants';
 
 interface ButtonProps {
   backgroundColor: string;
+  backgroundDark?: string;
   disabled?: boolean;
   filled?: boolean;
   borderColor?: string;
-  icon?: React.ReactNode;
+  icon?: string;
   stretch?: boolean;
-  children: React.ReactNode;
+  children?: React.ReactNode;
   textVariant?: VariantProp<never>;
   textColor?: string;
   onPress: () => void;
@@ -20,6 +22,7 @@ interface ButtonProps {
 const DuoButton = (props: ButtonProps) => {
   const {
     backgroundColor,
+    backgroundDark,
     disabled = false,
     filled = true,
     borderColor,
@@ -27,37 +30,53 @@ const DuoButton = (props: ButtonProps) => {
     stretch = false,
     children,
     textVariant = 'labelLarge',
-    textColor = '#FFFFFF',
+    textColor = theme.colors.onPrimary,
     onPress,
   } = props;
   return (
     <AwesomeButton
-      height={48}
+      height={Constants.buttonSize}
+      width={children ? null : Constants.buttonSize}
       disabled={disabled}
-      borderRadius={8}
-      paddingHorizontal={8}
+      borderRadius={Constants.radiusSmall}
+      paddingHorizontal={Constants.mediumGap}
       stretch={stretch}
       onPress={onPress}
-      debouncedPressTime={0}
       springRelease={false}
       backgroundShadow="transparent"
-      raiseLevel={disabled ? 0 : 4}
+      raiseLevel={disabled ? 0 : filled ? 4 : 2}
       backgroundColor={
-        disabled && filled ? 'rgba(29, 27, 32, 0.12)' : backgroundColor
+        disabled && filled
+          ? theme.colors.surfaceDisabledInvert
+          : backgroundColor
       }
-      backgroundDarker={filled ? backgroundColor : borderColor}
+      backgroundDarker={filled ? backgroundDark : borderColor}
       borderWidth={filled ? 0 : 2}
-      borderColor={disabled ? 'rgba(24, 28, 28, 0.38)' : borderColor}>
-      {icon}
-      <View style={{marginRight: 8}} />
-      <Text
-        variant={textVariant}
-        style={
-          disabled ? {color: 'rgba(24, 28, 28, 0.38)'} : {color: textColor}
-        }>
-        {children}
-      </Text>
-      <View style={{marginRight: 8}} />
+      borderColor={
+        disabled ? theme.colors.onSurfaceDisabledInvert : borderColor
+      } //for some reason the border draws as black with an overlay so we have to invert the colour
+    >
+      <>
+        {icon && (
+          <Icon
+            name={icon}
+            size={Constants.iconMedium}
+            color={disabled ? theme.colors.onSurfaceDisabled : textColor}
+          />
+        )}
+        {children && (
+          <Text
+            variant={textVariant}
+            style={[
+              disabled
+                ? {color: theme.colors.onSurfaceDisabled}
+                : {color: textColor},
+              {marginHorizontal: Constants.mediumGap},
+            ]}>
+            {children}
+          </Text>
+        )}
+      </>
     </AwesomeButton>
   );
 };
