@@ -1,7 +1,12 @@
 import React, {useState} from 'react';
 import {View, StyleSheet} from 'react-native';
-import {Button, Text} from 'react-native-paper';
+import {Button, Text, Portal, Dialog} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {
+  CommonActions,
+  EventArg,
+  NavigationAction,
+} from '@react-navigation/native';
 
 import Theme from '../common/constants/theme.json';
 import CustomStatusBar from '../common/CustomStatusBar';
@@ -24,6 +29,24 @@ const Quiz = (props: QuizProps) => {
 
   const [answer, setAnswer] = useState('');
   const [submit, setSubmit] = useState(false);
+  const [dialogVisible, setDialogVisible] = useState(false);
+
+  React.useEffect(
+    () =>
+      navigation.addListener(
+        'beforeRemove',
+        (e: EventArg<'beforeRemove', true, {action: NavigationAction}>) => {
+          if (e.data.action.type != 'GO_BACK') {
+            return;
+          }
+          // Prevent default behavior of leaving the screen
+          e.preventDefault();
+          // Prompt the user before leaving the screen
+          setDialogVisible(true);
+        },
+      ),
+    [navigation],
+  );
 
   const handleSubmit = () => {
     if (submit) {
@@ -43,13 +66,13 @@ const Quiz = (props: QuizProps) => {
       <View style={styles.questionContainer}>
         <View style={styles.innerContainer}>
           <Text variant={'headlineSmall'}>{question.question}</Text>
-          <Button
-            icon="map-marker-outline"
-            mode="contained"
-            onPress={() => navigation.navigate('Home')}>
-            Go to Home
-          </Button>
         </View>
+        <Button
+          icon="map-marker-outline"
+          mode="contained"
+          onPress={() => navigation.navigate('Home')}>
+          Go to Home
+        </Button>
         <QuizButtons
           question={question}
           backgroundColor={styles.mainContainer.backgroundColor}
@@ -141,6 +164,31 @@ const Quiz = (props: QuizProps) => {
           {submit ? 'Next' : 'Submit'}
         </DuoButton>
       </View>
+      <Portal>
+        <Dialog
+          visible={dialogVisible}
+          dismissable={false}
+          dismissableBackButton={false}>
+          <Dialog.Icon icon={'alert-circle-outline'} />
+          <Dialog.Title style={styles.title}>
+            Your progress will be lost.
+          </Dialog.Title>
+          <Dialog.Content>
+            <Text variant="bodyMedium">
+              Your progress will not be saved if you choose to leave now. Are
+              you sure you want to leave?
+            </Text>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button mode="text" onPress={() => setDialogVisible(false)}>
+              Cancel
+            </Button>
+            <Button mode="text" onPress={() => navigation.navigate('Home')}>
+              Leave
+            </Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
     </View>
   );
 };
@@ -183,5 +231,8 @@ const styles = StyleSheet.create({
   },
   explanation: {
     gap: Constants.smallGap,
+  },
+  title: {
+    textAlign: 'center',
   },
 });
