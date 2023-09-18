@@ -1,10 +1,11 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {View, StyleSheet} from 'react-native';
 import {Button, Text} from 'react-native-paper';
 
 import CustomStatusBar from '../common/CustomStatusBar';
 import Constants from '../common/constants/Constants';
 import DuoButton from '../common/DuoButton';
+import Dropdown from '../common/DropdownButton';
 import theme from '../common/constants/theme.json';
 
 interface HomeProps {
@@ -14,10 +15,38 @@ interface HomeProps {
 
 const Home = (props: HomeProps) => {
   const {route, navigation} = props;
+  const [selectedItem, setSelectedItem] = useState<{
+    id: number;
+    value: string;
+    icon: string;
+  }>();
+  const onSelect = (item: any) => {
+    setSelectedItem(item);
+  };
 
   return (
     <View style={styles.mainContainer}>
-      <CustomStatusBar />
+      {/* <CustomStatusBar /> */}
+
+      <View style={[styles.container, {alignItems: 'flex-start'}]}>
+        <Dropdown
+          title={'language'}
+          data={[
+            {
+              id: 1,
+              value: 'Mandarin',
+              icon: 'https://hatscripts.github.io/circle-flags/flags/cn.svg',
+            },
+            {
+              id: 2,
+              value: 'Malay',
+              icon: 'https://hatscripts.github.io/circle-flags/flags/my.svg',
+            },
+          ]}
+          item={selectedItem}
+          onSelect={onSelect}
+        />
+      </View>
       <View style={styles.container}>
         <Text variant={'headlineLarge'}>Home Screen</Text>
         <Button
