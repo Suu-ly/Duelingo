@@ -1,5 +1,12 @@
 import React, {useState} from 'react';
-import {View, StyleSheet, ScrollView} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  LayoutAnimation,
+  UIManager,
+  Platform,
+} from 'react-native';
 import {Button, Text, Portal, Dialog} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {EventArg, NavigationAction} from '@react-navigation/native';
@@ -14,6 +21,12 @@ import DuoButton from '../common/DuoButton';
 interface QuizProps {
   route: any;
   navigation: any;
+}
+
+if (Platform.OS === 'android') {
+  if (UIManager.setLayoutAnimationEnabledExperimental) {
+    UIManager.setLayoutAnimationEnabledExperimental(true);
+  }
 }
 
 const Quiz = (props: QuizProps) => {
@@ -70,7 +83,11 @@ const Quiz = (props: QuizProps) => {
         questionNo: questionNo + 1,
       });
     } else {
-      setSubmit(!submit);
+      LayoutAnimation.configureNext({
+        duration: 300,
+        update: {type: 'spring', springDamping: 100},
+      });
+      setSubmit(true);
     }
   };
 
