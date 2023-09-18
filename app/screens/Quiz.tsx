@@ -2,11 +2,7 @@ import React, {useState} from 'react';
 import {View, StyleSheet, ScrollView} from 'react-native';
 import {Button, Text, Portal, Dialog} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {
-  CommonActions,
-  EventArg,
-  NavigationAction,
-} from '@react-navigation/native';
+import {EventArg, NavigationAction} from '@react-navigation/native';
 
 import Theme from '../common/constants/theme.json';
 import CustomStatusBar from '../common/CustomStatusBar';
@@ -96,92 +92,96 @@ const Quiz = (props: QuizProps) => {
           onSelect={ans => setAnswer(ans)}
         />
       </View>
-      <View
-        style={[
-          styles.bottomContainer,
-          submit && answer === question.correct_answer
-            ? {backgroundColor: Theme.colors.secondaryContainer}
-            : submit
-            ? {backgroundColor: Theme.colors.errorContainer}
-            : {backgroundColor: 'transparent'},
-        ]}>
-        {submit && (
-          <View style={styles.submitContainer}>
-            <View style={styles.rowContainer}>
-              <Icon
-                name={
-                  answer === question.correct_answer
-                    ? 'check-circle-outline'
-                    : 'alert-circle-outline'
-                }
-                size={Constants.iconMedium}
-                color={
-                  answer === question.correct_answer
-                    ? Theme.colors.onSecondaryContainer
-                    : Theme.colors.onErrorContainer
-                }
-              />
-              <Text
-                variant="titleLarge"
-                style={
-                  answer === question.correct_answer
-                    ? {color: Theme.colors.onSecondaryContainer}
-                    : {color: Theme.colors.onErrorContainer}
-                }>
-                {answer === question.correct_answer
-                  ? 'Well Done!'
-                  : 'Incorrect'}
-              </Text>
-            </View>
-            <View style={styles.explanation}>
-              <Text
-                variant="labelLarge"
-                style={
-                  answer === question.correct_answer
-                    ? {color: Theme.colors.onSecondaryContainer}
-                    : {color: Theme.colors.onErrorContainer}
-                }>
-                Explanation:
-              </Text>
-              <ScrollView
-                style={styles.explanationScroll}
-                showsHorizontalScrollIndicator={true}>
+      <View style={styles.bottomContainer}>
+        <View
+          style={[
+            styles.innerBottomContainer,
+            submit && answer === question.correct_answer
+              ? {backgroundColor: Theme.colors.secondaryContainer}
+              : submit
+              ? {backgroundColor: Theme.colors.errorContainer}
+              : {backgroundColor: 'transparent'},
+          ]}>
+          {submit && (
+            <View style={styles.submitContainer}>
+              <View style={styles.rowContainer}>
+                <Icon
+                  name={
+                    answer === question.correct_answer
+                      ? 'check-circle-outline'
+                      : 'alert-circle-outline'
+                  }
+                  size={Constants.iconMedium}
+                  color={
+                    answer === question.correct_answer
+                      ? Theme.colors.onSecondaryContainer
+                      : Theme.colors.onErrorContainer
+                  }
+                />
                 <Text
-                  variant="bodyLarge"
+                  variant="titleLarge"
                   style={
                     answer === question.correct_answer
                       ? {color: Theme.colors.onSecondaryContainer}
                       : {color: Theme.colors.onErrorContainer}
                   }>
-                  {question.explanation}
+                  {answer === question.correct_answer
+                    ? 'Well Done!'
+                    : 'Incorrect'}
                 </Text>
-              </ScrollView>
+              </View>
+              <View style={styles.explanation}>
+                <Text
+                  variant="labelLarge"
+                  style={
+                    answer === question.correct_answer
+                      ? {color: Theme.colors.onSecondaryContainer}
+                      : {color: Theme.colors.onErrorContainer}
+                  }>
+                  Explanation:
+                </Text>
+                <ScrollView
+                  style={styles.explanationScroll}
+                  showsHorizontalScrollIndicator={true}>
+                  <Text
+                    variant="bodyLarge"
+                    style={
+                      answer === question.correct_answer
+                        ? {color: Theme.colors.onSecondaryContainer}
+                        : {color: Theme.colors.onErrorContainer}
+                    }>
+                    {question.explanation}
+                  </Text>
+                </ScrollView>
+              </View>
             </View>
-          </View>
-        )}
-        <DuoButton
-          disabled={answer === ''}
-          backgroundColor={
-            submit && answer === question.correct_answer
-              ? Theme.colors.primary
-              : submit
-              ? Theme.colors.error
-              : Theme.colors.secondaryContainer
-          }
-          backgroundDark={
-            submit && answer === question.correct_answer
-              ? Theme.colors.primaryDark
-              : submit
-              ? Theme.colors.errorDark
-              : Theme.colors.secondaryContainerDark
-          }
-          stretch={true}
-          textColor={
-            submit ? Theme.colors.onPrimary : Theme.colors.onSecondaryContainer
-          }
-          onPress={() => handleSubmit()}>
-          {submit ? 'Next' : 'Submit'}
-        </DuoButton>
+          )}
+          <DuoButton
+            disabled={answer === ''}
+            backgroundColor={
+              submit && answer === question.correct_answer
+                ? Theme.colors.primary
+                : submit
+                ? Theme.colors.error
+                : Theme.colors.secondaryContainer
+            }
+            backgroundDark={
+              submit && answer === question.correct_answer
+                ? Theme.colors.primaryDark
+                : submit
+                ? Theme.colors.errorDark
+                : Theme.colors.secondaryContainerDark
+            }
+            stretch={true}
+            textColor={
+              submit
+                ? Theme.colors.onPrimary
+                : Theme.colors.onSecondaryContainer
+            }
+            onPress={() => handleSubmit()}>
+            {submit ? 'Next' : 'Submit'}
+          </DuoButton>
+        </View>
       </View>
       <Portal>
         <Dialog
@@ -220,8 +220,7 @@ const styles = StyleSheet.create({
     backgroundColor: Theme.colors.surface,
   },
   questionContainer: {
-    flex: 1,
-    paddingHorizontal: Constants.edgePadding,
+    padding: Constants.edgePadding,
     gap: 36,
   },
   innerContainer: {
@@ -232,6 +231,11 @@ const styles = StyleSheet.create({
     backgroundColor: Theme.colors.elevation.level2,
   },
   bottomContainer: {
+    flex: 1,
+    justifyContent: 'flex-end',
+  },
+  innerBottomContainer: {
+    flexShrink: 1,
     justifyContent: 'flex-end',
     paddingHorizontal: Constants.edgePadding,
     paddingTop: Constants.edgePadding,
@@ -240,6 +244,7 @@ const styles = StyleSheet.create({
   },
   submitContainer: {
     gap: Constants.mediumGap,
+    flexShrink: 1,
   },
   rowContainer: {
     flexDirection: 'row',
@@ -248,9 +253,11 @@ const styles = StyleSheet.create({
   },
   explanation: {
     gap: Constants.smallGap,
+    flexShrink: 1,
   },
   explanationScroll: {
-    maxHeight: 24 * 2.6,
+    flexShrink: 1,
+    minHeight: 24 * 1.6,
   },
   title: {
     textAlign: 'center',

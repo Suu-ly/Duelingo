@@ -21,7 +21,6 @@ const Home = (props: HomeProps) => {
       <View style={styles.container}>
         <Text variant={'headlineLarge'}>Home Screen</Text>
         <Button
-          icon="map-marker-outline"
           mode="outlined"
           onPress={() =>
             navigation.navigate('Quiz', {
@@ -30,7 +29,29 @@ const Home = (props: HomeProps) => {
               questionNo: 0,
             })
           }>
-          Go to Quiz
+          Go to Easy Quiz
+        </Button>
+        <Button
+          mode="outlined"
+          onPress={() =>
+            navigation.navigate('Quiz', {
+              language: 'chinese',
+              difficulty: 'intermediate',
+              questionNo: 0,
+            })
+          }>
+          Go to Intermediate Quiz
+        </Button>
+        <Button
+          mode="outlined"
+          onPress={() =>
+            navigation.navigate('Quiz', {
+              language: 'chinese',
+              difficulty: 'hard',
+              questionNo: 0,
+            })
+          }>
+          Go to Hard Quiz
         </Button>
         <View style={styles.rowContainer}>
           <DuoButton
