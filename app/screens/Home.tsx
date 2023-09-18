@@ -4,6 +4,8 @@ import {Button, Text} from 'react-native-paper';
 
 import CustomStatusBar from '../common/CustomStatusBar';
 import Constants from '../common/constants/Constants';
+import DuoButton from '../common/DuoButton';
+import theme from '../common/constants/theme.json';
 
 interface HomeProps {
   route: any;
@@ -24,6 +26,56 @@ const Home = (props: HomeProps) => {
           onPress={() => navigation.navigate('Filter')}>
           Go to Filter
         </Button>
+        <View style={styles.rowContainer}>
+          <DuoButton
+            icon={'account-plus-outline'}
+            filled={true}
+            disabled={false}
+            backgroundColor={theme.colors.primary}
+            backgroundDark={theme.colors.primaryDark}
+            borderColor={theme.colors.primary}
+            textColor={theme.colors.onPrimary}
+            onPress={() => console.log('Pressed first')}>
+            First
+          </DuoButton>
+          <DuoButton
+            icon={'account-plus-outline'}
+            filled={true}
+            disabled={true}
+            backgroundColor={theme.colors.primary}
+            textColor={theme.colors.onPrimary}
+            onPress={() => console.log('Pressed disabled')}>
+            First
+          </DuoButton>
+          <DuoButton
+            icon={'account-plus-outline'}
+            filled={false}
+            disabled={false}
+            backgroundColor={'white'}
+            borderColor={theme.colors.secondary}
+            textColor={theme.colors.secondary}
+            onPress={() => console.log('Pressed second')}>
+            Second
+          </DuoButton>
+          <DuoButton
+            icon={'account-plus-outline'}
+            filled={false}
+            disabled={true}
+            backgroundColor={'white'}
+            textColor={theme.colors.secondary}
+            onPress={() => console.log('Pressed second disbled')}>
+            Second
+          </DuoButton>
+          <DuoButton
+            icon={'magnify'}
+            filled={false}
+            disabled={false}
+            backgroundColor={'white'}
+            borderColor={theme.colors.secondary}
+            textColor={theme.colors.secondary}
+            onPress={() => console.log('Pressed third')}
+          />
+        </View>
       </View>
     </View>
   );
@@ -42,5 +94,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: Constants.defaultGap,
     paddingHorizontal: Constants.edgePadding,
+  },
+  rowContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: Constants.mediumGap,
+    justifyContent: 'center',
   },
 });

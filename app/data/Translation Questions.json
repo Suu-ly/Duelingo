@@ -1,5 +1,5 @@
 {
-  "malay questions": {
+  "malay": {
     "easy": [
       {
         "question": "Apa warna daun pokok?",
@@ -302,7 +302,7 @@
       }
     ]
   },
-  "chinese questions": {
+  "chinese": {
     "easy": [
       {
         "question": "What is 3 in chinese?",
