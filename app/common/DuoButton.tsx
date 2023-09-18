@@ -45,7 +45,7 @@ const DuoButton = (props: ButtonProps) => {
       borderRadius={Constants.radiusSmall}
       paddingHorizontal={Constants.mediumGap}
       stretch={stretch}
-      onPressedIn={onPress}
+      onPress={onPress}
       springRelease={false}
       backgroundShadow="transparent"
       raiseLevel={disabled ? 0 : filled ? 4 : 2}
