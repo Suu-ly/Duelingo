@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, ScrollView} from 'react-native';
 import {Button, Text, Portal, Dialog} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {
@@ -30,6 +30,24 @@ const Quiz = (props: QuizProps) => {
   const [answer, setAnswer] = useState('');
   const [submit, setSubmit] = useState(false);
   const [dialogVisible, setDialogVisible] = useState(false);
+
+  const parseQuestion = (question: string, type: 'header' | 'box') => {
+    if (question.includes('"')) {
+      if (type === 'header') {
+        return (
+          question.split('"')[0] + 'the following' + question.split('"')[2]
+        );
+      } else return question.split('"')[1];
+    } else if (type === 'header') {
+      return question;
+    } else return null;
+  };
+
+  //Need to standardise the formatting of the questions for this to work properly.
+  //Right now it extracts the text contained within "" and puts it into a box
+  //And replaces the text with "the following"
+  const headerQuestion = parseQuestion(question.question, 'header');
+  const boxQuestion = parseQuestion(question.question, 'box');
 
   React.useEffect(
     () =>
@@ -64,15 +82,12 @@ const Quiz = (props: QuizProps) => {
     <View style={styles.mainContainer}>
       <CustomStatusBar />
       <View style={styles.questionContainer}>
-        <View style={styles.innerContainer}>
-          <Text variant={'headlineSmall'}>{question.question}</Text>
-        </View>
-        <Button
-          icon="map-marker-outline"
-          mode="contained"
-          onPress={() => navigation.navigate('Home')}>
-          Go to Home
-        </Button>
+        <Text variant={'headlineSmall'}>{headerQuestion}</Text>
+        {boxQuestion && (
+          <View style={styles.innerContainer}>
+            <Text variant={'headlineSmall'}>{boxQuestion}</Text>
+          </View>
+        )}
         <QuizButtons
           question={question}
           backgroundColor={styles.mainContainer.backgroundColor}
@@ -128,15 +143,19 @@ const Quiz = (props: QuizProps) => {
                 }>
                 Explanation:
               </Text>
-              <Text
-                variant="bodyLarge"
-                style={
-                  answer === question.correct_answer
-                    ? {color: Theme.colors.onSecondaryContainer}
-                    : {color: Theme.colors.onErrorContainer}
-                }>
-                {question.explanation}
-              </Text>
+              <ScrollView
+                style={styles.explanationScroll}
+                showsHorizontalScrollIndicator={true}>
+                <Text
+                  variant="bodyLarge"
+                  style={
+                    answer === question.correct_answer
+                      ? {color: Theme.colors.onSecondaryContainer}
+                      : {color: Theme.colors.onErrorContainer}
+                  }>
+                  {question.explanation}
+                </Text>
+              </ScrollView>
             </View>
           </View>
         )}
@@ -199,19 +218,17 @@ const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
     backgroundColor: Theme.colors.surface,
-    justifyContent: 'center',
   },
   questionContainer: {
     flex: 1,
     paddingHorizontal: Constants.edgePadding,
-    gap: Constants.defaultGap,
+    gap: 36,
   },
   innerContainer: {
-    alignItems: 'center',
     gap: Constants.defaultGap,
-    marginTop: 132,
-    paddingVertical: Constants.edgePadding,
-    borderRadius: Constants.radiusExtraLarge,
+    paddingVertical: Constants.edgePadding * 2,
+    paddingHorizontal: Constants.edgePadding * 2,
+    borderRadius: Constants.radiusLarge,
     backgroundColor: Theme.colors.elevation.level2,
   },
   bottomContainer: {
@@ -231,6 +248,9 @@ const styles = StyleSheet.create({
   },
   explanation: {
     gap: Constants.smallGap,
+  },
+  explanationScroll: {
+    maxHeight: 24 * 2.6,
   },
   title: {
     textAlign: 'center',

@@ -1,6 +1,5 @@
 import {StyleSheet, View} from 'react-native';
 import DuoButton from './DuoButton';
-import {useState} from 'react';
 import Theme from './constants/theme.json';
 import Constants from './constants/Constants';
 
