@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {signIn} from '../utils/auth';
-import {Text, TextInput} from 'react-native-paper';
+import {Appbar, Text, TextInput} from 'react-native-paper';
 import {View, StyleSheet} from 'react-native';
 
 import CustomStatusBar from '../common/CustomStatusBar';
@@ -23,9 +23,7 @@ const SignIn = (props: SignInProps) => {
   const [rightIcon, setRightIcon] = useState('eye-off');
 
   const handleOnSubmit = () => {
-    if (email != '' && password != '') {
-      signIn(email, password);
-    }
+    signIn(props, email, password);
   };
 
   const handlePasswordVisibility = () => {
@@ -36,8 +34,17 @@ const SignIn = (props: SignInProps) => {
   return (
     <View style={styles.mainContainer}>
       <CustomStatusBar />
+      <Appbar.Header style={styles.appbar}>
+        <Appbar.BackAction
+          onPress={() => {
+            navigation.goBack();
+          }}
+        />
+      </Appbar.Header>
       <View style={styles.container}>
-        <Text variant={'headlineLarge'}>Log In</Text>
+        <View style={styles.title}>
+          <Text variant={'headlineLarge'}>Log in</Text>
+        </View>
         <TextInput
           mode="outlined"
           label="Email"
@@ -88,14 +95,14 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    marginTop: 2 * Constants.defaultGap,
+    marginTop: Constants.mediumGap,
     gap: Constants.largeGap,
     paddingHorizontal: Constants.edgePadding,
   },
-  rowContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: Constants.mediumGap,
-    justifyContent: 'center',
+  appbar: {
+    backgroundColor: 'white',
+  },
+  title: {
+    marginBottom: 16,
   },
 });

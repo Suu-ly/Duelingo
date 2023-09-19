@@ -3,6 +3,7 @@ import * as React from 'react';
 
 import Home from '../screens/Home';
 import Filter from '../screens/Filter';
+import Landing from '../screens/Landing';
 import SignIn from '../screens/SignIn';
 import SignUp from '../screens/SignUp';
 
@@ -14,6 +15,7 @@ const StackNavigator = () => {
       screenOptions={{
         headerShown: false,
       }}>
+      <Stack.Screen name="Landing" component={Landing} />
       <Stack.Screen name="SignIn" component={SignIn} />
       <Stack.Screen name="SignUp" component={SignUp} />
       <Stack.Screen name="Home" component={Home} />
