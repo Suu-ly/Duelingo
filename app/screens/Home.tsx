@@ -1,12 +1,16 @@
 import React, {useState} from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, TouchableOpacity} from 'react-native';
 import {Button, Text} from 'react-native-paper';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Theme from '../common/constants/theme.json';
 
 import CustomStatusBar from '../common/CustomStatusBar';
 import Constants from '../common/constants/Constants';
 import DuoButton from '../common/DuoButton';
 import Dropdown from '../common/DropdownButton';
-import theme from '../common/constants/theme.json';
+import LanguageChoice from '../common/LanguageChoice';
+import {Colors} from 'react-native/Libraries/NewAppScreen';
+import {colors} from 'react-native-elements';
 
 interface HomeProps {
   route: any;
@@ -23,88 +27,37 @@ const Home = (props: HomeProps) => {
   const onSelect = (item: any) => {
     setSelectedItem(item);
   };
+  const language = [
+    {
+      id: 1,
+      value: 'Mandarin',
+      icon: 'https://hatscripts.github.io/circle-flags/flags/cn.svg',
+    },
+    {
+      id: 2,
+      value: 'Malay',
+      icon: 'https://hatscripts.github.io/circle-flags/flags/my.svg',
+    },
+  ];
 
   return (
     <View style={styles.mainContainer}>
       {/* <CustomStatusBar /> */}
 
-      <View style={[styles.container, {alignItems: 'flex-start'}]}>
+      <View style={styles.toprowContainer}>
         <Dropdown
           title={'language'}
-          data={[
-            {
-              id: 1,
-              value: 'Mandarin',
-              icon: 'https://hatscripts.github.io/circle-flags/flags/cn.svg',
-            },
-            {
-              id: 2,
-              value: 'Malay',
-              icon: 'https://hatscripts.github.io/circle-flags/flags/my.svg',
-            },
-          ]}
+          data={language}
           item={selectedItem}
           onSelect={onSelect}
         />
+        <TouchableOpacity style={styles.button}>
+          <Icon name="heart" size={24} color={Theme.colors.error} />
+          <Text style={{color: Theme.colors.error}}>5</Text>
+        </TouchableOpacity>
       </View>
-      <View style={styles.container}>
-        <Text variant={'headlineLarge'}>Home Screen</Text>
-        <Button
-          icon="map-marker-outline"
-          mode="outlined"
-          onPress={() => navigation.navigate('Filter')}>
-          Go to Filter
-        </Button>
-        <View style={styles.rowContainer}>
-          <DuoButton
-            icon={'account-plus-outline'}
-            filled={true}
-            disabled={false}
-            backgroundColor={theme.colors.primary}
-            backgroundDark={theme.colors.primaryDark}
-            borderColor={theme.colors.primary}
-            textColor={theme.colors.onPrimary}
-            onPress={() => console.log('Pressed first')}>
-            First
-          </DuoButton>
-          <DuoButton
-            icon={'account-plus-outline'}
-            filled={true}
-            disabled={true}
-            backgroundColor={theme.colors.primary}
-            textColor={theme.colors.onPrimary}
-            onPress={() => console.log('Pressed disabled')}>
-            First
-          </DuoButton>
-          <DuoButton
-            icon={'account-plus-outline'}
-            filled={false}
-            disabled={false}
-            backgroundColor={'white'}
-            borderColor={theme.colors.secondary}
-            textColor={theme.colors.secondary}
-            onPress={() => console.log('Pressed second')}>
-            Second
-          </DuoButton>
-          <DuoButton
-            icon={'account-plus-outline'}
-            filled={false}
-            disabled={true}
-            backgroundColor={'white'}
-            textColor={theme.colors.secondary}
-            onPress={() => console.log('Pressed second disbled')}>
-            Second
-          </DuoButton>
-          <DuoButton
-            icon={'magnify'}
-            filled={false}
-            disabled={false}
-            backgroundColor={'white'}
-            borderColor={theme.colors.secondary}
-            textColor={theme.colors.secondary}
-            onPress={() => console.log('Pressed third')}
-          />
-        </View>
+      <View style={styles.rowContainer}>
+        <LanguageChoice item={selectedItem} />
       </View>
     </View>
   );
@@ -117,17 +70,28 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'white',
   },
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: Constants.defaultGap,
+  toprowContainer: {
+    backgroundColor: Theme.colors.elevation.level0,
+    flexDirection: 'row',
+    gap: Constants.mediumGap,
+    justifyContent: 'space-between',
+    width: '100%',
     paddingHorizontal: Constants.edgePadding,
+    paddingVertical: Constants.mediumGap,
   },
   rowContainer: {
+    backgroundColor: Theme.colors.elevation.level0,
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: Constants.mediumGap,
+    justifyContent: 'flex-start',
+    paddingHorizontal: Constants.edgePadding,
+    paddingVertical: Constants.mediumGap,
+  },
+  button: {
+    borderRadius: Constants.radiusMedium,
+    flexDirection: 'row',
     justifyContent: 'center',
+    gap: Constants.mediumGap,
   },
 });
