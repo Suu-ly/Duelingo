@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
-import {View, StyleSheet, TouchableOpacity} from 'react-native';
+import {View, StyleSheet, TouchableOpacity, SectionList} from 'react-native';
+
 import {Button, Text} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Theme from '../common/constants/theme.json';
@@ -11,6 +12,7 @@ import Dropdown from '../common/DropdownButton';
 import LanguageChoice from '../common/LanguageChoice';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {colors} from 'react-native-elements';
+import Questions from '../data/Translation Questions.json';
 
 interface HomeProps {
   route: any;
@@ -40,6 +42,21 @@ const Home = (props: HomeProps) => {
     },
   ];
 
+  const difficulty = [
+    {
+      title: 'Easy',
+      data: ['q1', 'q2', 'q3'],
+    },
+    {
+      title: 'Medium',
+      data: ['q1', 'q2', 'q3', 'q4', 'q5'],
+    },
+    {
+      title: 'Difficult',
+      data: ['q1', 'q2', 'q3', 'q4', 'q5'],
+    },
+  ];
+
   return (
     <View style={styles.mainContainer}>
       {/* <CustomStatusBar /> */}
@@ -56,8 +73,22 @@ const Home = (props: HomeProps) => {
           <Text style={{color: Theme.colors.error}}>5</Text>
         </TouchableOpacity>
       </View>
-      <View style={styles.rowContainer}>
-        <LanguageChoice item={selectedItem} />
+      <View style={styles.container}>
+        <SectionList
+          showsVerticalScrollIndicator={false}
+          stickySectionHeadersEnabled={true}
+          sections={difficulty}
+          renderItem={({item}) => (
+            <View style={styles.item}>
+              <Text style={styles.title}>{item}</Text>
+            </View>
+          )}
+          renderSectionHeader={({section: {title}}) => (
+            <Text style={styles.header} variant={'titleLarge'}>
+              <LanguageChoice item={selectedItem} />: {title}
+            </Text>
+          )}
+        />
       </View>
     </View>
   );
@@ -79,19 +110,28 @@ const styles = StyleSheet.create({
     paddingHorizontal: Constants.edgePadding,
     paddingVertical: Constants.mediumGap,
   },
-  rowContainer: {
-    backgroundColor: Theme.colors.elevation.level0,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: Constants.mediumGap,
-    justifyContent: 'flex-start',
-    paddingHorizontal: Constants.edgePadding,
-    paddingVertical: Constants.mediumGap,
-  },
   button: {
     borderRadius: Constants.radiusMedium,
     flexDirection: 'row',
     justifyContent: 'center',
     gap: Constants.mediumGap,
+  },
+  container: {
+    flex: 1,
+    marginHorizontal: 16,
+  },
+  item: {
+    backgroundColor: '#f9c2ff',
+    padding: 20,
+    marginVertical: 8,
+  },
+  header: {
+    backgroundColor: Theme.colors.elevation.level0,
+    color: Theme.colors.onSurface,
+    paddingHorizontal: Constants.edgePadding,
+    paddingVertical: Constants.mediumGap,
+  },
+  title: {
+    fontSize: 24,
   },
 });
