@@ -17,6 +17,7 @@ import QuizButtons from '../common/QuizButtons';
 import Constants from '../common/constants/Constants';
 import Questions from '../data/Translation Questions.json';
 import DuoButton from '../common/DuoButton';
+import QuizHeader from '../common/quizHeader';
 
 interface QuizProps {
   route: any;
@@ -35,6 +36,7 @@ const Quiz = (props: QuizProps) => {
   const difficulty: keyof typeof Questions.chinese = route.params.difficulty;
   const questionNo: number = route.params.questionNo;
   const question = Questions[language][difficulty][questionNo];
+  const remaining = route.params.remaining;
 
   const [answer, setAnswer] = useState('');
   const [submit, setSubmit] = useState(false);
@@ -77,11 +79,16 @@ const Quiz = (props: QuizProps) => {
 
   const handleSubmit = () => {
     if (submit) {
-      navigation.push('Quiz', {
-        language: language,
-        difficulty: difficulty,
-        questionNo: questionNo + 1,
-      });
+      if (remaining === 0) {
+        navigation.navigate('Home');
+      } else {
+        navigation.push('Quiz', {
+          language: language,
+          difficulty: difficulty,
+          questionNo: questionNo + 1,
+          remaining: remaining - 1,
+        });
+      }
     } else {
       LayoutAnimation.configureNext({
         duration: 300,
@@ -93,7 +100,12 @@ const Quiz = (props: QuizProps) => {
 
   return (
     <View style={styles.mainContainer}>
-      <CustomStatusBar />
+      <CustomStatusBar backgroundColor={Theme.colors.elevation.level1} />
+      <QuizHeader
+        questionsRemaining={remaining}
+        multiplayer={false}
+        onPress={() => setDialogVisible(true)}
+      />
       <View style={styles.questionContainer}>
         <Text variant={'headlineSmall'}>{headerQuestion}</Text>
         {boxQuestion && (

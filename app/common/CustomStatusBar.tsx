@@ -8,10 +8,10 @@ interface StatusBarProps {
 const CustomStatusBar = (props: StatusBarProps) => {
   const {backgroundColor = 'transparent', barStyle = 'dark-content'} = props;
   return (
-    <View style={styles.barContainer}>
+    <View style={[styles.barContainer, {backgroundColor: backgroundColor}]}>
       <StatusBar
         animated={true}
-        backgroundColor={backgroundColor}
+        backgroundColor="transparent"
         barStyle={barStyle}
         translucent={true}
       />

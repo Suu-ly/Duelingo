@@ -27,6 +27,7 @@ const Home = (props: HomeProps) => {
               language: 'chinese',
               difficulty: 'easy',
               questionNo: 0,
+              remaining: 4,
             })
           }>
           Go to Easy Quiz
@@ -38,6 +39,7 @@ const Home = (props: HomeProps) => {
               language: 'chinese',
               difficulty: 'intermediate',
               questionNo: 0,
+              remaining: 4,
             })
           }>
           Go to Intermediate Quiz
@@ -49,60 +51,11 @@ const Home = (props: HomeProps) => {
               language: 'chinese',
               difficulty: 'hard',
               questionNo: 0,
+              remaining: 4,
             })
           }>
           Go to Hard Quiz
         </Button>
-        <View style={styles.rowContainer}>
-          <DuoButton
-            icon={'account-plus-outline'}
-            filled={true}
-            disabled={false}
-            backgroundColor={theme.colors.primary}
-            backgroundDark={theme.colors.primaryDark}
-            borderColor={theme.colors.primary}
-            textColor={theme.colors.onPrimary}
-            onPress={() => console.log('Pressed first')}>
-            First
-          </DuoButton>
-          <DuoButton
-            icon={'account-plus-outline'}
-            filled={true}
-            disabled={true}
-            backgroundColor={theme.colors.primary}
-            textColor={theme.colors.onPrimary}
-            onPress={() => console.log('Pressed disabled')}>
-            First
-          </DuoButton>
-          <DuoButton
-            icon={'account-plus-outline'}
-            filled={false}
-            disabled={false}
-            backgroundColor={'white'}
-            borderColor={theme.colors.secondary}
-            textColor={theme.colors.secondary}
-            onPress={() => console.log('Pressed second')}>
-            Second
-          </DuoButton>
-          <DuoButton
-            icon={'account-plus-outline'}
-            filled={false}
-            disabled={true}
-            backgroundColor={'white'}
-            textColor={theme.colors.secondary}
-            onPress={() => console.log('Pressed second disbled')}>
-            Second
-          </DuoButton>
-          <DuoButton
-            icon={'magnify'}
-            filled={false}
-            disabled={false}
-            backgroundColor={'white'}
-            borderColor={theme.colors.secondary}
-            textColor={theme.colors.secondary}
-            onPress={() => console.log('Pressed third')}
-          />
-        </View>
       </View>
     </View>
   );
