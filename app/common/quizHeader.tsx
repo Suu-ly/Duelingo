@@ -2,6 +2,7 @@ import {StyleSheet, View} from 'react-native';
 import Theme from './constants/theme.json';
 import Constants from './constants/Constants';
 import {IconButton, ProgressBar} from 'react-native-paper';
+import HeartContainer from './HeartContainer';
 
 interface QuizHeaderProps {
   backgroundColor?: string;
@@ -37,17 +38,19 @@ const QuizHeader = (props: QuizHeaderProps) => {
         <View style={styles.progressBar}>
           <ProgressBar
             progress={
-              (totalQuestions - questionsRemaining - 1 + 0.2) /
-              (totalQuestions - 1)
+              totalQuestions - questionsRemaining === 1
+                ? 0.02
+                : (totalQuestions - questionsRemaining - 1) /
+                  (totalQuestions - 1)
             }
           />
         </View>
       )}
-      {/* {!multiplayer && <HeartContainer lives={lives}/>} */}
-      {/* {multiplayer &&  */}
-      {/* <CountdownTimer onEnd={onEndTime}/> */}
-      <View style={styles.filler} />
-      {/* } */}
+      {!multiplayer && lives && <HeartContainer lives={lives} />}
+      {multiplayer && (
+        // <CountdownTimer onEnd={onEndTime}/>
+        <View style={styles.filler} />
+      )}
     </View>
   );
 };
@@ -62,7 +65,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    gap: 12,
+    gap: Constants.largeGap,
   },
   progressBar: {
     flex: 1,

@@ -12,35 +12,40 @@ interface HeartProps {
 const HeartContainer = (props: HeartProps) => {
   const {lives} = props;
 
-  const animationValue = useRef(new Animated.Value(0)).current;
+  const animationValue = useRef(new Animated.Value(100)).current;
 
   useEffect(() => {
     Animated.timing(animationValue, {
       toValue: 100,
-      duration: 400,
-      easing: Easing.bezier(0.2, 0, 0, 1),
+      duration: 1000,
+      easing: Easing.linear,
       useNativeDriver: false,
     }).start();
 
     const delay = setTimeout(() => {
       animationValue.setValue(0);
-    }, 400);
+    }, 1000);
 
     return () => clearTimeout(delay);
   }, [lives]);
 
   const color = animationValue.interpolate({
-    inputRange: [0, 50, 100],
-    outputRange: ['white', 'red', 'white'],
+    inputRange: [0, 10, 60, 100],
+    outputRange: [
+      'transparent',
+      Theme.colors.error,
+      Theme.colors.error,
+      'transparent',
+    ],
     extrapolate: 'clamp',
   });
   return (
-    <View style={[styles.container, {borderColor: color}]}>
+    <Animated.View style={[styles.container, {borderColor: color}]}>
       <Icon name="heart" color={Theme.colors.error} size={24} />
       <Text variant="titleMedium" style={{color: Theme.colors.error}}>
         {lives}
       </Text>
-    </View>
+    </Animated.View>
   );
 };
 

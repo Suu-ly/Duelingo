@@ -17,7 +17,7 @@ import QuizButtons from '../common/QuizButtons';
 import Constants from '../common/constants/Constants';
 import Questions from '../data/Translation Questions.json';
 import DuoButton from '../common/DuoButton';
-import QuizHeader from '../common/quizHeader';
+import QuizHeader from '../common/QuizHeader';
 
 interface QuizProps {
   route: any;
@@ -36,12 +36,21 @@ const Quiz = (props: QuizProps) => {
   const difficulty: keyof typeof Questions.chinese = route.params.difficulty;
   const questionNo: number = route.params.questionNo;
   const question = Questions[language][difficulty][questionNo];
-  const remaining = route.params.remaining;
+  const [lives, setLives] = useState(99);
 
+  //Remaining number of questions, used to update the progress bar
+  const [remaining, setRemaining] = useState(route.params.remaining);
+
+  //Selected answer
   const [answer, setAnswer] = useState('');
+  //Keeps track of whether the user as submitted the answer
   const [submit, setSubmit] = useState(false);
+  //Decides whether to show the progress won't be saved dialog
   const [dialogVisible, setDialogVisible] = useState(false);
 
+  //Need to standardise the formatting of the questions for this to work properly.
+  //Right now it extracts the text contained within "" and puts it into a box
+  //And replaces the text with "the following"
   const parseQuestion = (question: string, type: 'header' | 'box') => {
     if (question.includes('"')) {
       if (type === 'header') {
@@ -54,9 +63,6 @@ const Quiz = (props: QuizProps) => {
     } else return null;
   };
 
-  //Need to standardise the formatting of the questions for this to work properly.
-  //Right now it extracts the text contained within "" and puts it into a box
-  //And replaces the text with "the following"
   const headerQuestion = parseQuestion(question.question, 'header');
   const boxQuestion = parseQuestion(question.question, 'box');
 
@@ -78,6 +84,7 @@ const Quiz = (props: QuizProps) => {
   );
 
   const handleSubmit = () => {
+    //Navigates to end screen after remaining questions reach 0, else go to next question
     if (submit) {
       if (remaining === 0) {
         navigation.navigate('Home');
@@ -86,15 +93,17 @@ const Quiz = (props: QuizProps) => {
           language: language,
           difficulty: difficulty,
           questionNo: questionNo + 1,
-          remaining: remaining - 1,
+          remaining: remaining,
         });
       }
+      //Plays the animation upon submitting
     } else {
       LayoutAnimation.configureNext({
         duration: 300,
         update: {type: 'spring', springDamping: 100},
       });
       setSubmit(true);
+      setRemaining(remaining - 1);
     }
   };
 
@@ -105,8 +114,10 @@ const Quiz = (props: QuizProps) => {
         questionsRemaining={remaining}
         multiplayer={false}
         onPress={() => setDialogVisible(true)}
+        lives={lives}
       />
       <View style={styles.questionContainer}>
+        <Button onPress={() => setLives(lives - 1)}>Minus lives</Button>
         <Text variant={'headlineSmall'}>{headerQuestion}</Text>
         {boxQuestion && (
           <View style={styles.innerContainer}>
