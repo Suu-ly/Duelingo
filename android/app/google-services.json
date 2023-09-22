@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "637457265263",
+    "project_id": "duelingo-563d3",
+    "storage_bucket": "duelingo-563d3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:637457265263:android:2d24605c3cc2dcd7da539a",
+        "android_client_info": {
+          "package_name": "com.Duelingo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC_eCUmlS74me6GXndhQz8OBTRI51E3EbY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

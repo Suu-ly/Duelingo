@@ -14,50 +14,85 @@
         "explanation": "The question is asking for who works in the school. Hence the answer should be a teacher"
       },
       {
-          "question": "What is \"Thank you\" in malay?",
-          "options": ["Terima Kasih", "Terima Kasi", "Kasih Terima", "Kasi Terima"],
-          "correct_answer": "Terima Kasih",
-          "explanation": "The correct spelling is Terima Kasih"
+        "question": "What is \"Thank you\" in malay?",
+        "options": [
+          "Terima Kasih",
+          "Terima Kasi",
+          "Kasih Terima",
+          "Kasi Terima"
+        ],
+        "correct_answer": "Terima Kasih",
+        "explanation": "The correct spelling is Terima Kasih"
       },
       {
-          "question": "Berapakah jumlah hari dalam seminggu?",
-          "options": ["lima", "enam", "tujuh", "lapan"],
-          "correct_answer": "tujuh",
-          "explanation": "The question is asking for the total number of days in a week. 7 is \"tujuh\" in malay"
+        "question": "Berapakah jumlah hari dalam seminggu?",
+        "options": ["lima", "enam", "tujuh", "lapan"],
+        "correct_answer": "tujuh",
+        "explanation": "The question is asking for the total number of days in a week. 7 is \"tujuh\" in malay"
       },
       {
-          "question": "\"Saya sakit kepala\" translates to:",
-          "options": ["My foot is in pain", "I'm having a headache", "I am in pain", "My arms are in pain"],
-          "correct_answer": "I am having a headache",
-          "explanation": "Translates to I am in pain on my head, hence headache"
+        "question": "\"Saya sakit kepala\" translates to:",
+        "options": [
+          "My foot is in pain",
+          "I'm having a headache",
+          "I am in pain",
+          "My arms are in pain"
+        ],
+        "correct_answer": "I am having a headache",
+        "explanation": "Translates to I am in pain on my head, hence headache"
       },
       {
         "question": "\"Selamat Pagi\" translates to:",
-        "options": ["Good Morning", "Good Afternoon", "Good Evening", "Good Night"],
+        "options": [
+          "Good Morning",
+          "Good Afternoon",
+          "Good Evening",
+          "Good Night"
+        ],
         "correct_answer": "Good Morning",
         "explanation": "Pagi means morning"
       },
       {
         "question": "What does \"Buku ini mahal\" translates to in English",
-        "options": ["This book is cheap", "This book is big", "This book is expensive", "This book is interesting"],
+        "options": [
+          "This book is cheap",
+          "This book is big",
+          "This book is expensive",
+          "This book is interesting"
+        ],
         "correct_answer": "This book is expensive",
         "explanation": "Buku ini means this book, and mahal is Expensive."
       },
       {
         "question": "Translate the question: \"Where is the nearest hospital?\"",
-        "options": ["Di mana perpustakaan?", " Di mana tandas?", " Di mana kedai runcit?", "Di mana hospital terdekat?"],
+        "options": [
+          "Di mana perpustakaan?",
+          " Di mana tandas?",
+          " Di mana kedai runcit?",
+          "Di mana hospital terdekat?"
+        ],
         "correct_answer": "Di mana hospital terdekat?",
         "explanation": "Di mana translate to \"where\", while perpistakaan means library, tandas is toilet, kedai runcit is grocery store."
       },
       {
         "question": "\"Selamat Petang\" translates to:",
-        "options": ["Good Morning", "Good Afternoon", "Good Evening", "Good Night"],
+        "options": [
+          "Good Morning",
+          "Good Afternoon",
+          "Good Evening",
+          "Good Night"
+        ],
         "correct_answer": "Good Afternoon",
         "explanation": "Petang means evening, Afternoon translates to tengah hari, night is malam."
       },
       {
         "question": "Translate the following sentence to Malay: \"I am going to the market.\"",
-        "options": ["Saya pergi ke pasar", "Saya makan di rumah.", "Saya suka makanan.", "Saya baca buku."],
+        "options": [
+          "Saya pergi ke pasar",
+          "Saya makan di rumah.",
+          "Saya suka makanan.",
+          "Saya baca buku."
+        ],
         "correct_answer": "Saya pergi ke pasar",
         "explanation": "Pergi ke pasar means goes to the market, makan di rumah means eat at home, suka makanan means like eating, baca buku means read a book"
       }
@@ -65,43 +100,78 @@
     "intermediate": [
       {
         "question": "Translate the following sentence to Malay: \"She is reading a book.\"",
-        "options": ["Dia makan buku.", "Dia menulis buku.", "Dia membaca buku.", "Dia tidur buku."],
+        "options": [
+          "Dia makan buku.",
+          "Dia menulis buku.",
+          "Dia membaca buku.",
+          "Dia tidur buku."
+        ],
         "correct_answer": "Dia membaca buku.",
         "explanation": "Makan means to eat. Menulis means to write. Tidur means to sleep. Membaca means to read."
       },
       {
         "question": "How do you say \"I want to go to the beach\" in Malay?",
-        "options": ["Saya mahu pergi ke pantai", "Saya suka pantai.", "Saya ada di pantai.", "Saya pergi ke kedai."],
+        "options": [
+          "Saya mahu pergi ke pantai",
+          "Saya suka pantai.",
+          "Saya ada di pantai.",
+          "Saya pergi ke kedai."
+        ],
         "correct_answer": "Saya mahu pergi ke pantai",
         "explanation": "Pergi ke pantai means go to the beach. Saya suka pantai means I like going to the beach. Saya ada di pantai means I am at the beach. Kedai means store."
       },
       {
         "question": "What does \"Makanan itu sedap\" mean in English?",
-        "options": ["The food is expensive", "The food is delicious", "The food is spicy", "The food is cold"],
+        "options": [
+          "The food is expensive",
+          "The food is delicious",
+          "The food is spicy",
+          "The food is cold"
+        ],
         "correct_answer": "The food is delicious",
         "explanation": "Sedap means good. If referring to food, it means delicious."
       },
       {
         "question": "Translate the sentence: \"The concert was absolutely fantastic.\"",
-        "options": ["Konsert itu sangat membosankan", "Konsert itu tidak menarik", "Konsert itu sungguh fantastik", "Konsert itu tidak baik"],
+        "options": [
+          "Konsert itu sangat membosankan",
+          "Konsert itu tidak menarik",
+          "Konsert itu sungguh fantastik",
+          "Konsert itu tidak baik"
+        ],
         "correct_answer": "Konsert itu sungguh fantastik",
         "explanation": "Membosankan means boring. Tidak menarik means not interesting. Fantastik means fantastic. Tidak baik means not good."
       },
       {
         "question": "Translate the following sentence to Malay: \"I am happy.\"",
-        "options": ["Saya marah", "Saya bimbang", "Saya gembira", "Saya penat."],
+        "options": [
+          "Saya marah",
+          "Saya bimbang",
+          "Saya gembira",
+          "Saya penat."
+        ],
         "correct_answer": "Saya gembira",
         "explanation": "Marah means angry. Bimbang means worried. Gembira means happy. Penat means tired."
       },
       {
         "question": "What is \"She is a student.\" in Malay?",
-        "options": ["Dia seorang cikgu", "Dia seorang pelajar", "Dia seorang doktor", "Dia seorang tukang masak"],
+        "options": [
+          "Dia seorang cikgu",
+          "Dia seorang pelajar",
+          "Dia seorang doktor",
+          "Dia seorang tukang masak"
+        ],
         "correct_answer": "Dia seorang pelajar",
         "explanation": "Cikgu means teacher. Pelajar means student. Doktor means doctor. Tukang masak means chef."
       },
       {
         "question": "Translate the sentence: \"Saya ada dua anak lelaki.\"",
-        "options": ["I have two daughters.", "I have three sons", "I have four children", "I have two sons"],
+        "options": [
+          "I have two daughters.",
+          "I have three sons",
+          "I have four children",
+          "I have two sons"
+        ],
         "correct_answer": "I have two sons",
         "explanation": "Dua anak lelaki means two sons."
       },
@@ -113,13 +183,23 @@
       },
       {
         "question": "Translate to English: \"Kucing itu bermain di luar.\"",
-        "options": ["The cat is sleeping inside", "The cat is playing outside", "The cat is eating inside", "The cat is hiding under the bed"],
+        "options": [
+          "The cat is sleeping inside",
+          "The cat is playing outside",
+          "The cat is eating inside",
+          "The cat is hiding under the bed"
+        ],
         "correct_answer": "The cat is playing outside",
         "explanation": "Bermain di luar translates to play outside."
       },
       {
         "question": "Translate to Malay: \"I am going to school.\"",
-        "options": ["Saya pergi ke sekolah", "Saya suka tidur", "Saya mahu makan", "Saya berjalan-jalan"],
+        "options": [
+          "Saya pergi ke sekolah",
+          "Saya suka tidur",
+          "Saya mahu makan",
+          "Saya berjalan-jalan"
+        ],
         "correct_answer": "Saya pergi ke sekolah",
         "explanation": "Pergi ke sekolah means to go to school. Suka tidur means likes sleeping. Makan means to eat. Berjalan-jalan means to take a walk."
       }
@@ -127,37 +207,67 @@
     "hard": [
       {
         "question": "Berapa umur kamu?",
-        "options": ["Saya makan", "Saya belajar", "Saya berusia dua puluh tahun", "Terima kasih"],
+        "options": [
+          "Saya makan",
+          "Saya belajar",
+          "Saya berusia dua puluh tahun",
+          "Terima kasih"
+        ],
         "correct_answer": "Saya berusia dua puluh tahun",
         "explanation": "Question is asking 'How old are you?' The most appropriate response is 'Saya berusia dua puluh tahun' which means I am twenty years old."
       },
       {
         "question": "Apa pekerjaan kamu?",
-        "options": ["Saya guru", "Kamu makan apa?", "Terima kasih", "Saya lapar"],
+        "options": [
+          "Saya guru",
+          "Kamu makan apa?",
+          "Terima kasih",
+          "Saya lapar"
+        ],
         "correct_answer": "Saya guru",
         "explanation": "Question is asking 'What is your job?' The most appropriate response is 'Saya guru' which means I am a teacher."
       },
       {
         "question": "Bolehkah saya membantu anda?",
-        "options": ["Tidak apa-apa", "Terima kasih", "Ya, sila bantu saya", "Saya suka makan"],
+        "options": [
+          "Tidak apa-apa",
+          "Terima kasih",
+          "Ya, sila bantu saya",
+          "Saya suka makan"
+        ],
         "correct_answer": "Ya, sila bantu saya",
         "explanation": "Question is asking 'Can I help you?' The most appropriate response is 'Ya, sila bantu saya' which means yes, please help me. "
       },
       {
         "question": "Apa khabar?",
-        "options": ["Selamat datang.", "Saya baik.", "Terima kasih.", "Khabar baik."],
+        "options": [
+          "Selamat datang.",
+          "Saya baik.",
+          "Terima kasih.",
+          "Khabar baik."
+        ],
         "correct_answer": "Khabar baik.",
         "explanation": "Question is asking 'How are you?' The most appropriate response is 'Khabar baik' which means I am fine. "
       },
       {
         "question": "Apakah hobi kamu?",
-        "options": ["Saya suka bermain bola sepak.", "Saya pergi ke sekolah.", "Terima kasih.", "Kamu tinggal di rumah."],
+        "options": [
+          "Saya suka bermain bola sepak.",
+          "Saya pergi ke sekolah.",
+          "Terima kasih.",
+          "Kamu tinggal di rumah."
+        ],
         "correct_answer": "Saya suka bermain bola sepak.",
         "explanation": "Question is asking 'What is your hobby?' The most appropriate response is 'Saya suka bermain bola sepak.' which means I like to play soccer. "
       },
       {
         "question": "Kamu suka makanan apa?",
-        "options": ["Saya minum air.", "Saya suka makan pizza.", "Terima kasih.", "Kamu suka berjalan-jalan."],
+        "options": [
+          "Saya minum air.",
+          "Saya suka makan pizza.",
+          "Terima kasih.",
+          "Kamu suka berjalan-jalan."
+        ],
         "correct_answer": "Saya suka makan pizza.",
         "explanation": "Question is asking 'What do you like to eat?' The most appropriate response is 'Saya suka makan pizza' which means I like to eat pizza. "
       },
@@ -169,7 +279,12 @@
       },
       {
         "question": "Fill in the blank: Hari ini, saya akan ________________ filem seram.",
-        "options": ["bermain bola sepak", "menonton", "berjalan-jalan", "tidur"],
+        "options": [
+          "bermain bola sepak",
+          "menonton",
+          "berjalan-jalan",
+          "tidur"
+        ],
         "correct_answer": "menonton ",
         "explanation": "The question is saying 'Today I will __ a horror movie.'. The most suitable answer is Menonton, which means to watch."
       },
@@ -203,7 +318,12 @@
       },
       {
         "question": "Translate \"What is your name?\" to chinese",
-        "options": ["你叫什么名字?", "你吃饱了吗?", "你住哪里?", "你家里有人吗?"],
+        "options": [
+          "你叫什么名字?",
+          "你吃饱了吗?",
+          "你住哪里?",
+          "你家里有人吗?"
+        ],
         "correct_answer": "你叫什么名字?",
         "explanation": "你吃饱了吗? = Have you eaten?, 你住哪里 = Where do you stay, 你家里有人吗 = Is there anyone in your house?"
       },
@@ -259,7 +379,12 @@
       },
       {
         "question": "Translate \"Whose bag is this?\" to Chinese",
-        "options": ["这个书包是谁的?", "这个是什么书包?", "这个书包是什么时候放的?", "这个书包在哪里?"],
+        "options": [
+          "这个书包是谁的?",
+          "这个是什么书包?",
+          "这个书包是什么时候放的?",
+          "这个书包在哪里?"
+        ],
         "correct_answer": "这个书包是谁的?",
         "explanation": "这个是什么书包 = What kind of bag is it?, 这个书包是什么时候放的 = When was this bag placed?, 这个书包在哪里 = Where is this bag (which does not make sense) "
       },
@@ -272,12 +397,17 @@
       {
         "question": "What is the chinese word for \"Family\"",
         "options": ["美丽", "家庭", "学校", "谢谢"],
-        "correct_answer": "家庭", 
+        "correct_answer": "家庭",
         "explanation": "美丽 means beautiful, 学校 means school, 谢谢 means thank you"
       },
       {
         "question": "Translate the phrase \"How much does it cost?\"",
-        "options": ["我有一个问题", "这个多少钱?", "你今天好吗?", "明天你有空吗?"],
+        "options": [
+          "我有一个问题",
+          "这个多少钱?",
+          "你今天好吗?",
+          "明天你有空吗?"
+        ],
         "correct_answer": "这个多少钱?",
         "explanation": "我有一个问题 means i have a question, 你今天好吗 means how are you today, 明天你有空吗 means are you free tommorow"
       },
@@ -293,21 +423,36 @@
         "correct_answer": "历史",
         "explanation": "数学 means math, 科学 is Science, 英文 is English "
       },
-      { 
+      {
         "question": "What is the English translation for \"我喜欢阅读书\"?",
-        "options": ["I like to sleep", "I like to read books", "I want to go to school", "I want to go to the bathroom"],
+        "options": [
+          "I like to sleep",
+          "I like to read books",
+          "I want to go to school",
+          "I want to go to the bathroom"
+        ],
         "correct_answer": "I like to read books",
         "explanation": "-"
       },
       {
         "question": "How to say \"Technology is advancing rapidly\" in chinese?",
-        "options": ["电脑迅速发展", "科技迅速发展", "我要迅速发财", "人工智能正在改变产业"],
+        "options": [
+          "电脑迅速发展",
+          "科技迅速发展",
+          "我要迅速发财",
+          "人工智能正在改变产业"
+        ],
         "correct_answer": "科技迅速发展",
         "explanation": "电脑迅速发展 menas computers are advancing rapidly, 我要迅速发财 means I want to get rich quickly, 人工智能正在改变产业 means Artificial intelligence is changing industries"
       },
       {
         "question": "What is the Chinese translation for \"I am going on vacation\"?",
-        "options": ["我想学中文", "我要度假", "我会在十分钟内到达", " 请问,你能帮助我吗?"],
+        "options": [
+          "我想学中文",
+          "我要度假",
+          "我会在十分钟内到达",
+          " 请问,你能帮助我吗?"
+        ],
         "correct_answer": "我要度假",
         "explanation": "我想学中文 means i want to learn chinese, 我会在十分钟内到达 means i will arrive in 10 minutes, 请问,你能帮助我吗? means excuse me, would you be able to help me?"
       }
@@ -321,49 +466,89 @@
       },
       {
         "question": "Translate \"I am a computer engineer\" into Chinese",
-        "options": ["我是一名材料科学工程师", "我是一名电脑工程师", "我是一位杰出的科学家", "我是一名学生"],
+        "options": [
+          "我是一名材料科学工程师",
+          "我是一名电脑工程师",
+          "我是一位杰出的科学家",
+          "我是一名学生"
+        ],
         "correct_answer": "我是一名电脑工程师",
         "explanation": "我是一名材料科学工程师 means I am a materials science engineer, 我是一位杰出的科学家 means I am an outstanding scientist, 我是一名学生 means I am a student"
       },
       {
         "question": "How do you say \"Environmental conservation is crucial\" in Chinese?",
-        "options": ["全球合作至关重要", "环保至关重要", "进步来自创新", "创新推动经济增长"],
+        "options": [
+          "全球合作至关重要",
+          "环保至关重要",
+          "进步来自创新",
+          "创新推动经济增长"
+        ],
         "correct_answer": "环保至关重要",
         "explanation": "全球合作至关重要 means global coorperation is important, 进步来自创新 measn progress comes from innovation, 创新推动经济增长 means innovation drives economic growth"
       },
       {
         "question": "Translate \"The company is facing economic challenges\"",
-        "options": ["公司将上市", "公司即将破产", "公司正在全球扩张", "公司正面临经济挑战"],
+        "options": [
+          "公司将上市",
+          "公司即将破产",
+          "公司正在全球扩张",
+          "公司正面临经济挑战"
+        ],
         "correct_answer": "公司正面临经济挑战",
         "explanation": "公司将上市 means the company is being listed, 公司即将破产 means the company is going bankrupt, 公司正在全球扩张 means the company is expanding globally"
       },
       {
         "question": "What is the Chinese translation for \"He is a renowned architect\"?",
-        "options": ["他是一位著名的建筑师", "他是一位有才华的音乐家", "我们在研究这个问题", "他是一位著名的物理学家"],
+        "options": [
+          "他是一位著名的建筑师",
+          "他是一位有才华的音乐家",
+          "我们在研究这个问题",
+          "他是一位著名的物理学家"
+        ],
         "correct_answer": "他是一位著名的建筑师",
         "explanation": "他是一位有才华的音乐家 means he is a talented musician, 我们在研究这个问题 means i am researching about this problem, 他是一位著名的物理学家 means he is a famous physicist"
       },
       {
         "question": "Translate \"The stock market is volatile\" into Chinese.",
-        "options": ["股市不可预测", "股市波动较大", "这个城市人口稠密", "城市正在迅速增长"],
+        "options": [
+          "股市不可预测",
+          "股市波动较大",
+          "这个城市人口稠密",
+          "城市正在迅速增长"
+        ],
         "correct_answer": "股市波动较大",
         "explanation": "股市不可预测 means the stock market is unpredictable, 这个城市人口稠密 menas the city is densely populated, 城市正在迅速增长 means the city is growing rapidly"
       },
       {
         "question": "How do you say \"Can you help me find my keys?\" in Chinese?",
-        "options": ["你看见我的眼镜了吗?", "你能帮我找到我的钥匙吗?", "请问，你能帮助我吗?", "能说英语吗?"],
+        "options": [
+          "你看见我的眼镜了吗?",
+          "你能帮我找到我的钥匙吗?",
+          "请问，你能帮助我吗?",
+          "能说英语吗?"
+        ],
         "correct_answer": "你能帮我找到我的钥匙吗?",
         "explanation": "你看见我的眼镜了吗? means have you seen my glasses, 请问，你能帮助我吗?? means excuse me, could you help me please?, 能说英语吗 means if the other party could speak English?"
       },
       {
         "question": "Translate \"I need to buy groceries\" into Chinese.",
-        "options": ["我需要买食物", "天气越来越冷", "我们在学习", "我们要出发了"],
+        "options": [
+          "我需要买食物",
+          "天气越来越冷",
+          "我们在学习",
+          "我们要出发了"
+        ],
         "correct_answer": "我需要买食物",
         "explanation": "天气越来越冷 means the weather is getting colder, 我们在学习 means we are learning, 我们要出发了 means we are leaving now."
       },
       {
         "question": "Translate \"She is wearing a beautiful dress\" into Chinese.",
-        "options": ["她是一位有才华的女演员", "她是一位有才华的作家", "她是一位有才华的歌手", "她穿着一件漂亮的连衣裙"],
+        "options": [
+          "她是一位有才华的女演员",
+          "她是一位有才华的作家",
+          "她是一位有才华的歌手",
+          "她穿着一件漂亮的连衣裙"
+        ],
         "correct_answer": "她穿着一件漂亮的连衣裙",
         "explanation": "她是一位有才华的女演员 means she is a talented actress, 她是一位有才华的作家 means she is a talented writer, 她是一位有才华的歌手 means she is a talented singer"
       },
