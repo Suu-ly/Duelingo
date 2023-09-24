@@ -1,6 +1,9 @@
 import auth from '@react-native-firebase/auth';
 import {Alert, ToastAndroid} from 'react-native';
 
+  
+
+
 interface AuthProps {
   route: any;
   navigation: any;

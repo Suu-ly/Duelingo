@@ -6,6 +6,15 @@ import CustomStatusBar from '../common/CustomStatusBar';
 import Constants from '../common/constants/Constants';
 import DuoButton from '../common/DuoButton';
 import theme from '../common/constants/theme.json';
+import { database } from '@react-native-firebase/database';
+
+import { firebase } from '@react-native-firebase/database';
+
+const reference = database
+  .app()
+  .database('https://duelingo-563d3-default-rtdb.asia-southeast1.firebasedatabase.app/')
+  .ref('/games');
+
 
 interface LobbyProps {
     route: any;
@@ -35,7 +44,12 @@ interface LobbyProps {
               backgroundDark={theme.colors.primaryDark}
               borderColor={theme.colors.primary}
               textColor={theme.colors.onPrimary}
-              onPress={() => console.log('Pressed first')}>
+              onPress={() => database()
+                .ref('/games')
+                .set({
+                  name: 'Ada Lovelace'
+                })
+                .then(() => console.log('Data set.'))}>
               First
             </DuoButton>
             <DuoButton
