@@ -1,18 +1,17 @@
 import {StyleSheet, View} from 'react-native';
 import Theme from './constants/theme.json';
 import Constants from './constants/Constants';
-import {IconButton, ProgressBar} from 'react-native-paper';
+import {IconButton, ProgressBar, Text} from 'react-native-paper';
 import HeartContainer from './HeartContainer';
+import QuizTimer from './QuizTimer';
 
 interface QuizHeaderProps {
   backgroundColor?: string;
   totalQuestions?: number;
   questionsRemaining: number;
-  timer?: boolean;
-  multiplayer: boolean;
   onPress: () => void;
-  onEndTime?: () => void;
-  lives?: number;
+  singleplayer?: {lives: number};
+  multiplayer?: {onEndTime: () => void; timer: boolean};
 }
 
 const QuizHeader = (props: QuizHeaderProps) => {
@@ -20,21 +19,19 @@ const QuizHeader = (props: QuizHeaderProps) => {
     backgroundColor = Theme.colors.elevation.level1,
     totalQuestions = 5,
     questionsRemaining,
-    timer,
+    singleplayer,
     multiplayer,
     onPress,
-    onEndTime,
-    lives,
   } = props;
   return (
     <View style={[styles.barContainer, {backgroundColor: backgroundColor}]}>
       <IconButton
         icon={'arrow-left'}
         iconColor={Theme.colors.onSurfaceVariant}
-        style={{marginRight: 22}}
+        style={{marginRight: 12}}
         onPress={onPress}
       />
-      {!multiplayer && (
+      {singleplayer && (
         <View style={styles.progressBar}>
           <ProgressBar
             progress={
@@ -46,10 +43,18 @@ const QuizHeader = (props: QuizHeaderProps) => {
           />
         </View>
       )}
-      {!multiplayer && lives && <HeartContainer lives={lives} />}
+      {singleplayer && <HeartContainer lives={singleplayer.lives} />}
       {multiplayer && (
-        // <CountdownTimer onEnd={onEndTime}/>
-        <View style={styles.filler} />
+        <>
+          {multiplayer.timer ? (
+            <QuizTimer onEndTime={multiplayer.onEndTime} />
+          ) : (
+            <Text variant="titleMedium">
+              Round {totalQuestions - questionsRemaining} of {totalQuestions}
+            </Text>
+          )}
+          <View style={styles.filler} />
+        </>
       )}
     </View>
   );
@@ -71,7 +76,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   filler: {
-    width: 58,
-    height: 48,
+    width: 60,
+    height: Constants.buttonSize,
   },
 });

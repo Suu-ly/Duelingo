@@ -2,13 +2,11 @@ import React, {useState} from 'react';
 import {
   View,
   StyleSheet,
-  ScrollView,
   LayoutAnimation,
   UIManager,
   Platform,
 } from 'react-native';
 import {Button, Text, Portal, Dialog} from 'react-native-paper';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {EventArg, NavigationAction} from '@react-navigation/native';
 
 import Theme from '../common/constants/theme.json';
@@ -16,8 +14,8 @@ import CustomStatusBar from '../common/CustomStatusBar';
 import QuizButtons from '../common/QuizButtons';
 import Constants from '../common/constants/Constants';
 import Questions from '../data/Translation Questions.json';
-import DuoButton from '../common/DuoButton';
 import QuizHeader from '../common/QuizHeader';
+import QuizFooter from '../common/QuizFooter';
 
 interface QuizProps {
   route: any;
@@ -36,7 +34,7 @@ const Quiz = (props: QuizProps) => {
   const difficulty: keyof typeof Questions.chinese = route.params.difficulty;
   const questionNo: number = route.params.questionNo;
   const question = Questions[language][difficulty][questionNo];
-  const [lives, setLives] = useState(99);
+  const [lives, setLives] = useState(5);
 
   //Remaining number of questions, used to update the progress bar
   const [remaining, setRemaining] = useState(route.params.remaining);
@@ -104,6 +102,9 @@ const Quiz = (props: QuizProps) => {
       });
       setSubmit(true);
       setRemaining(remaining - 1);
+      if (answer !== question.correct_answer) {
+        setLives(lives - 1);
+      }
     }
   };
 
@@ -112,9 +113,9 @@ const Quiz = (props: QuizProps) => {
       <CustomStatusBar backgroundColor={Theme.colors.elevation.level1} />
       <QuizHeader
         questionsRemaining={remaining}
-        multiplayer={false}
+        singleplayer={{lives: lives}}
+        // multiplayer={{onEndTime: () => setSubmit(true), timer: true}}
         onPress={() => setDialogVisible(true)}
-        lives={lives}
       />
       <View style={styles.questionContainer}>
         <Button onPress={() => setLives(lives - 1)}>Minus lives</Button>
@@ -132,97 +133,13 @@ const Quiz = (props: QuizProps) => {
           onSelect={ans => setAnswer(ans)}
         />
       </View>
-      <View style={styles.bottomContainer}>
-        <View
-          style={[
-            styles.innerBottomContainer,
-            submit && answer === question.correct_answer
-              ? {backgroundColor: Theme.colors.secondaryContainer}
-              : submit
-              ? {backgroundColor: Theme.colors.errorContainer}
-              : {backgroundColor: 'transparent'},
-          ]}>
-          {submit && (
-            <View style={styles.submitContainer}>
-              <View style={styles.rowContainer}>
-                <Icon
-                  name={
-                    answer === question.correct_answer
-                      ? 'check-circle-outline'
-                      : 'alert-circle-outline'
-                  }
-                  size={Constants.iconMedium}
-                  color={
-                    answer === question.correct_answer
-                      ? Theme.colors.onSecondaryContainer
-                      : Theme.colors.onErrorContainer
-                  }
-                />
-                <Text
-                  variant="titleLarge"
-                  style={
-                    answer === question.correct_answer
-                      ? {color: Theme.colors.onSecondaryContainer}
-                      : {color: Theme.colors.onErrorContainer}
-                  }>
-                  {answer === question.correct_answer
-                    ? 'Well Done!'
-                    : 'Incorrect'}
-                </Text>
-              </View>
-              <View style={styles.explanation}>
-                <Text
-                  variant="labelLarge"
-                  style={
-                    answer === question.correct_answer
-                      ? {color: Theme.colors.onSecondaryContainer}
-                      : {color: Theme.colors.onErrorContainer}
-                  }>
-                  Explanation:
-                </Text>
-                <ScrollView
-                  style={styles.explanationScroll}
-                  showsHorizontalScrollIndicator={true}>
-                  <Text
-                    variant="bodyLarge"
-                    style={
-                      answer === question.correct_answer
-                        ? {color: Theme.colors.onSecondaryContainer}
-                        : {color: Theme.colors.onErrorContainer}
-                    }>
-                    {question.explanation}
-                  </Text>
-                </ScrollView>
-              </View>
-            </View>
-          )}
-          <DuoButton
-            disabled={answer === ''}
-            backgroundColor={
-              submit && answer === question.correct_answer
-                ? Theme.colors.primary
-                : submit
-                ? Theme.colors.error
-                : Theme.colors.secondaryContainer
-            }
-            backgroundDark={
-              submit && answer === question.correct_answer
-                ? Theme.colors.primaryDark
-                : submit
-                ? Theme.colors.errorDark
-                : Theme.colors.secondaryContainerDark
-            }
-            stretch={true}
-            textColor={
-              submit
-                ? Theme.colors.onPrimary
-                : Theme.colors.onSecondaryContainer
-            }
-            onPress={() => handleSubmit()}>
-            {submit ? 'Next' : 'Submit'}
-          </DuoButton>
-        </View>
-      </View>
+      <QuizFooter
+        correct={answer === question.correct_answer}
+        explanation={question.explanation}
+        selected={answer === ''}
+        submit={submit}
+        handleSubmit={handleSubmit}
+      />
       <Portal>
         <Dialog
           visible={dialogVisible}
@@ -269,35 +186,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: Constants.edgePadding * 2,
     borderRadius: Constants.radiusLarge,
     backgroundColor: Theme.colors.elevation.level2,
-  },
-  bottomContainer: {
-    flex: 1,
-    justifyContent: 'flex-end',
-  },
-  innerBottomContainer: {
-    flexShrink: 1,
-    justifyContent: 'flex-end',
-    paddingHorizontal: Constants.edgePadding,
-    paddingTop: Constants.edgePadding,
-    paddingBottom: 2 * Constants.edgePadding,
-    gap: Constants.defaultGap,
-  },
-  submitContainer: {
-    gap: Constants.mediumGap,
-    flexShrink: 1,
-  },
-  rowContainer: {
-    flexDirection: 'row',
-    gap: Constants.mediumGap,
-    alignItems: 'center',
-  },
-  explanation: {
-    gap: Constants.smallGap,
-    flexShrink: 1,
-  },
-  explanationScroll: {
-    flexShrink: 1,
-    minHeight: 24 * 1.6,
   },
   title: {
     textAlign: 'center',
