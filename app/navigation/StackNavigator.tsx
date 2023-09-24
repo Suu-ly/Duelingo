@@ -6,6 +6,7 @@ import Filter from '../screens/Filter';
 import Landing from '../screens/Landing';
 import SignIn from '../screens/SignIn';
 import SignUp from '../screens/SignUp';
+import Lobby from '../screens/Lobby';
 
 const Stack = createNativeStackNavigator();
 
@@ -20,6 +21,7 @@ const StackNavigator = () => {
       <Stack.Screen name="SignUp" component={SignUp} />
       <Stack.Screen name="Home" component={Home} />
       <Stack.Screen name="Filter" component={Filter} />
+      <Stack.Screen name="Lobby" component={Lobby} />
     </Stack.Navigator>
   );
 };

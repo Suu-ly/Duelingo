@@ -66,6 +66,12 @@ const Home = (props: HomeProps) => {
             onPress={() => console.log('Pressed second disbled')}>
             Second
           </DuoButton>
+          <Button
+          icon="map-marker-outline"
+          mode="outlined"
+          onPress={() => navigation.navigate('Lobby')}>
+          Lobby
+        </Button>
           <DuoButton
             icon={'magnify'}
             filled={false}
