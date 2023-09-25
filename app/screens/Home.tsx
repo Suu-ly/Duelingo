@@ -21,61 +21,62 @@ const Home = (props: HomeProps) => {
       <View style={styles.container}>
         <Text variant={'headlineLarge'}>Home Screen</Text>
         <Button
-          icon="map-marker-outline"
           mode="outlined"
-          onPress={() => navigation.navigate('Filter')}>
-          Go to Filter
+          onPress={() =>
+            navigation.navigate('Quiz', {
+              language: 'chinese',
+              difficulty: 'easy',
+              questionNo: 0,
+              remaining: 4,
+              totalQuestions: 5,
+              timeElapsed: 0,
+              score: 0,
+            })
+          }>
+          Go to Easy Quiz
         </Button>
-        <View style={styles.rowContainer}>
-          <DuoButton
-            icon={'account-plus-outline'}
-            filled={true}
-            disabled={false}
-            backgroundColor={theme.colors.primary}
-            backgroundDark={theme.colors.primaryDark}
-            borderColor={theme.colors.primary}
-            textColor={theme.colors.onPrimary}
-            onPress={() => console.log('Pressed first')}>
-            First
-          </DuoButton>
-          <DuoButton
-            icon={'account-plus-outline'}
-            filled={true}
-            disabled={true}
-            backgroundColor={theme.colors.primary}
-            textColor={theme.colors.onPrimary}
-            onPress={() => console.log('Pressed disabled')}>
-            First
-          </DuoButton>
-          <DuoButton
-            icon={'account-plus-outline'}
-            filled={false}
-            disabled={false}
-            backgroundColor={'white'}
-            borderColor={theme.colors.secondary}
-            textColor={theme.colors.secondary}
-            onPress={() => console.log('Pressed second')}>
-            Second
-          </DuoButton>
-          <DuoButton
-            icon={'account-plus-outline'}
-            filled={false}
-            disabled={true}
-            backgroundColor={'white'}
-            textColor={theme.colors.secondary}
-            onPress={() => console.log('Pressed second disbled')}>
-            Second
-          </DuoButton>
-          <DuoButton
-            icon={'magnify'}
-            filled={false}
-            disabled={false}
-            backgroundColor={'white'}
-            borderColor={theme.colors.secondary}
-            textColor={theme.colors.secondary}
-            onPress={() => console.log('Pressed third')}
-          />
-        </View>
+        <Button
+          mode="outlined"
+          onPress={() =>
+            navigation.navigate('Quiz', {
+              language: 'chinese',
+              difficulty: 'intermediate',
+              questionNo: 0,
+              remaining: 4,
+              totalQuestions: 5,
+              timeElapsed: 0,
+              score: 0,
+            })
+          }>
+          Go to Intermediate Quiz
+        </Button>
+        <Button
+          mode="outlined"
+          onPress={() =>
+            navigation.navigate('Quiz', {
+              language: 'chinese',
+              difficulty: 'hard',
+              questionNo: 0,
+              remaining: 4,
+              totalQuestions: 5,
+              timeElapsed: 0,
+              score: 0,
+            })
+          }>
+          Go to Hard Quiz
+        </Button>
+        <Button
+          mode="outlined"
+          onPress={() =>
+            navigation.navigate('QuizEnd', {
+              timeElapsed: 80,
+              multiplayer: false,
+              score: 3,
+              totalQuestions: 7,
+            })
+          }>
+          Go to Quiz End
+        </Button>
       </View>
     </View>
   );

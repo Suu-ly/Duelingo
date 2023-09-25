@@ -1,4 +1,4 @@
-import {StatusBar} from 'react-native';
+import {StatusBar, StyleSheet, View} from 'react-native';
 
 interface StatusBarProps {
   backgroundColor?: string;
@@ -8,13 +8,21 @@ interface StatusBarProps {
 const CustomStatusBar = (props: StatusBarProps) => {
   const {backgroundColor = 'transparent', barStyle = 'dark-content'} = props;
   return (
-    <StatusBar
-      animated={true}
-      backgroundColor={backgroundColor}
-      barStyle={barStyle}
-      translucent={true}
-    />
+    <View style={[styles.barContainer, {backgroundColor: backgroundColor}]}>
+      <StatusBar
+        animated={true}
+        backgroundColor="transparent"
+        barStyle={barStyle}
+        translucent={true}
+      />
+    </View>
   );
 };
 
 export default CustomStatusBar;
+
+const styles = StyleSheet.create({
+  barContainer: {
+    height: StatusBar.currentHeight,
+  },
+});

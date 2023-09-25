@@ -2,7 +2,8 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import * as React from 'react';
 
 import Home from '../screens/Home';
-import Filter from '../screens/Filter';
+import Quiz from '../screens/Quiz';
+import QuizEnd from '../screens/QuizEnd';
 import Landing from '../screens/Landing';
 import SignIn from '../screens/SignIn';
 import SignUp from '../screens/SignUp';
@@ -19,7 +20,8 @@ const StackNavigator = () => {
       <Stack.Screen name="SignIn" component={SignIn} />
       <Stack.Screen name="SignUp" component={SignUp} />
       <Stack.Screen name="Home" component={Home} />
-      <Stack.Screen name="Filter" component={Filter} />
+      <Stack.Screen name="Quiz" component={Quiz} />
+      <Stack.Screen name="QuizEnd" component={QuizEnd} />
     </Stack.Navigator>
   );
 };

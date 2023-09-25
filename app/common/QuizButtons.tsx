@@ -1,6 +1,5 @@
 import {StyleSheet, View} from 'react-native';
 import DuoButton from './DuoButton';
-import {useState} from 'react';
 import Theme from './constants/theme.json';
 import Constants from './constants/Constants';
 
@@ -13,16 +12,14 @@ interface QuizButtonProps {
   };
   backgroundColor: string;
   reveal: boolean;
+  selected: string;
   onSelect: (callback: string) => void;
 }
 
 const QuizButtons = (props: QuizButtonProps) => {
-  const {question, backgroundColor, reveal, onSelect} = props;
-
-  const [selected, setSelected] = useState('');
+  const {question, backgroundColor, reveal, selected, onSelect} = props;
 
   const selectHandler = (option: string) => {
-    setSelected(option);
     onSelect(option);
   };
 
