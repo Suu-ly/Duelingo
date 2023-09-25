@@ -41,6 +41,7 @@ const Lobby = (props: LobbyProps) => {
   const RenderOnFlat = ({item}) => {
     return(
       <View>
+        <Text style={styles.text}>Challenged: {item.challenged}</Text>
       </View>
     )
   }
