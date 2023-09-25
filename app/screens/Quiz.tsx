@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {
   View,
   StyleSheet,
@@ -16,6 +16,7 @@ import Constants from '../common/constants/Constants';
 import Questions from '../data/Translation Questions.json';
 import QuizHeader from '../common/QuizHeader';
 import QuizFooter from '../common/QuizFooter';
+import useTimeElapsed from '../common/useTimeElapsed';
 
 interface QuizProps {
   route: any;
@@ -36,8 +37,16 @@ const Quiz = (props: QuizProps) => {
   const question = Questions[language][difficulty][questionNo];
   const [lives, setLives] = useState(5);
 
+  //To keep track of the time spent in the quiz
+  const startTime = route.params.timeElapsed;
+  const {timePassed, stopTimer} = useTimeElapsed(startTime);
+
   //Remaining number of questions, used to update the progress bar
   const [remaining, setRemaining] = useState(route.params.remaining);
+
+  //To keep track of the users score
+  const score = route.params.score;
+  const totalQuestions = route.params.totalQuestions;
 
   //Selected answer
   const [answer, setAnswer] = useState('');
@@ -64,7 +73,7 @@ const Quiz = (props: QuizProps) => {
   const headerQuestion = parseQuestion(question.question, 'header');
   const boxQuestion = parseQuestion(question.question, 'box');
 
-  React.useEffect(
+  useEffect(
     () =>
       navigation.addListener(
         'beforeRemove',
@@ -85,13 +94,23 @@ const Quiz = (props: QuizProps) => {
     //Navigates to end screen after remaining questions reach 0, else go to next question
     if (submit) {
       if (remaining === 0) {
-        navigation.navigate('Home');
+        stopTimer();
+        navigation.navigate('QuizEnd', {
+          timeElapsed: timePassed,
+          multiplayer: false,
+          totalQuestions: totalQuestions,
+          score: score,
+        });
       } else {
+        stopTimer();
         navigation.push('Quiz', {
           language: language,
           difficulty: difficulty,
           questionNo: questionNo + 1,
           remaining: remaining,
+          totalQuestions: totalQuestions,
+          timeElapsed: timePassed,
+          score: answer === question.correct_answer ? score + 1 : score,
         });
       }
       //Plays the animation upon submitting
@@ -113,12 +132,12 @@ const Quiz = (props: QuizProps) => {
       <CustomStatusBar backgroundColor={Theme.colors.elevation.level1} />
       <QuizHeader
         questionsRemaining={remaining}
+        totalQuestions={totalQuestions}
         singleplayer={{lives: lives}}
         // multiplayer={{onEndTime: () => setSubmit(true), timer: true}}
         onPress={() => setDialogVisible(true)}
       />
       <View style={styles.questionContainer}>
-        <Button onPress={() => setLives(lives - 1)}>Minus lives</Button>
         <Text variant={'headlineSmall'}>{headerQuestion}</Text>
         {boxQuestion && (
           <View style={styles.innerContainer}>
@@ -178,7 +197,7 @@ const styles = StyleSheet.create({
   },
   questionContainer: {
     padding: Constants.edgePadding,
-    gap: 36,
+    gap: Constants.defaultGap,
   },
   innerContainer: {
     gap: Constants.defaultGap,

@@ -28,6 +28,9 @@ const Home = (props: HomeProps) => {
               difficulty: 'easy',
               questionNo: 0,
               remaining: 4,
+              totalQuestions: 5,
+              timeElapsed: 0,
+              score: 0,
             })
           }>
           Go to Easy Quiz
@@ -40,6 +43,9 @@ const Home = (props: HomeProps) => {
               difficulty: 'intermediate',
               questionNo: 0,
               remaining: 4,
+              totalQuestions: 5,
+              timeElapsed: 0,
+              score: 0,
             })
           }>
           Go to Intermediate Quiz
@@ -52,9 +58,24 @@ const Home = (props: HomeProps) => {
               difficulty: 'hard',
               questionNo: 0,
               remaining: 4,
+              totalQuestions: 5,
+              timeElapsed: 0,
+              score: 0,
             })
           }>
           Go to Hard Quiz
+        </Button>
+        <Button
+          mode="outlined"
+          onPress={() =>
+            navigation.navigate('QuizEnd', {
+              timeElapsed: 80,
+              multiplayer: false,
+              score: 3,
+              totalQuestions: 7,
+            })
+          }>
+          Go to Quiz End
         </Button>
       </View>
     </View>
