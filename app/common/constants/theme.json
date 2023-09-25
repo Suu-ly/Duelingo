@@ -28,7 +28,7 @@
     "onBackground": "rgb(26, 28, 24)",
     "surface": "rgb(250, 251, 252)",
     "onSurface": "rgb(24, 28, 28)",
-    "surfaceVariant": "rgb(225, 228, 213)",
+    "surfaceVariant": "rgb(213, 223, 228)",
     "onSurfaceVariant": "rgb(61, 67, 72)",
     "outline": "rgb(108, 118, 121)",
     "outlineVariant": "rgb(186, 198, 200)",
