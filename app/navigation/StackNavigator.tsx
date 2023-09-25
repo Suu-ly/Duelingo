@@ -4,6 +4,9 @@ import * as React from 'react';
 import Home from '../screens/Home';
 import Quiz from '../screens/Quiz';
 import QuizEnd from '../screens/QuizEnd';
+import Landing from '../screens/Landing';
+import SignIn from '../screens/SignIn';
+import SignUp from '../screens/SignUp';
 
 const Stack = createNativeStackNavigator();
 
@@ -13,6 +16,9 @@ const StackNavigator = () => {
       screenOptions={{
         headerShown: false,
       }}>
+      <Stack.Screen name="Landing" component={Landing} />
+      <Stack.Screen name="SignIn" component={SignIn} />
+      <Stack.Screen name="SignUp" component={SignUp} />
       <Stack.Screen name="Home" component={Home} />
       <Stack.Screen name="Quiz" component={Quiz} />
       <Stack.Screen name="QuizEnd" component={QuizEnd} />
