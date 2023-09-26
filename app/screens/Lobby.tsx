@@ -59,7 +59,7 @@ const Lobby = (props: LobbyProps) => {
             <Button
               icon="map-marker-outline"
               mode="outlined"
-              onPress={Challenge}>
+              onPress={(Challenge) => navigation.navigate('Waiting')}>
               Challenge
             </Button>
             <Text>Firebase CRUD Testing</Text>
