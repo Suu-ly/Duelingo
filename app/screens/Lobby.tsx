@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import {View, TouchableOpacity, FlatList, KeyboardAvoidingView, StyleSheet} from 'react-native';
-import {Button, Text, TextInput} from 'react-native-paper';
+import {View, TouchableOpacity, FlatList, TextInput, KeyboardAvoidingView, StyleSheet} from 'react-native';
+import {Button, Text} from 'react-native-paper';
 import database from '@react-native-firebase/database';
 
 import CustomStatusBar from '../common/CustomStatusBar';
@@ -25,11 +25,10 @@ interface LobbyProps {
 const Lobby = (props: LobbyProps) => {
   const {route, navigation} = props;
   const [myData, setMyData] = useState('')
-  const [newGameId, setGameId] = useState('')
   
   const ReadData = async () => {
     database()
-    .ref('/games/')
+    .ref('/users/')
     .on('value', snapshot => {
       setMyData(snapshot.val());
     })
@@ -38,27 +37,19 @@ const Lobby = (props: LobbyProps) => {
     ReadData()
   }, [])
 
-  const CreateGame = async () => {
+  const Challenge = async () => {
     database()
-    .ref('/games/' + newGameId)
+    .ref('/users/' + '3')
     .set({
-      gameId: newGameId,
-      isPlaying: 'true',
-      currentPlayer: '',
-      round: '',
-      status: '',
-      timestamp: '',
-      turnStartTimestamp: '',
-      turnTime: '60000',
-      players: {player1: '', player2: ''}
+      challenged: 'false'
     })
-    .then(() => navigation.navigate('Waiting'));
+    .then(() => console.log('Challenge sent.'));
   }
 
   const RenderOnFlat = ({item}) => {
     return(
       <View>
-        <Text style={styles.text}>games: {item}</Text>
+        <Text style={styles.text}>Challenged: {item.challenged}</Text>
       </View>
     )
   }
@@ -74,20 +65,13 @@ const Lobby = (props: LobbyProps) => {
         </Button>
         <View style={styles.rowContainer}>
           <KeyboardAvoidingView>
-            <TextInput
-              placeholder="New Game Id"
-              value={newGameId}
-              activeOutlineColor={theme.colors.primary}
-              autoCapitalize="none"
-              onChangeText={newGameId => setGameId(newGameId)}
-            />
             <Button
               icon="map-marker-outline"
               mode="outlined"
-              onPress={CreateGame}>
-              Create Game
+              onPress={Challenge}>
+              Challenge
             </Button>
-            <Text>Firebase Read Testing</Text>
+            <Text>Firebase CRUD Testing</Text>
             <View>
               <FlatList
                 data={myData}
