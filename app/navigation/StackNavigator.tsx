@@ -7,6 +7,7 @@ import Landing from '../screens/Landing';
 import SignIn from '../screens/SignIn';
 import SignUp from '../screens/SignUp';
 import Lobby from '../screens/Lobby';
+import Waiting from '../screens/Waiting';
 
 const Stack = createNativeStackNavigator();
 
@@ -22,6 +23,7 @@ const StackNavigator = () => {
       <Stack.Screen name="Home" component={Home} />
       <Stack.Screen name="Filter" component={Filter} />
       <Stack.Screen name="Lobby" component={Lobby} />
+      <Stack.Screen name="Waiting" component={Waiting} />
     </Stack.Navigator>
   );
 };
