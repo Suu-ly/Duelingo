@@ -20,12 +20,11 @@ const reference = database
 interface LobbyProps {
     route: any;
     navigation: any;
-  }
+}
 
 const Lobby = (props: LobbyProps) => {
   const {route, navigation} = props;
   const [myData, setMyData] = useState('')
-  const [isChallenged, setChallenged] = useState('')
   
   const ReadData = async () => {
     database()
@@ -40,9 +39,9 @@ const Lobby = (props: LobbyProps) => {
 
   const Challenge = async () => {
     database()
-    .ref('/users/1')
+    .ref('/users/' + '3')
     .set({
-      challenged: 'true'
+      challenged: 'false'
     })
     .then(() => console.log('Challenge sent.'));
   }
