@@ -32,9 +32,9 @@ const Lobby = (props: LobbyProps) => {
     database()
     .ref('/users/' + '3')
     .set({
-      challenged: 'false'
+      challenged: 'true'
     })
-    .then(() => console.log('Challenge sent.'));
+    .then(() => navigation.navigate('Waiting'));
   }
 
   const RenderOnFlat = ({item}) => {
@@ -59,7 +59,7 @@ const Lobby = (props: LobbyProps) => {
             <Button
               icon="map-marker-outline"
               mode="outlined"
-              onPress={(Challenge) => navigation.navigate('Waiting')}>
+              onPress={Challenge}>
               Challenge
             </Button>
             <Text>Firebase CRUD Testing</Text>
