@@ -17,7 +17,7 @@ interface LobbyProps {
 const Lobby = (props: LobbyProps) => {
   const {route, navigation} = props;
   const [myData, setMyData] = useState('')
-  const [newGameId, setGameId] = useState('')
+  let [newGameId, setGameId] = useState('')
   const userId = auth().currentUser.uid;
   
   
@@ -31,6 +31,12 @@ const Lobby = (props: LobbyProps) => {
   useEffect(() => {
     ReadData()
   }, [])
+
+  const generateCode = length => {
+    return Array(length).fill('x').join('').replace(/x/g, () => {
+      return String.fromCharCode(Math.floor(Math.random() * 26) + 65)
+    })
+  }
 
   const CreateGame = async () => {
     database()
@@ -48,6 +54,12 @@ const Lobby = (props: LobbyProps) => {
     })
     .then(() => navigation.navigate('Waiting'));
   }
+
+  const CreateGameThings = () => {
+    newGameId = generateCode(4);
+    setGameId(newGameId);
+    CreateGame();
+  };
 
   const RenderOnFlat = ({item}) => {
     return(
@@ -69,16 +81,16 @@ const Lobby = (props: LobbyProps) => {
         <View style={styles.rowContainer}>
           <KeyboardAvoidingView>
             <TextInput
-              placeholder="New Game Id"
-              value={newGameId}
-              activeOutlineColor={theme.colors.primary}
-              autoCapitalize="none"
-              onChangeText={newGameId => setGameId(newGameId)}
+            //  placeholder="New Game Id"
+              //value={newGameId}
+             // activeOutlineColor={theme.colors.primary}
+             // autoCapitalize="none"
+             // onChangeText={newGameId => setGameId(newGameId)}
             />
             <Button
               icon="map-marker-outline"
               mode="outlined"
-              onPress={CreateGame}>
+              onPress={CreateGameThings}>
               Create Game
             </Button>
             <Text>Firebase Read Testing</Text>
