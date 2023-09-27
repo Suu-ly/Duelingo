@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {View, TouchableOpacity, FlatList, KeyboardAvoidingView, StyleSheet} from 'react-native';
 import {Button, Text, TextInput} from 'react-native-paper';
 import database from '@react-native-firebase/database';
+import auth from '@react-native-firebase/auth';
 
 import CustomStatusBar from '../common/CustomStatusBar';
 import Constants from '../common/constants/Constants';
@@ -17,6 +18,8 @@ const Lobby = (props: LobbyProps) => {
   const {route, navigation} = props;
   const [myData, setMyData] = useState('')
   const [newGameId, setGameId] = useState('')
+  const userId = auth().currentUser.uid;
+  
   
   const ReadData = async () => {
     database()
@@ -41,7 +44,7 @@ const Lobby = (props: LobbyProps) => {
       timestamp: '',
       turnStartTimestamp: '',
       turnTime: '60000',
-      players: {player1: '', player2: ''}
+      players: {player1: userId, player2: ''}
     })
     .then(() => navigation.navigate('Waiting'));
   }

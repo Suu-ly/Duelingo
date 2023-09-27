@@ -1,6 +1,9 @@
-import React from 'react';
+
 import {View, StyleSheet} from 'react-native';
 import {Button, Text} from 'react-native-paper';
+import React, { useEffect } from 'react';
+import auth from '@react-native-firebase/auth';
+import database from '@react-native-firebase/database';
 
 import CustomStatusBar from '../common/CustomStatusBar';
 import Constants from '../common/constants/Constants';
@@ -14,6 +17,22 @@ interface HomeProps {
 
 const Home = (props: HomeProps) => {
   const {route, navigation} = props;
+
+  useEffect(() => {
+    // Assuming user is logged in
+    const userId = auth().currentUser.uid;
+
+    const reference = database().ref(`/users/${userId}`);
+
+    // Set the /users/:userId value to true
+    reference.set(true).then(() => console.log('Online presence set'));
+
+     // Remove the node whenever the client disconnects
+     reference
+     .onDisconnect()
+     .remove()
+     .then(() => console.log('On disconnect function configured.'));
+  }, []);
 
   return (
     <View style={styles.mainContainer}>
