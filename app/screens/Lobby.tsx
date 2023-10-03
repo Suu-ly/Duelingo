@@ -61,6 +61,22 @@ const Lobby = (props: LobbyProps) => {
     CreateGame();
   };
 
+  const JoinGame = async () => {
+    database()
+    .ref('/games/' + newGameId)
+    .on('value', snapshot => {
+      setMyData(snapshot.val());
+      JoinGameThings();
+    })
+  }
+  const JoinGameThings = () => {
+    database()
+    .ref('/games/' + newGameId + 'players')
+    .set({
+      players: {player2: userId}
+    })
+  };
+
   const RenderOnFlat = ({item}) => {
     return(
       <View>
@@ -92,6 +108,12 @@ const Lobby = (props: LobbyProps) => {
               mode="outlined"
               onPress={CreateGameThings}>
               Create Game
+            </Button>
+            <Button
+              icon="map-marker-outline"
+              mode="outlined"
+              onPress={JoinGame}>
+              Join Game
             </Button>
             <Text>Firebase Read Testing</Text>
             <View>
