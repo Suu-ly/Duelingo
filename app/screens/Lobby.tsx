@@ -16,21 +16,8 @@ interface LobbyProps {
 
 const Lobby = (props: LobbyProps) => {
   const {route, navigation} = props;
-  const [myData, setMyData] = useState('')
   let [newGameId, setGameId] = useState('')
   const userId = auth().currentUser.uid;
-  
-  
-  const ReadData = async () => {
-    database()
-    .ref('/games/')
-    .on('value', snapshot => {
-      setMyData(snapshot.val());
-    })
-  }
-  useEffect(() => {
-    ReadData()
-  }, [])
 
   const generateCode = length => {
     return Array(length).fill('x').join('').replace(/x/g, () => {
@@ -61,29 +48,24 @@ const Lobby = (props: LobbyProps) => {
     CreateGame();
   };
 
-  const JoinGame = async () => {
+  const JoinGame = () => {
     database()
     .ref('/games/' + newGameId)
-    .on('value', snapshot => {
-      setMyData(snapshot.val());
+    .once('value')
+    .then(snapshot => {
       JoinGameThings();
-    })
+      console.log('User data: ', snapshot.val());
+    });
   }
-  const JoinGameThings = () => {
+
+   const JoinGameThings = () => {
     database()
     .ref('/games/' + newGameId + 'players')
     .set({
-      players: {player2: userId}
+      player2: userId
     })
   };
 
-  const RenderOnFlat = ({item}) => {
-    return(
-      <View>
-        <Text style={styles.text}>games: {item}</Text>
-      </View>
-    )
-  }
   return (
     <View style={styles.mainContainer}>
       <View style={styles.container}>
@@ -116,12 +98,6 @@ const Lobby = (props: LobbyProps) => {
               Join Game
             </Button>
             <Text>Firebase Read Testing</Text>
-            <View>
-              <FlatList
-                data={myData}
-                renderItem={({item}) => <RenderOnFlat item={item} />}
-              />
-            </View>
           </KeyboardAvoidingView>
         </View>
       </View>
