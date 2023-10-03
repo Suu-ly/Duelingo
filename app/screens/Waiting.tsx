@@ -12,9 +12,12 @@ interface WaitingProps {
     route: any;
     navigation: any;
 }
-
 const Waiting = (props: WaitingProps) => {
   const {route, navigation} = props;
+  if (global.globalLobbyId == '') {
+    global.globalLobbyId = global.globalJoinId;
+  }
+  
   return (
     <View style={styles.mainContainer}>
       <View style={styles.container}>
@@ -23,7 +26,7 @@ const Waiting = (props: WaitingProps) => {
           icon="map-marker-outline"
           mode="outlined"
           onPress={() => navigation.navigate('Home')}>
-          Go to Home
+          {global.globalLobbyId}
         </Button>
       </View>
     </View>

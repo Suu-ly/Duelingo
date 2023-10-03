@@ -16,8 +16,13 @@ interface LobbyProps {
 
 const Lobby = (props: LobbyProps) => {
   const {route, navigation} = props;
+  let [lobbyId, setLobbyId] = useState('')
+  let [joinId, setJoinId] = useState('')
   let [newGameId, setGameId] = useState('')
   const userId = auth().currentUser.uid;
+  global.globalJoinId = joinId;
+  global.globalLobbyId = lobbyId;
+  global.globalNewGameId = newGameId;
 
   const generateCode = length => {
     return Array(length).fill('x').join('').replace(/x/g, () => {
@@ -27,7 +32,7 @@ const Lobby = (props: LobbyProps) => {
 
   const CreateGame = async () => {
     database()
-    .ref('/games/' + newGameId)
+    .ref('/games/' + lobbyId)
     .set({
       gameId: newGameId,
       isPlaying: 'true',
@@ -48,22 +53,13 @@ const Lobby = (props: LobbyProps) => {
     CreateGame();
   };
 
-  const JoinGame = () => {
+  const JoinGame = async () => {
     database()
-    .ref('/games/' + newGameId)
-    .once('value')
-    .then(snapshot => {
-      JoinGameThings();
-      console.log('User data: ', snapshot.val());
-    });
-  }
-
-   const JoinGameThings = () => {
-    database()
-    .ref('/games/' + newGameId + 'players')
-    .set({
-      player2: userId
+    .ref('/games/'+ joinId +'/players/')
+    .update({
+      player2:userId
     })
+    .then(() => navigation.navigate('Waiting'));
   };
 
   return (
@@ -79,11 +75,11 @@ const Lobby = (props: LobbyProps) => {
         <View style={styles.rowContainer}>
           <KeyboardAvoidingView>
             <TextInput
-            //  placeholder="New Game Id"
-              //value={newGameId}
-             // activeOutlineColor={theme.colors.primary}
-             // autoCapitalize="none"
-             // onChangeText={newGameId => setGameId(newGameId)}
+              placeholder="New Lobby Id"
+              value={lobbyId}
+              activeOutlineColor={theme.colors.primary}
+              autoCapitalize="none"
+              onChangeText={lobbyId => setLobbyId(lobbyId)}
             />
             <Button
               icon="map-marker-outline"
@@ -91,13 +87,19 @@ const Lobby = (props: LobbyProps) => {
               onPress={CreateGameThings}>
               Create Game
             </Button>
+            <TextInput
+              placeholder="Join Lobby Id"
+              value={joinId}
+              activeOutlineColor={theme.colors.primary}
+              autoCapitalize="none"
+              onChangeText={joinId => setJoinId(joinId)}
+            />
             <Button
               icon="map-marker-outline"
               mode="outlined"
               onPress={JoinGame}>
               Join Game
             </Button>
-            <Text>Firebase Read Testing</Text>
           </KeyboardAvoidingView>
         </View>
       </View>
