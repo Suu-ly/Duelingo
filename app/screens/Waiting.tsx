@@ -14,10 +14,27 @@ interface WaitingProps {
 }
 const Waiting = (props: WaitingProps) => {
   const {route, navigation} = props;
-  if (global.globalLobbyId == '') {
-    global.globalLobbyId = global.globalJoinId;
+  if (global.lobbyId === '') {
+    global.lobbyId = global.joinId;
   }
   
+  //const StartGame = async () => {
+    useEffect(() => {
+      const onValueChange = database()
+        .ref('/games/' + global.lobbyId + '/guest')
+        .on('value', snapshot => {
+          if (snapshot.val() !== '') {
+            navigation.navigate('Home'); //needs to nav to quiz instead
+          } else {
+            console.log('Starting Game Error');
+          }
+        });
+  
+      // Stop listening for updates when no longer required
+      return () => database().ref('/games/' + global.lobbyId + '/guest').off('value', onValueChange);
+    }, []);
+  //}
+
   return (
     <View style={styles.mainContainer}>
       <View style={styles.container}>
@@ -26,7 +43,7 @@ const Waiting = (props: WaitingProps) => {
           icon="map-marker-outline"
           mode="outlined"
           onPress={() => navigation.navigate('Home')}>
-          {global.globalLobbyId}
+          {global.lobbyId}
         </Button>
       </View>
     </View>

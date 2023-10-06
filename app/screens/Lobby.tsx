@@ -20,9 +20,10 @@ const Lobby = (props: LobbyProps) => {
   let [joinId, setJoinId] = useState('')
   let [newGameId, setGameId] = useState('')
   const userId = auth().currentUser.uid;
-  global.globalJoinId = joinId;
-  global.globalLobbyId = lobbyId;
-  global.globalNewGameId = newGameId;
+  //global variables
+  global.joinId = joinId;
+  global.lobbyId = lobbyId;
+  global.newGameId = newGameId;
 
   const generateCode = length => {
     return Array(length).fill('x').join('').replace(/x/g, () => {
@@ -42,7 +43,8 @@ const Lobby = (props: LobbyProps) => {
       timestamp: '',
       turnStartTimestamp: '',
       turnTime: '60000',
-      players: {player1: userId, player2: ''}
+      host: userId,
+      guest: ''
     })
     .then(() => navigation.navigate('Waiting'));
   }
@@ -55,9 +57,9 @@ const Lobby = (props: LobbyProps) => {
 
   const JoinGame = async () => {
     database()
-    .ref('/games/'+ joinId +'/players/')
+    .ref('/games/'+ joinId)
     .update({
-      player2:userId
+      guest:userId
     })
     .then(() => navigation.navigate('Waiting'));
   };
