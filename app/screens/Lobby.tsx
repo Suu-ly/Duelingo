@@ -55,13 +55,27 @@ const Lobby = (props: LobbyProps) => {
     CreateGame();
   };
 
-  const JoinGame = async () => {
+  const JoinGame = () => {
     database()
-    .ref('/games/'+ joinId)
-    .update({
-      guest:userId
+    .ref('/games/')
+    .orderByKey()
+    .equalTo(joinId)
+    .limitToFirst(1)
+    .once('value', snapshot => {
+      if (snapshot.val()!==null) {
+        database()
+        .ref('/games/'+ joinId)
+        .update({
+          guest:userId
+        })
+        .then(() => navigation.navigate('Waiting'));
+        console.log('Game joined.', snapshot.val());
+      }
+      else {
+        navigation.navigate('Home');
+        console.log('Lobby Id does not exist.', snapshot.val());
+      }
     })
-    .then(() => navigation.navigate('Waiting'));
   };
 
   return (
