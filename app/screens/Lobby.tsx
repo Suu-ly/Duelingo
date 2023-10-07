@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import {View, TouchableOpacity, FlatList, KeyboardAvoidingView, StyleSheet} from 'react-native';
-import {Button, Text, TextInput} from 'react-native-paper';
+import {Button, Text, TextInput, Portal, Dialog} from 'react-native-paper';
 import database from '@react-native-firebase/database';
 import auth from '@react-native-firebase/auth';
+import {EventArg, NavigationAction} from '@react-navigation/native';
 
 import CustomStatusBar from '../common/CustomStatusBar';
 import Constants from '../common/constants/Constants';
@@ -20,6 +21,8 @@ const Lobby = (props: LobbyProps) => {
   let [joinId, setJoinId] = useState('')
   let [newGameId, setGameId] = useState('')
   const userId = auth().currentUser.uid;
+  //Decides whether to show the progress won't be saved dialog
+  const [dialogVisible, setDialogVisible] = useState(false);
   //global variables
   global.joinId = joinId;
   global.lobbyId = lobbyId;
@@ -54,6 +57,22 @@ const Lobby = (props: LobbyProps) => {
     setGameId(newGameId);
     CreateGame();
   };
+  useEffect(
+    () =>
+      navigation.addListener(
+        'beforeRemove',
+        (e: EventArg<'beforeRemove', true, {action: NavigationAction}>) => {
+          if (e.data.action.type != 'GO_BACK') {
+            return;
+          }
+          // Prevent default behavior of leaving the screen
+          e.preventDefault();
+          // Prompt the user before leaving the screen
+          setDialogVisible(true);
+        },
+      ),
+    [navigation],
+  );
 
   const JoinGame = () => {
     database()
@@ -72,8 +91,8 @@ const Lobby = (props: LobbyProps) => {
         console.log('Game joined.', snapshot.val());
       }
       else {
-        navigation.navigate('Home');
         console.log('Lobby Id does not exist.', snapshot.val());
+        setDialogVisible(true)
       }
     })
   };
@@ -117,6 +136,27 @@ const Lobby = (props: LobbyProps) => {
               Join Game
             </Button>
           </KeyboardAvoidingView>
+          <Portal>
+          <Dialog
+            visible={dialogVisible}
+            dismissable={false}
+            dismissableBackButton={false}>
+            <Dialog.Icon icon={'alert-circle-outline'} />
+            <Dialog.Title style={styles.title}>
+              No Lobby Found
+            </Dialog.Title>
+            <Dialog.Content>
+              <Text variant="bodyMedium">
+                Please enter another lobby ID
+              </Text>
+            </Dialog.Content>
+            <Dialog.Actions>
+              <Button mode="text" onPress={() => setDialogVisible(false)}>
+                Exit
+              </Button>
+            </Dialog.Actions>
+          </Dialog>
+        </Portal>
         </View>
       </View>
     </View>
