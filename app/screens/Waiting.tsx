@@ -24,7 +24,15 @@ const Waiting = (props: WaitingProps) => {
         .ref('/games/' + global.lobbyId + '/guest')
         .on('value', snapshot => {
           if (snapshot.val() !== '') {
-            navigation.navigate('Home'); //needs to nav to quiz instead
+            navigation.navigate('Quiz', {
+              language: 'chinese',
+              difficulty: 'easy',
+              questionNo: 0,
+              remaining: 5,
+              totalQuestions: 5,
+              timeElapsed: 0,
+              score: 0,
+          });
           } else {
             console.log('Starting Game Error');
           }
