@@ -11,7 +11,6 @@ const useTimeElapsed = (startTime: number) => {
 
     const timer = setTimeout(() => {
       setTimePassed(timePassed + 1);
-      console.log(timePassed);
     }, 1000);
 
     return () => clearTimeout(timer);

@@ -305,10 +305,10 @@
   "chinese": {
     "easy": [
       {
-        "question": "What is 3 in chinese?",
+        "question": "What is 3 in Chinese?",
         "options": ["一", "二", "三", "四"],
         "correct_answer": "三",
-        "explanation": "The question is asking what is 3 in chinese. 四 is four, therefore should be 三"
+        "explanation": "The question is asking what is 3 in Chinese. 四 is four, therefore should be 三"
       },
       {
         "question": "What is 妈妈 in English?",
@@ -317,13 +317,8 @@
         "explanation": "Father is 爸爸， Godfather is 干爸, grandmother can be 婆婆 or 奶奶"
       },
       {
-        "question": "Translate \"What is your name?\" to chinese",
-        "options": [
-          "你叫什么名字?",
-          "你吃饱了吗?",
-          "你住哪里?",
-          "你家里有人吗?"
-        ],
+        "question": "Translate \"What is your name?\" to Chinese",
+        "options": ["你叫什么名字?", "你吃饱了吗?", "你住哪里?", "你家里有人吗?"],
         "correct_answer": "你叫什么名字?",
         "explanation": "你吃饱了吗? = Have you eaten?, 你住哪里 = Where do you stay, 你家里有人吗 = Is there anyone in your house?"
       },
@@ -334,37 +329,37 @@
         "explanation": "新加坡 would be the only correct options"
       },
       {
-        "question": "Translate \"I can speak Mandarin\" to chinese",
+        "question": "Translate \"I can speak Mandarin\" to Chinese",
         "options": ["我会讲华语", "我会讲花语", "我会讲画语", "我会讲话语"],
         "correct_answer": "我会讲华语",
         "explanation": "花语 = flower language, 画语 = art language, 话语 = speech"
       },
       {
-        "question": "Translate \"Teacher\" to chinese",
+        "question": "Translate \"Teacher\" to Chinese",
         "options": ["老板", "老师", "老兄", "老猪"],
         "correct_answer": "老师",
         "explanation": "老板 = Boss/Owner, 老兄 = Older brother (Friend), 老猪 = pig"
       },
       {
-        "question": "What is the chinese word for \"friend?\"",
+        "question": "What is the Chinese word for \"friend\"?",
         "options": ["老师", "不是", "朋友", "美丽"],
         "correct_answer": "朋友",
         "explanation": "老师 = Teacher, 不是 = No, 美丽 = Pretty"
       },
       {
-        "question": "Translate computer to chinese",
+        "question": "Translate \"computer\" to Chinese",
         "options": ["美丽", "电脑", "环境", "学校"],
         "correct_answer": "电脑",
         "explanation": "美丽 = Pretty, 环境 = Environment, 学校 = School"
       },
       {
-        "question": "How do you say \"Yes\" in chinese?",
+        "question": "How do you say \"Yes\" in Chinese?",
         "options": ["是的", "不是的", "请", "明天"],
         "correct_answer": "是的",
         "explanation": "不是的 = No, 请 = Please, 明天 = Tommorow"
       },
       {
-        "question": "How do you say \"I dont understand\" in chinese?",
+        "question": "How do you say \"I dont understand\" in Chinese?",
         "options": ["我饿了", "我有一个问题", "再见", "我不明白"],
         "correct_answer": "我不明白",
         "explanation": "我饿了 = i'm hungry, 再见 = goodbye, 我不明白 = I do not understand"
@@ -389,13 +384,13 @@
         "explanation": "这个是什么书包 = What kind of bag is it?, 这个书包是什么时候放的 = When was this bag placed?, 这个书包在哪里 = Where is this bag (which does not make sense) "
       },
       {
-        "question": "What is the chinese translation for \"next week\"?",
+        "question": "What is the Chinese translation for \"next week\"?",
         "options": ["下个礼拜", "下个月", "明年", "昨天"],
         "correct_answer": "下个礼拜",
         "explanation": "下个月 means next month, 明年 means next year, 昨天 means yesterday"
       },
       {
-        "question": "What is the chinese word for \"Family\"",
+        "question": "What is the Chinese word for \"Family\"",
         "options": ["美丽", "家庭", "学校", "谢谢"],
         "correct_answer": "家庭",
         "explanation": "美丽 means beautiful, 学校 means school, 谢谢 means thank you"
@@ -412,13 +407,13 @@
         "explanation": "我有一个问题 means i have a question, 你今天好吗 means how are you today, 明天你有空吗 means are you free tommorow"
       },
       {
-        "question": "How do you say \"I'm looking for a job\" in chinese?",
+        "question": "How do you say \"I'm looking for a job\" in Chinese?",
         "options": ["我在找女朋友", "我在找我的手机", "我在找工作", "我要回家"],
         "correct_answer": "我在找工作",
         "explanation": "我在找女朋友 means i'm looking for a girlfriend, 我在找我的手机 means i'm looking for my phone, 我要回家 means i want to go home"
       },
       {
-        "question": "Translate \"History\" to chinese",
+        "question": "Translate \"History\" to Chinese",
         "options": ["历史", "数学", "科学", "英文"],
         "correct_answer": "历史",
         "explanation": "数学 means math, 科学 is Science, 英文 is English "
@@ -435,13 +430,8 @@
         "explanation": "-"
       },
       {
-        "question": "How to say \"Technology is advancing rapidly\" in chinese?",
-        "options": [
-          "电脑迅速发展",
-          "科技迅速发展",
-          "我要迅速发财",
-          "人工智能正在改变产业"
-        ],
+        "question": "How to say \"Technology is advancing rapidly\" in Chinese?",
+        "options": ["电脑迅速发展", "科技迅速发展", "我要迅速发财", "人工智能正在改变产业"],
         "correct_answer": "科技迅速发展",
         "explanation": "电脑迅速发展 menas computers are advancing rapidly, 我要迅速发财 means I want to get rich quickly, 人工智能正在改变产业 means Artificial intelligence is changing industries"
       },
@@ -454,12 +444,12 @@
           " 请问,你能帮助我吗?"
         ],
         "correct_answer": "我要度假",
-        "explanation": "我想学中文 means i want to learn chinese, 我会在十分钟内到达 means i will arrive in 10 minutes, 请问,你能帮助我吗? means excuse me, would you be able to help me?"
+        "explanation": "我想学中文 means i want to learn Chinese, 我会在十分钟内到达 means i will arrive in 10 minutes, 请问,你能帮助我吗? means excuse me, would you be able to help me?"
       }
     ],
     "hard": [
       {
-        "question": "What is 5 Million in chinese?",
+        "question": "What is \"5 Million\" in Chinese?",
         "options": ["五万", "五十万", "五百万", "五千万"],
         "correct_answer": "五百万",
         "explanation": "五万 is 50,000, 五十万 is 500,000, 五千万 is 50,000,000"

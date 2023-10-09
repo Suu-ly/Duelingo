@@ -15,7 +15,7 @@ interface ButtonProps {
   icon?: string;
   stretch?: boolean;
   height?: number;
-  children?: React.ReactNode;
+  children: React.ReactNode;
   textVariant?: VariantProp<never>;
   textColor: string;
   onPress: (callback?: () => void) => void;

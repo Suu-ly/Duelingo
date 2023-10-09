@@ -1,7 +1,6 @@
-
 import {View, StyleSheet} from 'react-native';
 import {Button, Text} from 'react-native-paper';
-import React, { useEffect } from 'react';
+import React, {useEffect} from 'react';
 import auth from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
 
@@ -27,11 +26,11 @@ const Home = (props: HomeProps) => {
     // Set the /users/:userId value to true
     reference.set(true).then(() => console.log('Online presence set'));
 
-     // Remove the node whenever the client disconnects
-     reference
-     .onDisconnect()
-     .remove()
-     .then(() => console.log('On disconnect function configured.'));
+    // Remove the node whenever the client disconnects
+    reference
+      .onDisconnect()
+      .remove()
+      .then(() => console.log('On disconnect function configured.'));
   }, []);
 
   return (
@@ -40,67 +39,62 @@ const Home = (props: HomeProps) => {
       <View style={styles.container}>
         <Text variant={'headlineLarge'}>Home Screen</Text>
         <Button
-          icon="map-marker-outline"
           mode="outlined"
-          onPress={() => navigation.navigate('Filter')}>
-          Go to Filter
+          onPress={() =>
+            navigation.navigate('Quiz', {
+              language: 'chinese',
+              difficulty: 'easy',
+              questionNo: 0,
+              remaining: 5,
+              totalQuestions: 5,
+              timeElapsed: 0,
+              score: 0,
+            })
+          }>
+          Go to Easy Quiz
         </Button>
-        <View style={styles.rowContainer}>
-          <DuoButton
-            icon={'account-plus-outline'}
-            filled={true}
-            disabled={false}
-            backgroundColor={theme.colors.primary}
-            backgroundDark={theme.colors.primaryDark}
-            borderColor={theme.colors.primary}
-            textColor={theme.colors.onPrimary}
-            onPress={() => console.log('Pressed first')}>
-            First
-          </DuoButton>
-          <DuoButton
-            icon={'account-plus-outline'}
-            filled={true}
-            disabled={true}
-            backgroundColor={theme.colors.primary}
-            textColor={theme.colors.onPrimary}
-            onPress={() => console.log('Pressed disabled')}>
-            First
-          </DuoButton>
-          <DuoButton
-            icon={'account-plus-outline'}
-            filled={false}
-            disabled={false}
-            backgroundColor={'white'}
-            borderColor={theme.colors.secondary}
-            textColor={theme.colors.secondary}
-            onPress={() => console.log('Pressed second')}>
-            Second
-          </DuoButton>
-          <DuoButton
-            icon={'account-plus-outline'}
-            filled={false}
-            disabled={true}
-            backgroundColor={'white'}
-            textColor={theme.colors.secondary}
-            onPress={() => console.log('Pressed second disbled')}>
-            Second
-          </DuoButton>
-          <Button
-          icon="map-marker-outline"
+        <Button
           mode="outlined"
-          onPress={() => navigation.navigate('Lobby')}>
-          Lobby
+          onPress={() =>
+            navigation.navigate('Quiz', {
+              language: 'chinese',
+              difficulty: 'intermediate',
+              questionNo: 0,
+              remaining: 5,
+              totalQuestions: 5,
+              timeElapsed: 0,
+              score: 0,
+            })
+          }>
+          Go to Intermediate Quiz
         </Button>
-          <DuoButton
-            icon={'magnify'}
-            filled={false}
-            disabled={false}
-            backgroundColor={'white'}
-            borderColor={theme.colors.secondary}
-            textColor={theme.colors.secondary}
-            onPress={() => console.log('Pressed third')}
-          />
-        </View>
+        <Button
+          mode="outlined"
+          onPress={() =>
+            navigation.navigate('Quiz', {
+              language: 'chinese',
+              difficulty: 'hard',
+              questionNo: 0,
+              remaining: 5,
+              totalQuestions: 5,
+              timeElapsed: 0,
+              score: 0,
+            })
+          }>
+          Go to Hard Quiz
+        </Button>
+        <Button
+          mode="outlined"
+          onPress={() =>
+            navigation.navigate('QuizEnd', {
+              timeElapsed: 80,
+              multiplayer: false,
+              score: 3,
+              totalQuestions: 7,
+            })
+          }>
+          Go to Quiz End
+        </Button>
       </View>
     </View>
   );
