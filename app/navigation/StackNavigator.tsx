@@ -9,7 +9,6 @@ import SignIn from '../screens/SignIn';
 import SignUp from '../screens/SignUp';
 import Lobby from '../screens/Lobby';
 import Waiting from '../screens/Waiting';
-import Quiz from '../screens/Quiz';
 
 const Stack = createNativeStackNavigator();
 
@@ -23,10 +22,8 @@ const StackNavigator = () => {
       <Stack.Screen name="SignIn" component={SignIn} />
       <Stack.Screen name="SignUp" component={SignUp} />
       <Stack.Screen name="Home" component={Home} />
-      <Stack.Screen name="Filter" component={Filter} />
       <Stack.Screen name="Lobby" component={Lobby} />
       <Stack.Screen name="Waiting" component={Waiting} />
-      <Stack.Screen name="Quiz" component={Quiz} />
       <Stack.Screen name="Quiz" component={Quiz} />
       <Stack.Screen name="QuizEnd" component={QuizEnd} />
     </Stack.Navigator>

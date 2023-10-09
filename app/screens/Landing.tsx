@@ -1,6 +1,7 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Text} from 'react-native-paper';
 import {View, StyleSheet, Image} from 'react-native';
+import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
 
 import CustomStatusBar from '../common/CustomStatusBar';
 import Constants from '../common/constants/Constants';
@@ -16,6 +17,23 @@ theme.colors.background = 'white';
 
 const Landing = (props: LandingProps) => {
   const {route, navigation} = props;
+
+  const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
+
+  //Remember logged in user
+  useEffect(() => {
+    const subscriber = auth().onAuthStateChanged(userState => {
+      setUser(userState);
+      if (userState) {
+        navigation.reset({
+          index: 0,
+          routes: [{name: 'Home'}],
+        });
+      }
+    });
+
+    return subscriber;
+  }, []);
 
   return (
     <View style={styles.mainContainer}>

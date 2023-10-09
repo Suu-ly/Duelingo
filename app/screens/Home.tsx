@@ -19,7 +19,7 @@ const Home = (props: HomeProps) => {
 
   useEffect(() => {
     // Assuming user is logged in
-    const userId = auth().currentUser.uid;
+    const userId = auth().currentUser?.uid;
 
     const reference = database().ref(`/users/${userId}`);
 
