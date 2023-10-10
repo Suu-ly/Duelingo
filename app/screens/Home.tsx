@@ -33,6 +33,11 @@ const Home = (props: HomeProps) => {
       .then(() => console.log('On disconnect function configured.'));
   }, []);
 
+  const handleSignOut = () => {
+    auth().signOut();
+    navigation.navigate('Landing');
+  };
+
   return (
     <View style={styles.mainContainer}>
       <CustomStatusBar />
@@ -94,6 +99,15 @@ const Home = (props: HomeProps) => {
             })
           }>
           Go to Quiz End
+        </Button>
+        <Button
+          icon="map-marker-outline"
+          mode="outlined"
+          onPress={() => navigation.navigate('Lobby')}>
+          Lobby
+        </Button>
+        <Button mode="outlined" onPress={() => handleSignOut()}>
+          Sign Out
         </Button>
       </View>
     </View>

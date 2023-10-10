@@ -11,6 +11,12 @@ export const signIn = (props: AuthProps, email: any, password: any) => {
 
   auth()
     .signInWithEmailAndPassword(email, password)
+    .then(
+      navigation.reset({
+        index: 0,
+        routes: [{name: 'Home'}],
+      }),
+    )
     .catch(err => {
       console.log(err);
       Alert.alert('Incorrect Email or Password');

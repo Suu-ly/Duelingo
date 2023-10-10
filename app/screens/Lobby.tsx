@@ -1,5 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import {View, TouchableOpacity, FlatList, KeyboardAvoidingView, StyleSheet} from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {
+  View,
+  TouchableOpacity,
+  FlatList,
+  KeyboardAvoidingView,
+  StyleSheet,
+} from 'react-native';
 import {Button, Text, TextInput, Portal, Dialog} from 'react-native-paper';
 import database from '@react-native-firebase/database';
 import auth from '@react-native-firebase/auth';
@@ -8,55 +14,70 @@ import {EventArg, NavigationAction} from '@react-navigation/native';
 import CustomStatusBar from '../common/CustomStatusBar';
 import Constants from '../common/constants/Constants';
 import DuoButton from '../common/DuoButton';
-import theme from '../common/constants/theme.json';
+import Theme from '../common/constants/theme.json';
 
 interface LobbyProps {
-    route: any;
-    navigation: any;
+  route: any;
+  navigation: any;
 }
 
 const Lobby = (props: LobbyProps) => {
   const {route, navigation} = props;
-  let [lobbyId, setLobbyId] = useState('')
-  let [joinId, setJoinId] = useState('')
-  let [newGameId, setGameId] = useState('')
-  const userId = auth().currentUser.uid;
+  const [lobbyId, setLobbyId] = useState('');
+  const [joinId, setJoinId] = useState('');
+  const [newGameId, setGameId] = useState('');
+  const userId = auth().currentUser?.uid;
   //Decides whether to show the progress won't be saved dialog
   const [dialogVisible, setDialogVisible] = useState(false);
-  //global variables
-  global.joinId = joinId;
-  global.lobbyId = lobbyId;
-  global.newGameId = newGameId;
 
-  const generateCode = length => {
-    return Array(length).fill('x').join('').replace(/x/g, () => {
-      return String.fromCharCode(Math.floor(Math.random() * 26) + 65)
-    })
-  }
+  const generateCode = (length: number) => {
+    return Array(length)
+      .fill('x')
+      .join('')
+      .replace(/x/g, () => {
+        return String.fromCharCode(Math.floor(Math.random() * 26) + 65);
+      });
+  };
+
+  const randomQuestion = (count: number, max: number) => {
+    if (count > max) return;
+    const qns = [];
+    while (qns.length < count) {
+      const no = Math.floor(Math.random() * max);
+      if (qns.indexOf(no) === -1) {
+        qns.push(no);
+      }
+    }
+    return qns;
+  };
 
   const CreateGame = async () => {
-    database()
-    .ref('/games/' + lobbyId)
-    .set({
-      gameId: newGameId,
-      isPlaying: 'true',
-      currentPlayer: '',
-      round: '',
-      status: '',
-      timestamp: '',
-      turnStartTimestamp: '',
-      turnTime: '60000',
-      host: userId,
-      guest: ''
-    })
-    .then(() => navigation.navigate('Waiting'));
-  }
+    if (userId) {
+      database()
+        .ref('/games/' + lobbyId)
+        .set({
+          isReady: {[userId]: false},
+          isWaiting: {[userId]: false},
+          startTimestamp: 0,
+          questions: randomQuestion(5, 9),
+          points: {[userId]: 0},
+        })
+        .then(() =>
+          navigation.navigate('Multiplayer', {
+            gameId: lobbyId,
+            host: true,
+            language: 'chinese',
+            difficulty: 'easy',
+          }),
+        );
+    }
+  };
 
   const CreateGameThings = () => {
-    newGameId = generateCode(4);
-    setGameId(newGameId);
+    setGameId(generateCode(4));
     CreateGame();
   };
+
   useEffect(
     () =>
       navigation.addListener(
@@ -76,29 +97,45 @@ const Lobby = (props: LobbyProps) => {
 
   const JoinGame = () => {
     database()
-    .ref('/games/')
-    .orderByKey()
-    .equalTo(joinId)
-    .limitToFirst(1)
-    .once('value', snapshot => {
-      if (snapshot.val()!==null) {
-        database()
-        .ref('/games/'+ joinId)
-        .update({
-          guest:userId
-        })
-        .then(() => navigation.navigate('Waiting'));
-        console.log('Game joined.', snapshot.val());
-      }
-      else {
-        console.log('Lobby Id does not exist.', snapshot.val());
-        setDialogVisible(true)
-      }
-    })
+      .ref('/games/')
+      .orderByKey()
+      .equalTo(joinId)
+      .limitToFirst(1)
+      .once('value', snapshot => {
+        if (snapshot.val() !== null && userId) {
+          database()
+            .ref('/games/' + joinId + '/isWaiting')
+            .update({
+              [userId]: false,
+            });
+          database()
+            .ref('/games/' + joinId + '/points')
+            .update({
+              [userId]: 0,
+            });
+          database()
+            .ref('/games/' + joinId + '/isReady')
+            .update({
+              [userId]: false,
+            })
+            .then(() =>
+              navigation.navigate('Multiplayer', {
+                gameId: joinId,
+                host: false,
+                language: 'chinese',
+                difficulty: 'easy',
+              }),
+            );
+        } else {
+          console.log('Lobby Id does not exist.', snapshot.val());
+          setDialogVisible(true);
+        }
+      });
   };
 
   return (
     <View style={styles.mainContainer}>
+      <CustomStatusBar backgroundColor={Theme.colors.surface} />
       <View style={styles.container}>
         <Text variant={'headlineLarge'}>Lobby Screen</Text>
         <Button
@@ -112,7 +149,7 @@ const Lobby = (props: LobbyProps) => {
             <TextInput
               placeholder="New Lobby Id"
               value={lobbyId}
-              activeOutlineColor={theme.colors.primary}
+              activeOutlineColor={Theme.colors.primary}
               autoCapitalize="none"
               onChangeText={lobbyId => setLobbyId(lobbyId)}
             />
@@ -125,7 +162,7 @@ const Lobby = (props: LobbyProps) => {
             <TextInput
               placeholder="Join Lobby Id"
               value={joinId}
-              activeOutlineColor={theme.colors.primary}
+              activeOutlineColor={Theme.colors.primary}
               autoCapitalize="none"
               onChangeText={joinId => setJoinId(joinId)}
             />
@@ -137,38 +174,36 @@ const Lobby = (props: LobbyProps) => {
             </Button>
           </KeyboardAvoidingView>
           <Portal>
-          <Dialog
-            visible={dialogVisible}
-            dismissable={false}
-            dismissableBackButton={false}>
-            <Dialog.Icon icon={'alert-circle-outline'} />
-            <Dialog.Title style={styles.title}>
-              No Lobby Found
-            </Dialog.Title>
-            <Dialog.Content>
-              <Text variant="bodyMedium">
-                Please enter another lobby ID
-              </Text>
-            </Dialog.Content>
-            <Dialog.Actions>
-              <Button mode="text" onPress={() => setDialogVisible(false)}>
-                Exit
-              </Button>
-            </Dialog.Actions>
-          </Dialog>
-        </Portal>
+            <Dialog
+              visible={dialogVisible}
+              dismissable={false}
+              dismissableBackButton={false}>
+              <Dialog.Icon icon={'alert-circle-outline'} />
+              <Dialog.Title style={styles.title}>Lobby not found.</Dialog.Title>
+              <Dialog.Content>
+                <Text variant="bodyMedium">
+                  The lobby ID you have entered is invalid.
+                </Text>
+              </Dialog.Content>
+              <Dialog.Actions>
+                <Button mode="text" onPress={() => setDialogVisible(false)}>
+                  Ok
+                </Button>
+              </Dialog.Actions>
+            </Dialog>
+          </Portal>
         </View>
       </View>
     </View>
-  )
-}
+  );
+};
 
 export default Lobby;
 
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: Theme.colors.surface,
   },
   container: {
     flex: 1,
@@ -183,9 +218,7 @@ const styles = StyleSheet.create({
     gap: Constants.mediumGap,
     justifyContent: 'center',
   },
-  text:{
-    color:'black',
-    fontSize:20
-  }
+  title: {
+    textAlign: 'center',
+  },
 });
-  

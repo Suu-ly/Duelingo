@@ -8,15 +8,15 @@ import {
 } from 'react-native';
 import {Button, Text, Portal, Dialog} from 'react-native-paper';
 import {EventArg, NavigationAction} from '@react-navigation/native';
-import {getQuiz} from '../utils/database';
 
 import Theme from '../common/constants/theme.json';
 import CustomStatusBar from '../common/CustomStatusBar';
 import QuizButtons from '../common/QuizButtons';
 import Constants from '../common/constants/Constants';
+import Questions from '../data/Translation Questions.json';
 import QuizHeader from '../common/QuizHeader';
 import QuizFooter from '../common/QuizFooter';
-import useTimeElapsed from '../common/useTimeElapsed';
+import useTimeElapsed from '../utils/useTimeElapsed';
 
 interface QuizProps {
   route: any;
@@ -31,9 +31,10 @@ if (Platform.OS === 'android') {
 
 const Quiz = (props: QuizProps) => {
   const {route, navigation} = props;
-  const language: string = route.params.language;
-  const difficulty: string = route.params.difficulty;
+  const language: keyof typeof Questions = route.params.language;
+  const difficulty: keyof typeof Questions.chinese = route.params.difficulty;
   const questionNo: number = route.params.questionNo;
+  const question = Questions[language][difficulty][questionNo];
   const [lives, setLives] = useState(5);
 
   //To keep track of the time spent in the quiz
@@ -54,24 +55,6 @@ const Quiz = (props: QuizProps) => {
   //Decides whether to show the progress won't be saved dialog
   const [dialogVisible, setDialogVisible] = useState(false);
 
-  const [currentQuestion, setCurrentQuestion] = useState({
-    question: '',
-    options: [],
-    correct_answer: '',
-    explanation: '',
-  });
-
-  //call API to retrieve questions from database
-  const getQuizDetails = async () => {
-    let currentQuiz: any = await getQuiz(language);
-    currentQuiz = currentQuiz.data()[difficulty][questionNo];
-    setCurrentQuestion({...currentQuiz});
-  };
-
-  useEffect(() => {
-    getQuizDetails();
-  }, []);
-
   //Need to standardise the formatting of the questions for this to work properly.
   //Right now it extracts the text contained within "" and puts it into a box
   //And replaces the text with "the following"
@@ -87,8 +70,8 @@ const Quiz = (props: QuizProps) => {
     } else return null;
   };
 
-  const headerQuestion = parseQuestion(currentQuestion.question, 'header');
-  const boxQuestion = parseQuestion(currentQuestion.question, 'box');
+  const headerQuestion = parseQuestion(question.question, 'header');
+  const boxQuestion = parseQuestion(question.question, 'box');
 
   useEffect(
     () =>
@@ -127,7 +110,7 @@ const Quiz = (props: QuizProps) => {
           remaining: remaining,
           totalQuestions: totalQuestions,
           timeElapsed: timePassed,
-          score: answer === currentQuestion.correct_answer ? score + 1 : score,
+          score: answer === question.correct_answer ? score + 1 : score,
         });
       }
       //Plays the animation upon submitting
@@ -138,7 +121,7 @@ const Quiz = (props: QuizProps) => {
       });
       setSubmit(true);
       setRemaining(remaining - 1);
-      if (answer !== currentQuestion.correct_answer) {
+      if (answer !== question.correct_answer) {
         setLives(lives - 1);
       }
     }
@@ -150,8 +133,8 @@ const Quiz = (props: QuizProps) => {
       <QuizHeader
         questionsRemaining={remaining}
         totalQuestions={totalQuestions}
-        singleplayer={{lives: lives}}
-        // multiplayer={{onEndTime: () => setSubmit(true), timer: true}}
+        // singleplayer={{lives: lives}}
+        multiplayer={{onEndTime: () => setSubmit(true), timer: true}}
         onPress={() => setDialogVisible(true)}
       />
       <View style={styles.questionContainer}>
@@ -162,7 +145,7 @@ const Quiz = (props: QuizProps) => {
           </View>
         )}
         <QuizButtons
-          question={currentQuestion}
+          question={question}
           backgroundColor={styles.mainContainer.backgroundColor}
           reveal={submit}
           selected={answer}
@@ -170,9 +153,9 @@ const Quiz = (props: QuizProps) => {
         />
       </View>
       <QuizFooter
-        correct={answer === currentQuestion.correct_answer}
-        explanation={currentQuestion.explanation}
-        selected={answer === ''}
+        correct={answer === question.correct_answer}
+        explanation={question.explanation}
+        selected={answer !== ''}
         submit={submit}
         handleSubmit={handleSubmit}
       />

@@ -4,6 +4,7 @@ import Constants from './constants/Constants';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Text} from 'react-native-paper';
 import {useEffect, useRef, useState} from 'react';
+import useCountdown from '../utils/useCountdown';
 
 interface TimerProps {
   seconds?: number;
@@ -25,18 +26,10 @@ const QuizTimer = (props: TimerProps) => {
     }),
   );
 
-  useEffect(() => {
-    if (secondsLeft <= 0) {
-      pulse.reset();
-      return onEndTime();
-    }
-
-    const timeout = setTimeout(() => {
-      setSecondsLeft(secondsLeft - 1);
-    }, 1000);
-
-    return () => clearTimeout(timeout);
-  }, [secondsLeft]);
+  useCountdown(secondsLeft, setSecondsLeft, () => {
+    pulse.reset();
+    onEndTime();
+  });
 
   useEffect(() => {
     if (secondsLeft === 5) {
