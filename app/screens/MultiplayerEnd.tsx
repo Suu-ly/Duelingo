@@ -6,18 +6,19 @@ import Constants from '../common/constants/Constants';
 import DuoButton from '../common/DuoButton';
 import {CountUp} from 'use-count-up';
 import {useRef} from 'react';
+import MultiplayerPlayers from '../common/MultiplayerPlayers';
 
-interface QuizEndProps {
-  route: any;
-  navigation: any;
+interface MultiplayerEndProps {
+  points: Record<string, unknown>[];
+  userId: string;
+  onRematchPress: () => void;
+  onPress: () => void;
 }
 
-const QuizEnd = (props: QuizEndProps) => {
-  const {route, navigation} = props;
+const MultiplayerEnd = (props: MultiplayerEndProps) => {
+  const {points, userId, onRematchPress, onPress} = props;
 
-  const timeTaken = route.params.timeElapsed;
-  const score = route.params.score;
-  const totalQuestions = route.params.totalQuestions;
+  const isFirst = points[0].id === userId;
 
   const animationValue = useRef(new Animated.Value(0)).current;
 
@@ -31,9 +32,17 @@ const QuizEnd = (props: QuizEndProps) => {
     <View style={styles.mainContainer}>
       <CustomStatusBar />
       <View style={styles.innerContainer}>
-        <Text variant="displaySmall" style={{color: Theme.colors.tertiary}}>
-          Lesson Complete!
+        <Text
+          variant="displaySmall"
+          style={isFirst && {color: Theme.colors.tertiary}}>
+          {isFirst ? 'You win!' : 'Better luck next time!'}
         </Text>
+        <MultiplayerPlayers
+          userUID={userId}
+          points={points}
+          endPage={true}
+          isFirst={isFirst}
+        />
         <View style={styles.statsContainer}>
           <Text variant="titleMedium" style={{color: Theme.colors.primary}}>
             Exp Gained
@@ -63,40 +72,28 @@ const QuizEnd = (props: QuizEndProps) => {
               </Text>
             </Animated.View>
           </View>
-        </View>
-        <View style={styles.statsContainer}>
-          <Text variant="titleMedium" style={{color: Theme.colors.primary}}>
-            Score
-          </Text>
-          <View style={styles.numberContainer}>
-            <Text
-              variant="headlineSmall"
-              style={{color: Theme.colors.onSurface}}>
-              {((score / totalQuestions) * 100).toFixed(0)}%
-            </Text>
-          </View>
-        </View>
-        <View style={styles.statsContainer}>
-          <Text variant="titleMedium" style={{color: Theme.colors.primary}}>
-            Time Taken
-          </Text>
-          <View style={styles.numberContainer}>
-            <Text
-              variant="headlineSmall"
-              style={{color: Theme.colors.onSurface}}>
-              {Math.floor(timeTaken / 60)}:
-              {(timeTaken % 60).toString().padStart(2, '0')}
-            </Text>
-          </View>
+          <Text variant="titleMedium">Total exp: 460</Text>
         </View>
       </View>
       <View style={styles.bottomContainer}>
         <View style={styles.buttonContainer}>
           <DuoButton
+            backgroundColor={Theme.colors.surface}
+            borderColor={Theme.colors.outline}
+            stretch={true}
+            filled={false}
+            onPress={onRematchPress}
+            textColor={Theme.colors.onSurface}>
+            Rematch
+          </DuoButton>
+        </View>
+
+        <View style={styles.buttonContainer}>
+          <DuoButton
             backgroundColor={Theme.colors.primary}
             backgroundDark={Theme.colors.primaryDark}
             stretch={true}
-            onPress={() => navigation.navigate('Home')}
+            onPress={onPress}
             textColor={Theme.colors.onPrimary}>
             Back to Home
           </DuoButton>
@@ -106,7 +103,7 @@ const QuizEnd = (props: QuizEndProps) => {
   );
 };
 
-export default QuizEnd;
+export default MultiplayerEnd;
 
 const styles = StyleSheet.create({
   mainContainer: {

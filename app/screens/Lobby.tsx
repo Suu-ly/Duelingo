@@ -56,8 +56,7 @@ const Lobby = (props: LobbyProps) => {
       database()
         .ref('/games/' + lobbyId)
         .set({
-          isReady: {[userId]: false},
-          isWaiting: {[userId]: false},
+          isWaiting: {[userId]: true},
           startTimestamp: 0,
           questions: randomQuestion(5, 9),
           points: {[userId]: 0},
@@ -106,17 +105,12 @@ const Lobby = (props: LobbyProps) => {
           database()
             .ref('/games/' + joinId + '/isWaiting')
             .update({
-              [userId]: false,
+              [userId]: true,
             });
           database()
             .ref('/games/' + joinId + '/points')
             .update({
               [userId]: 0,
-            });
-          database()
-            .ref('/games/' + joinId + '/isReady')
-            .update({
-              [userId]: false,
             })
             .then(() =>
               navigation.navigate('Multiplayer', {

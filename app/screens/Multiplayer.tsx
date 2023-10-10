@@ -17,7 +17,6 @@ import {EventArg, NavigationAction} from '@react-navigation/native';
 import database from '@react-native-firebase/database';
 import auth from '@react-native-firebase/auth';
 import {getQuiz} from '../utils/database';
-import useCountdown from '../utils/useCountdown';
 
 import Theme from '../common/constants/theme.json';
 import CustomStatusBar from '../common/CustomStatusBar';
@@ -25,6 +24,9 @@ import QuizButtons from '../common/QuizButtons';
 import Constants from '../common/constants/Constants';
 import QuizHeader from '../common/QuizHeader';
 import QuizFooter from '../common/QuizFooter';
+import MultiplayerQuizStandings from '../common/MultiplayerQuizStandings';
+import MultiplayerPlayers from '../common/MultiplayerPlayers';
+import MultiplayerEnd from './MultiplayerEnd';
 
 interface MultiplayerProps {
   route: any;
@@ -33,8 +35,14 @@ interface MultiplayerProps {
 
 const Multiplayer = (props: MultiplayerProps) => {
   const {route, navigation} = props;
+
+  if (Platform.OS === 'android') {
+    if (UIManager.setLayoutAnimationEnabledExperimental) {
+      UIManager.setLayoutAnimationEnabledExperimental(true);
+    }
+  }
   //Your own userId
-  const userId = auth().currentUser?.uid;
+  const userId = auth().currentUser?.uid as string;
   //Remaining number of questions, used to select the question
   const [remaining, setRemaining] = useState(5);
   const language = route.params.language;
@@ -71,7 +79,6 @@ const Multiplayer = (props: MultiplayerProps) => {
   //Keeps track of the current game state
   const [isPlaying, setIsPlaying] = useState(false);
   const [timeUploaded, setTimeUploaded] = useState(false);
-  var interval: NodeJS.Timeout | undefined = undefined;
   //Keeps track of whether the game has started
   const [start, setStart] = useState(false);
   //Keeps track of time taken to answer for points
@@ -80,8 +87,8 @@ const Multiplayer = (props: MultiplayerProps) => {
   const [secondsLeft, setSecondsLeft] = useState(0);
   const [timeStamp, setTimeStamp] = useState(0);
   //Keeps track of points for both players
-  const [myPoints, setMyPoints] = useState(0);
-  const [theirPoints, setTheirPoints] = useState(0);
+  const [points, setPoints] = useState<Record<string, unknown>[]>([]);
+  const [oldPoints, setOldPoints] = useState<Record<string, unknown>[]>([]);
   //Decides whether to show the progress won't be saved dialog
   const [dialogVisible, setDialogVisible] = useState(false);
 
@@ -101,9 +108,9 @@ const Multiplayer = (props: MultiplayerProps) => {
   };
 
   const calculateScore = (timeTaken: number) => {
-    if (timeTaken < 75) return 1000;
-    else if (75 <= timeTaken && timeTaken < 15000)
-      return Math.floor(-8.19232 * Math.sqrt(timeTaken - 75) + 1000);
+    if (timeTaken < 1000) return 1000;
+    else if (1000 <= timeTaken && timeTaken < 15000)
+      return Math.floor(-8.19232 * Math.sqrt(timeTaken - 1000) + 1000);
     else return 0;
   };
 
@@ -113,34 +120,37 @@ const Multiplayer = (props: MultiplayerProps) => {
       .ref('/games/' + gameId + '/questions')
       .once('value');
     const qns = (await getQuiz(language)).data();
-    if (qns && userId) {
+    if (qns) {
       chosenQns.val().forEach((item: number) => {
         setQuestionBank(old => [...old, qns[difficulty][item]]);
       });
       database()
-        .ref('/games/' + gameId + '/isReady')
-        .update({[userId]: true});
+        .ref('/games/' + gameId + '/isWaiting')
+        .update({[userId]: false});
     } else {
       console.log("Can't retrieve questions");
     }
   };
 
+  //Gets the points from the database
   const getPoints = async () => {
-    var points = await database()
+    var tempPoints: Record<string, unknown>[] = [];
+    await database()
       .ref('/games/' + gameId + '/points')
-      .once('value');
-    if (Object.keys(points.val())[0] === userId) {
-      setMyPoints(Object.values(points.val())[0] as number);
-      setTheirPoints(Object.values(points.val())[1] as number);
-    } else {
-      setMyPoints(Object.values(points.val())[1] as number);
-      setTheirPoints(Object.values(points.val())[0] as number);
-    }
-    if (userId) {
-      database()
-        .ref('/games/' + gameId + '/isWaiting')
-        .update({[userId]: false});
-    }
+      .orderByValue()
+      .once('value')
+      .then(snapshot => {
+        snapshot.forEach(element => {
+          tempPoints.push({id: element.key as string, value: element.val()});
+          return undefined;
+        });
+      });
+    tempPoints.reverse();
+    setPoints(tempPoints);
+    //Trigger countdown
+    database()
+      .ref('/games/' + gameId + '/isWaiting')
+      .update({[userId]: false});
   };
 
   const handleSubmit = () => {
@@ -152,11 +162,9 @@ const Multiplayer = (props: MultiplayerProps) => {
           return calculateScore(Date.now() - currentTime) + currentPts;
         });
     }
-    if (userId) {
-      database()
-        .ref('/games/' + gameId + '/isWaiting')
-        .update({[userId]: true});
-    }
+    database()
+      .ref('/games/' + gameId + '/isWaiting')
+      .update({[userId]: true});
   };
 
   //Resets everything for the next round
@@ -169,6 +177,7 @@ const Multiplayer = (props: MultiplayerProps) => {
     setSubmit(false);
     setAnswer('');
     setTimeStamp(0);
+    setOldPoints(points);
     if (host) {
       database()
         .ref('/games/' + gameId)
@@ -177,9 +186,24 @@ const Multiplayer = (props: MultiplayerProps) => {
     }
   };
 
+  const onRoundEnd = () => {
+    getPoints();
+    if (remaining === 1) {
+      database()
+        .ref('/games/' + gameId + '/isWaiting')
+        .off();
+      if (!host) {
+        database()
+          .ref('/games/' + gameId + '/startTimestamp')
+          .off();
+      }
+    }
+    setRemaining(remaining - 1);
+  };
+
+  //Countdown between rounds
   const startCountdown = () => {
-    console.log('Countdown running: ', host);
-    interval = setInterval(() => {
+    const interval = setInterval(() => {
       var timeLeft = Math.ceil((5000 - (Date.now() - timeStamp)) / 1000);
       timeLeft = timeLeft <= 0 ? 0 : timeLeft;
       setSecondsLeft(timeLeft);
@@ -191,56 +215,6 @@ const Multiplayer = (props: MultiplayerProps) => {
     }, 100);
   };
 
-  //Listens to the database for any updates
-  if (questionBank.length === 0) getQuestions();
-  database()
-    .ref('/games/' + gameId + '/isWaiting')
-    .on('value', snapshot => {
-      if (
-        isPlaying &&
-        Object.values(snapshot.val())[0] === true &&
-        Object.values(snapshot.val())[1] === true
-      ) {
-        setIsPlaying(false);
-      }
-      //Waiting in between rounds
-      else if (
-        !isPlaying &&
-        start &&
-        Object.values(snapshot.val())[0] === false &&
-        Object.values(snapshot.val())[1] === false &&
-        host &&
-        timeUploaded === false
-      ) {
-        setTimeUploaded(true);
-        console.log('Players no longer waiitng');
-      }
-    });
-
-  database()
-    .ref('/games/' + gameId + '/isReady')
-    .on('value', snapshot => {
-      if (
-        !start &&
-        Object.keys(snapshot.val()).length === 2 &&
-        Object.values(snapshot.val())[0] === true &&
-        Object.values(snapshot.val())[1] === true &&
-        host &&
-        timeUploaded === false
-      ) {
-        setTimeUploaded(true);
-        console.log('Players ready');
-      }
-    });
-
-  database()
-    .ref('/games/' + gameId + '/startTimestamp')
-    .on('value', snapshot => {
-      if (snapshot.val() > 0 && secondsLeft <= 0) {
-        if (!host) setTimeStamp(snapshot.val());
-      }
-    });
-
   //Controls what is shown
   useEffect(() => {
     if (isPlaying) {
@@ -248,12 +222,7 @@ const Multiplayer = (props: MultiplayerProps) => {
       setCurrentTime(Date.now());
     } else if (start) {
       //End of quiz
-      if (remaining === 1) {
-        // navigation.navigate('Home');
-      }
-      //Waiting screen
-      setRemaining(remaining - 1);
-      getPoints();
+      onRoundEnd();
     }
   }, [isPlaying]);
 
@@ -280,7 +249,6 @@ const Multiplayer = (props: MultiplayerProps) => {
 
   useEffect(() => {
     if (timeUploaded) {
-      console.log('Host uploading time');
       database()
         .ref('/games/' + gameId)
         .update({startTimestamp: Date.now()});
@@ -288,87 +256,167 @@ const Multiplayer = (props: MultiplayerProps) => {
     }
   }, [timeUploaded]);
 
+  useEffect(() => {
+    LayoutAnimation.configureNext({
+      duration: 300,
+      create: {type: 'easeOut', property: 'opacity'},
+      update: {type: 'spring', springDamping: 100},
+      delete: {type: 'easeOut', property: 'opacity'},
+    });
+    //Listens to the database for any updates
+    if (questionBank.length === 0) getQuestions();
+    database()
+      .ref('/games/' + gameId + '/isWaiting')
+      .on('value', snapshot => {
+        if (
+          isPlaying &&
+          Object.values(snapshot.val())[0] === true &&
+          Object.values(snapshot.val())[1] === true
+        ) {
+          setIsPlaying(false);
+        }
+        //Waiting in between rounds
+        else if (
+          !isPlaying &&
+          start &&
+          Object.values(snapshot.val())[0] === false &&
+          Object.values(snapshot.val())[1] === false &&
+          host &&
+          timeUploaded === false
+        ) {
+          setTimeUploaded(true);
+        }
+        //Before the game starts
+        else if (
+          !isPlaying &&
+          !start &&
+          Object.keys(snapshot.val()).length === 2 &&
+          Object.values(snapshot.val())[0] === false &&
+          Object.values(snapshot.val())[1] === false &&
+          host &&
+          timeUploaded === false
+        ) {
+          setTimeUploaded(true);
+        }
+      });
+
+    if (!host) {
+      database()
+        .ref('/games/' + gameId + '/startTimestamp')
+        .on('value', snapshot => {
+          if (snapshot.val() > 0 && secondsLeft <= 0) {
+            setTimeStamp(snapshot.val());
+          }
+        });
+    }
+  });
+
   return (
     <View style={styles.mainContainer}>
-      <CustomStatusBar backgroundColor={Theme.colors.elevation.level1} />
-      <QuizHeader
-        questionsRemaining={remaining}
-        multiplayer={{
-          onEndTime: handleSubmit,
-          timer: submit ? false : true,
-        }}
-        onPress={() => setDialogVisible(true)}
+      <CustomStatusBar
+        backgroundColor={
+          remaining === 0 ? Theme.colors.surface : Theme.colors.elevation.level1
+        }
       />
-      {!start ? (
-        <View style={styles.entryScreen}>
-          <Text variant="headlineSmall">
-            {language.charAt(0).toUpperCase() + language.slice(1)}:{' '}
-            {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}
-          </Text>
-          <Text
-            variant="titleMedium"
-            style={{color: Theme.colors.onSurfaceVariant}}>
-            {secondsLeft === 0
-              ? 'Waiting for both players to be ready...'
-              : 'Get ready! Duel will begin in ' + secondsLeft + 's...'}
-          </Text>
-        </View>
-      ) : isPlaying && remaining > 0 && !submit ? (
-        <>
-          <View style={styles.questionContainer}>
-            <Text variant={'headlineSmall'}>
-              {parseQuestion(question.question, 'header')}
-            </Text>
-            {parseQuestion(question.question, 'box') && (
-              <View style={styles.innerContainer}>
-                <Text variant={'headlineSmall'}>
-                  {parseQuestion(question.question, 'box')}
-                </Text>
-              </View>
-            )}
-            <QuizButtons
-              question={question}
-              backgroundColor={styles.mainContainer.backgroundColor}
-              reveal={submit}
-              selected={answer}
-              onSelect={ans => setAnswer(ans)}
-            />
-          </View>
-          <QuizFooter
-            correct={answer === question.correct_answer}
-            explanation={question.explanation}
-            selected={answer !== ''}
-            submit={submit}
-            handleSubmit={handleSubmit}
-            multiplayer={true}
-          />
-        </>
-      ) : isPlaying && submit ? (
-        <View style={styles.loadingScreen}>
-          <ActivityIndicator />
-          <Text
-            variant="bodyMedium"
-            style={{color: Theme.colors.onSurfaceVariant}}>
-            Waiting for opponent to submit an answer...
-          </Text>
-        </View>
+      {remaining === 0 ? (
+        <MultiplayerEnd
+          points={points}
+          userId={userId}
+          onRematchPress={() => navigation.navigate('Home')}
+          onPress={() => navigation.navigate('Home')}
+        />
       ) : (
         <>
-          <Text variant="headlineSmall">Intermission Screen</Text>
-          <Text
-            variant="titleMedium"
-            style={{color: Theme.colors.onSurfaceVariant}}>
-            {secondsLeft !== 0 &&
-              'Next round will begin in ' + secondsLeft + 's...'}
-          </Text>
-          <QuizFooter
-            correct={answer === question.correct_answer}
-            explanation={question.explanation}
-            selected={answer !== ''}
-            submit={submit}
-            handleSubmit={handleSubmit}
-            multiplayer={true}
+          <QuizHeader
+            questionsRemaining={remaining}
+            multiplayer={{
+              onEndTime: handleSubmit,
+              timer: submit ? false : true,
+            }}
+            onPress={() => setDialogVisible(true)}
           />
+          {!start ? (
+            <View style={styles.entryScreen}>
+              <Text variant="headlineSmall">
+                {language.charAt(0).toUpperCase() + language.slice(1)}:{' '}
+                {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}
+              </Text>
+              <MultiplayerPlayers
+                userUID={userId}
+                exp={[
+                  {id: userId, value: 403},
+                  {id: 'Player2', value: 302},
+                ]}
+                endPage={false}
+              />
+
+              <Text
+                variant="bodyMedium"
+                style={{color: Theme.colors.onSurfaceVariant}}>
+                {secondsLeft === 0
+                  ? 'Waiting for both players to be ready...'
+                  : 'Get ready! Duel will begin in ' + secondsLeft + 's...'}
+              </Text>
+            </View>
+          ) : isPlaying && !submit ? (
+            <>
+              <View style={styles.questionContainer}>
+                <Text variant={'headlineSmall'}>
+                  {parseQuestion(question.question, 'header')}
+                </Text>
+                {parseQuestion(question.question, 'box') && (
+                  <View style={styles.innerContainer}>
+                    <Text variant={'headlineSmall'}>
+                      {parseQuestion(question.question, 'box')}
+                    </Text>
+                  </View>
+                )}
+                <QuizButtons
+                  question={question}
+                  backgroundColor={styles.mainContainer.backgroundColor}
+                  reveal={submit}
+                  selected={answer}
+                  onSelect={ans => setAnswer(ans)}
+                />
+              </View>
+              <QuizFooter
+                correct={answer === question.correct_answer}
+                explanation={question.explanation}
+                selected={answer !== ''}
+                submit={submit}
+                handleSubmit={handleSubmit}
+                multiplayer={true}
+              />
+            </>
+          ) : isPlaying && submit ? (
+            <View style={styles.loadingScreen}>
+              <ActivityIndicator />
+              <Text
+                variant="bodyMedium"
+                style={{color: Theme.colors.onSurfaceVariant}}>
+                Waiting for opponent to submit an answer...
+              </Text>
+            </View>
+          ) : (
+            <>
+              {points.length !== 0 && (
+                <MultiplayerQuizStandings
+                  data={points}
+                  oldData={oldPoints}
+                  userUID={userId}
+                  secondsLeft={secondsLeft}
+                />
+              )}
+              <QuizFooter
+                correct={answer === question.correct_answer}
+                explanation={question.explanation}
+                selected={answer !== ''}
+                submit={submit}
+                handleSubmit={handleSubmit}
+                multiplayer={true}
+              />
+            </>
+          )}
         </>
       )}
 
@@ -410,15 +458,16 @@ const styles = StyleSheet.create({
   },
   entryScreen: {
     alignItems: 'center',
-    justifyContent: 'center',
     gap: Constants.defaultGap,
-    padding: Constants.edgePadding,
+    paddingHorizontal: Constants.edgePadding,
+    paddingTop: 90,
   },
   loadingScreen: {
     alignItems: 'center',
     justifyContent: 'center',
     gap: Constants.defaultGap,
     padding: Constants.edgePadding,
+    flex: 1,
   },
   questionContainer: {
     padding: Constants.edgePadding,

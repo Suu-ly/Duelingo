@@ -97,7 +97,6 @@ const Quiz = (props: QuizProps) => {
         stopTimer();
         navigation.navigate('QuizEnd', {
           timeElapsed: timePassed,
-          multiplayer: false,
           totalQuestions: totalQuestions,
           score: answer === question.correct_answer ? score + 1 : score,
         });
@@ -133,8 +132,8 @@ const Quiz = (props: QuizProps) => {
       <QuizHeader
         questionsRemaining={remaining}
         totalQuestions={totalQuestions}
-        // singleplayer={{lives: lives}}
-        multiplayer={{onEndTime: () => setSubmit(true), timer: true}}
+        singleplayer={{lives: lives}}
+        // multiplayer={{onEndTime: () => setSubmit(true), timer: true}}
         onPress={() => setDialogVisible(true)}
       />
       <View style={styles.questionContainer}>
