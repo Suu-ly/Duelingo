@@ -1,0 +1,884 @@
+{
+  "modules": [
+    {
+      "moduleName": "Module 1: Basics",
+      "topics": [
+        {
+          "topicName": "Topic 1: Greetings",
+          "questions": [
+            {
+              "gameFormat": 0,
+              "word": "你好",
+              "pinyin": "nĭ hăo",
+              "explanation": "Hello",
+              "example": "你好，你叫什么名字?",
+              "pinyinExample": "nǐ hǎo ， nǐ jiào shén me míng zì",
+              "exampleTranslated": "Hello, what is your name?"
+            },
+            {
+              "gameFormat": 0,
+              "word": "早安",
+              "pinyin": "zǎo ān",
+              "explanation": "Good Morning",
+              "Example": "早安，起床了！",
+              "PinyinExample": "zǎo ān ， qǐ chuáng liǎo",
+              "exampleTranslated": "Good morning, it's time to wake up!"
+            },
+            {
+              "gameFormat": 0,
+              "word": "午安",
+              "pinyin": "wǔ ān",
+              "explanation": "Good Afternoon",
+              "Example": "午安，你吃午饭了吗?",
+              "PinyinExample": "wǔ ān ， nǐ chī wǔ fàn liǎo má",
+              "exampleTranslated": "Good afternoon, have you eaten lunch?"
+            },
+            {
+              "gameFormat": 0,
+              "word": "请问",
+              "pinyin": "qǐng wèn",
+              "explanation": "May I please ask, used at the start of the sentence",
+              "Example": "请问厕所在哪?",
+              "PinyinExample": "qǐng wèn cè suǒ zài nǎ",
+              "exampleTranslated": "Excuse me, where is the toilet?"
+            },
+            {
+              "gameFormat": 0,
+              "word": "谢谢",
+              "pinyin": "xiè xiè",
+              "explanation": "Thank you",
+              "Example": "谢谢你帮我",
+              "PinyinExample": "xiè xiè nǐ bāng wǒ",
+              "exampleTranslated": "Thanks for helping me"
+            },
+            {
+              "gameFormat": 1,
+              "question": "_____, _____今天早餐吃什么？",
+              "options": [
+                "早安，谢谢",
+                "午安，你好",
+                "早安，请问",
+                "晚安，请问"
+              ],
+              "correct_answer": "早安，请问",
+              "explanation": "As the question is asking a question, we need to use 请问。早餐 means breakfast, therefore it would be logical for it to be in the morning, and the morning greeting would be 早安"
+            },
+            {
+              "gameFormat": 1,
+              "question": "我要睡觉了，_________",
+              "options": ["早安", "午安", "谢谢", "晚安"],
+              "correct_answer": "晚安",
+              "explanation": "Question translates to I want to sleep already, hence the most fitting greeting would be 晚安"
+            },
+            {
+              "gameFormat": 1,
+              "question": "______ 你买午饭给我",
+              "options": ["早安", "午安", "谢谢", "晚安"],
+              "correct_answer": "谢谢",
+              "explanation": "Question translates to thanking the person for buying lunch, hence the appropriate greeting would be thank you"
+            }
+          ]
+        },
+        {
+          "topicName": "Topic 2 Numbers",
+          "questions": [
+            {
+              "gameFormat": 0,
+              "word": "一二三一二三四五六七八九十四",
+              "pinyin": "yī èr sān sì wǔ liù qī bā jiǔ shí",
+              "explanation": "1 2 3 4 5 6 7 8 9 10",
+              "Example": "我有三个苹果",
+              "PinyinExample": "wǒ yǒu sān gè píng guǒ",
+              "exampleTranslated": "I have three apples"
+            },
+            {
+              "gameFormat": 0,
+              "word": "十一，十二，十三，二十",
+              "pinyin": "shí yī, shí èr, shí sān, èr shí",
+              "explanation": "Eleven, Twelve, Thirteen, Twenty",
+              "Example": "我请了十五位朋友来我生日会",
+              "PinyinExample": "wǒ qǐng liǎo shí wǔ wèi péng yǒu lái wǒ shēng rì huì",
+              "exampleTranslated": "I have invited 15 friends to my birthday party"
+            },
+            {
+              "gameFormat": 0,
+              "word": "一百，两百十二，五百二十三，九百九十九",
+              "pinyin": "yī bǎi ， liǎng bǎi shí èr ， wǔ bǎi èr shí sān ， jiǔ bǎi jiǔ shí jiǔ",
+              "explanation": "100, 212, 523, 999",
+              "Example": "我刚刚捡到的钱包里有两百二十五块钱",
+              "PinyinExample": "wǒ gāng gāng jiǎn dào de qián bāo lǐ yǒu liǎng bǎi èr shí wǔ kuài qián",
+              "exampleTranslated": "The wallet that I just picked up has 225 dollars inside."
+            },
+            {
+              "gameFormat": 0,
+              "word": "一千，五千六百七十八， 一万两千三百四十五，六十七万八千九百零一",
+              "pinyin": "yī qiān ， wǔ qiān liù bǎi qī shí bā ， yī wàn liǎng qiān sān bǎi sì shí wǔ ， liù shí qī wàn bā qiān jiǔ bǎi líng yī",
+              "explanation": "1000, 12345, 678901",
+              "Example": "您从中赚取的利息为二十三万四千五百六十七元",
+              "PinyinExample": "nín cóng zhōng zhuàn qǔ de lì xī wéi èr shí sān wàn sì qiān wǔ bǎi liù shí qī yuán",
+              "exampleTranslated": "You have earned $234,567 in interest"
+            },
+            {
+              "gameFormat": 0,
+              "word": "一百万，一亿",
+              "pinyin": "yī bǎi wàn ， yī yì",
+              "explanation": "One million, one billion",
+              "Example": "本周末的彩票奖金是两百五十万",
+              "PinyinExample": "běn zhōu mò de cǎi piào jiǎng jīn shì liǎng bǎi wǔ shí wàn",
+              "exampleTranslated": "This weekend's lottery prize is $2.5 million"
+            },
+            {
+              "gameFormat": 1,
+              "question": "Translate 3,966 to chinese",
+              "options": [
+                "三十九百六十六",
+                "三千九百六十六",
+                "两千九百六十六",
+                "三七六六"
+              ],
+              "correct_answer": "三千九百六十六",
+              "explanation": "1: Does'nt make sense, 3: 2966, 4:3766"
+            },
+            {
+              "gameFormat": 1,
+              "question": "Translate 10,485 to chinese",
+              "options": [
+                "十千四百八十五",
+                "十四百八十五",
+                "一千四百八十五",
+                "十四千八十五"
+              ],
+              "correct_answer": "十千四百八十五",
+              "explanation": "2: 14085, 3: 1485, 4: 14085"
+            },
+            {
+              "gameFormat": 1,
+              "question": "Translate 6 million 50 thousand and 6 hundred to chinese",
+              "options": [
+                "六十亿五万零六百",
+                "六百万零五万零六百",
+                "六百五十六",
+                "六百万五十千六十"
+              ],
+              "correct_answer": "六百万零五万零六百",
+              "explanation": "1: 6 billion 50 thousand and 6 hundred, 3: 656, 4: 5 million, fifty thousand and sixty"
+            }
+          ]
+        },
+        {
+          "topicName": "Topic 3: Public Transport",
+          "questions": [
+            {
+              "gameFormat": 0,
+              "word": "地铁",
+              "pinyin": "dì tiě",
+              "explanation": "Mass Rapid Transit (MRT)",
+              "example": "从文礼前往裕廊东，需乘坐三站地铁",
+              "pinyinExample": "cóng wén lǐ qián wǎng yù láng dōng, xū chéng zuò sān zhàn dì tiě?",
+              "exampleTranslated": "To travel from Boon Lay to Jurong East,take 3 stops on the MRT"
+            },
+            {
+              "gameFormat": 0,
+              "word": "巴士",
+              "pinyin": "bā shì",
+              "explanation": "Bus",
+              "Example": "如果您想前往南洋理工大学，您需要从文礼巴士转换站乘坐179号巴士",
+              "PinyinExample": "rú guǒ nín xiǎng qián wǎng nán yáng lǐ gōng dà xué ， nín xū yào cóng wén lǐ bā shì zhuǎn huàn zhàn chéng zuò 179 hào bā shì",
+              "exampleTranslated": "Good morning, it's time to wake up!"
+            },
+            {
+              "gameFormat": 0,
+              "word": "德士",
+              "pinyin": "dé shì",
+              "explanation": "Taxi",
+              "Example": "时间已经很晚了，您可能需要考虑乘坐德士返回住宿地点",
+              "PinyinExample": "shí jiān yǐ jīng hěn wǎn le, nín kě yǐ kǎo lǜ chéng zuò dé shì fǎn huí zhù sù dì diǎn",
+              "exampleTranslated": "It is getting late, you may want to consider taking a taxi back to your accommodation"
+            },
+            {
+              "gameFormat": 0,
+              "word": "飞机",
+              "pinyin": "fēi jī",
+              "explanation": "",
+              "Example": "我们家人计划明年坐飞机去新加坡度假?",
+              "PinyinExample": "wǒ men jiā rén jì huà míng nián zuò fēi jī qù xīn jiā pō dù jià",
+              "exampleTranslated": "Our family plans to take an airplane to Singapore for a vacation next year."
+            },
+            {
+              "gameFormat": 0,
+              "word": "船",
+              "pinyin": "chuán",
+              "explanation": "Boat/Ferry",
+              "Example": "那艘渡轮将乘客从新加坡港口送往印尼的巴淡岛。",
+              "PinyinExample": "nà suǒ dù lún jiāng chéng kè cóng xīn jiāpō gǎng kǒu sòng wǎng Yìn ní de bā dàn dǎo",
+              "exampleTranslated": "That ferry transports passengers from the Singapore port to Batam Island in Indonesia"
+            },
+            {
+              "gameFormat": 1,
+              "question": "新加坡河上有很多______，可以欣赏城市的美丽夜景",
+              "options": ["飞机", "地铁", "船", "德士"],
+              "correct_answer": "船",
+              "explanation": "河 represent river, hence the only transport that could travel on water would be a boat/ferry,船 "
+            },
+            {
+              "gameFormat": 1,
+              "question": "我需要乘坐 302 号________回家",
+              "options": ["飞机", "地铁", "船", "巴士"],
+              "correct_answer": "巴士",
+              "explanation": "Question has prompted with a number, high chance would be bus"
+            },
+            {
+              "gameFormat": 1,
+              "question": "我下周乘________去香港",
+              "options": ["飞机", "地铁", "船", "巴士"],
+              "correct_answer": "飞机",
+              "explanation": "Question has mentioned the author would be going to Hong Kong, therefore the highest probability would be a flight"
+            }
+          ]
+        },
+        {
+          "topicName": "Topic 4: Places of interest in Singapore",
+          "questions": [
+            {
+              "gameFormat": 0,
+              "word": "牛车水",
+              "pinyin": "nĭ hăo",
+              "explanation": "Chinatown",
+              "example": "牛车水是新加坡的历史街区",
+              "pinyinExample": "niú chē shuǐ shì xīn jiā pō de lì shǐ jiē qū",
+              "exampleTranslated": "Chinatown is a historic district in Singapore?"
+            },
+            {
+              "gameFormat": 0,
+              "word": "乌节路",
+              "pinyin": "wū jié Lù",
+              "explanation": "Orchard Road",
+              "Example": "乌节路是新加坡著名的购物街道",
+              "PinyinExample": "wū jié lù shì xīn jiā pō zhù míng de gòu wù jiē dào",
+              "exampleTranslated": "Orchard Road is a famous shopping street in Singapore"
+            },
+            {
+              "gameFormat": 0,
+              "word": "滨海湾金沙",
+              "pinyin": "bīn hǎi wān jīn shā",
+              "explanation": "Marina Bay Sands",
+              "Example": "滨海湾金沙是一个豪华度假胜地",
+              "PinyinExample": "bīn hǎi wān jīn shā shì yī gè háo huá dù jià shèng dì",
+              "exampleTranslated": "Marina Bay Sands is a luxury resort"
+            },
+            {
+              "gameFormat": 0,
+              "word": "纽顿熟食中心",
+              "pinyin": "niú dùn shú shí zhōng xīn",
+              "explanation": "Newton Food Centre",
+              "Example": "纽顿熟食中心有各种美味的食物?",
+              "PinyinExample": "niǔ dùn shú shí zhōng xīn yǒu gè zhǒng měi wèi de shí wù",
+              "exampleTranslated": "Newton Food Center has a variety of delicious food"
+            },
+            {
+              "gameFormat": 0,
+              "word": "樟宜机场",
+              "pinyin": "zhāng yí jī chǎng",
+              "explanation": "Changi Airport",
+              "Example": "樟宜机场是新加坡的主要国际机场",
+              "PinyinExample": "Zhāng yí jī chǎng shì xīn jiā pō de zhǔ yào guó jì jī chǎng",
+              "exampleTranslated": "Changi Airport is Singapore's main international airport"
+            },
+            {
+              "gameFormat": 1,
+              "question": "我们要去_______乘坐飞机去香港",
+              "options": ["樟宜机场", "纽顿熟食中心", "滨海湾金沙", "乌节路"],
+              "correct_answer": "樟宜机场",
+              "explanation": "Question is stating that we are taking a flight, hence the only logical choice would be the airport"
+            },
+            {
+              "gameFormat": 1,
+              "question": "________ 有好多好吃的美食",
+              "options": ["滨海湾金沙", "樟宜机场", "乌节路", "纽顿熟食中心"],
+              "correct_answer": "纽顿熟食中心",
+              "explanation": "The food centre would be the most fitting when talking about food"
+            },
+            {
+              "gameFormat": 1,
+              "question": "______ 你买午饭给我",
+              "options": ["早安", "午安", "谢谢", "晚安"],
+              "correct_answer": "谢谢",
+              "explanation": "Question translates to thanking the person for buying lunch, hence the appropriate greeting would be thank you"
+            }
+          ]
+        },
+        {
+          "topicName": "Topic 5: Local Food",
+          "questions": [
+            {
+              "gameFormat": 0,
+              "word": "海南鸡饭",
+              "pinyin": "nĭ hăo",
+              "explanation": "Hello",
+              "example": "海南鸡饭包括嫩滑的鸡肉、香味十足的鸡油饭和美味的辣椒酱",
+              "pinyinExample": "nǐ hǎo ， nǐ jiào shén me míng zì",
+              "exampleTranslated": "Hello, what is your name?"
+            },
+            {
+              "gameFormat": 0,
+              "word": "榴莲",
+              "pinyin": "zǎo ān",
+              "explanation": "Good Morning",
+              "Example": "榴莲是新加坡的国果",
+              "PinyinExample": "zǎo ān ， qǐ chuáng liǎo",
+              "exampleTranslated": "Good morning, it's time to wake up!"
+            },
+            {
+              "gameFormat": 0,
+              "word": "辣椒蟹",
+              "pinyin": "wǔ ān",
+              "explanation": "Good Afternoon",
+              "Example": "午安，你吃午饭了吗?",
+              "PinyinExample": "wǔ ān ， nǐ chī wǔ fàn liǎo má",
+              "exampleTranslated": "Good afternoon, have you eaten lunch?"
+            },
+            {
+              "gameFormat": 0,
+              "word": "沙爹",
+              "pinyin": "qǐng wèn",
+              "explanation": "May I please ask, used at the start of the sentence",
+              "Example": "沙爹是一种美味的烤肉串，通常搭配花生酱?",
+              "PinyinExample": "shā diē shì yī zhǒng měi wèi de kǎo ròu chuàn, tōng cháng dā pèi huā shēng jiàng.",
+              "exampleTranslated": "Excuse me, where is the toilet?"
+            },
+            {
+              "gameFormat": 0,
+              "word": "咖椰吐司",
+              "pinyin": "xiè xiè",
+              "explanation": "Thank you",
+              "Example": "咖椰吐司的脆皮和柔软内馅相得益彰",
+              "PinyinExample": "kā yē tǔ sī de cuì pí hé róu ruǎn nèi xiàn xiāng dé yì zhāng",
+              "exampleTranslated": "Thanks for helping me"
+            },
+            {
+              "gameFormat": 1,
+              "question": "_____, _____今天早餐吃什么？",
+              "options": [
+                "早安，谢谢",
+                "午安，你好",
+                "早安，请问",
+                "晚安，请问"
+              ],
+              "correct_answer": "早安，请问",
+              "explanation": "As the question is asking a question, we need to use 请问。早餐 means breakfast, therefore it would be logical for it to be in the morning, and the morning greeting would be 早安"
+            },
+            {
+              "gameFormat": 1,
+              "question": "我要睡觉了，_________",
+              "options": ["早安", "午安", "谢谢", "晚安"],
+              "correct_answer": "晚安",
+              "explanation": "Question translates to I want to sleep already, hence the most fitting greeting would be 晚安"
+            },
+            {
+              "gameFormat": 1,
+              "question": "______ 你买午饭给我",
+              "options": ["早安", "午安", "谢谢", "晚安"],
+              "correct_answer": "谢谢",
+              "explanation": "Question translates to thanking the person for buying lunch, hence the appropriate greeting would be thank you"
+            }
+          ]
+        },
+        {
+          "topicName": "Topic 6: Review",
+          "questions": [
+            {
+              "gameFormat": 1,
+              "question": "",
+              "options": ["", "", "", ""],
+              "correct_answer": "",
+              "explanation": ""
+            },
+            {
+              "gameFormat": 1,
+              "question": "",
+              "options": ["", "", "", ""],
+              "correct_answer": "",
+              "explanation": ""
+            },
+            {
+              "gameFormat": 1,
+              "question": "",
+              "options": ["", "", "", ""],
+              "correct_answer": "",
+              "explanation": ""
+            },
+            {
+              "gameFormat": 1,
+              "question": "",
+              "options": ["", "", "", ""],
+              "correct_answer": "",
+              "explanation": ""
+            },
+            {
+              "gameFormat": 1,
+              "question": "",
+              "options": ["", "", "", ""],
+              "correct_answer": "",
+              "explanation": ""
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "moduleName": "Module 2: Easy",
+      "topics": [
+        {
+          "topicName": "xxx"
+        },
+        {
+          "topicName": "Topic 2: Weather",
+          "questions": [
+            {
+              "gameformat": 0,
+              "word": "气温",
+              "pinyin": "qì wēn",
+              "explanation": "temperature",
+              "Example": "今天的气温很热",
+              "PinyinExample": "jīn tiān de qì wēn hěn rè",
+              "exampleTranslated": "Today's temperature is very hot"
+            },
+            {
+              "gameformat": 0,
+              "word": "多云",
+              "pinyin": "duō yún",
+              "Explaination": "cloudy",
+              "Example": "今天的天空多云",
+              "PinyinExample": "jīn tiān de tiān kōng duō yún",
+              "exampleTranslated": "The sky looks cloudy today"
+            },
+            {
+              "gameformat": 0,
+              "word": "下雨",
+              "pinyin": "xià yǔ",
+              "Explaination": "raining",
+              "Example": "目前正在下雨",
+              "PinyinExample": "mù qián zhèng zài xià yǔ",
+              "exampleTranslated": "It is currently raining"
+            },
+            {
+              "gameformat": 0,
+              "word": "雷雨",
+              "pinyin": "léi yǔ",
+              "Explaination": "thunderstorm",
+              "Example": "天气预报预计有雷雨",
+              "PinyinExample": "tiān qì yù bào yù jì yǒu léi yǔ",
+              "exampleTranslated": "The weather forecast predicts a thunderstorm"
+            },
+            {
+              "gameformat": 0,
+              "word": "下雪",
+              "pinyin": "xià xuě",
+              "Explaination": "snow",
+              "Example": "新加坡不下雪",
+              "PinyinExample": "xīn jiā pō bù xià xuě",
+              "exampleTranslated": "It does not snow in Singapore"
+            },
+            {
+              "gameformat": 1,
+              "question": "What does “今天的天气很热” mean?",
+              "options": [
+                "Today’s weather is very cold",
+                "Today’s weather is very windy",
+                "Today’s weather is very hot",
+                "Today’s weather is very snowy"
+              ],
+              "correct_answer": "Today’s weather is very hot",
+              "explanation": "热 means hot"
+            },
+            {
+              "gameformat": 1,
+              "question": "How do you say Cloudy in Chinese?",
+              "options": ["多云", "雾天", "冰雹", "寒冷"],
+              "correct_answer": "多云",
+              "explanation": "多云 means cloudy"
+            },
+            {
+              "gameformat": 1,
+              "question": "What does “下雨” mean?",
+              "options": ["Raining", "Snowing", "Sunny", "Windy"],
+              "correct_answer": "Raining",
+              "explanation": "下雨 means raining"
+            }
+          ]
+        },
+        {
+          "topicName": "Topic 3: Directions",
+          "questions": [
+            {
+              "gameformat": 0,
+              "word": "东",
+              "pinyin": "dōng",
+              "Explaination": "east",
+              "Example": "太阳从东方升起",
+              "PinyinExample": "tài yáng cóng dōng fāng shēng qǐ",
+              "exampleTranslated": "The sun rises from the east"
+            },
+            {
+              "gameformat": 0,
+              "word": "西",
+              "pinyin": "xī",
+              "Explaination": "west",
+              "Example": "太阳在西方落下",
+              "PinyinExample": "tài yáng zài xī fāng luò xià",
+              "exampleTranslated": "The sun sets in the west"
+            },
+            {
+              "gameformat": 0,
+              "word": "左",
+              "pinyin": "zuǒ",
+              "Explaination": "left",
+              "Example": "他叫我左转",
+              "PinyinExample": "tā jiào wǒ zuǒ zhuǎn",
+              "exampleTranslated": "He told me to turn left"
+            },
+            {
+              "gameformat": 0,
+              "word": "直走",
+              "pinyin": "zhí zǒu",
+              "Explaination": "straight ahead",
+              "Example": "如果我直走我就会到达商店",
+              "PinyinExample": "rú guǒ wǒ zhí zǒu wǒ jiù huì dào dá shāng diàn",
+              "exampleTranslated": "I will reach the store if I walk straight"
+            },
+            {
+              "gameformat": 0,
+              "word": "上楼",
+              "pinyin": "shàng lóu",
+              "Explaination": "go upstairs",
+              "Example": "她上楼去找妈妈",
+              "PinyinExample": "tā shàng lóu qù zhǎo mā mā",
+              "exampleTranslated": "She went upstairs to look for mother"
+            },
+            {
+              "gameformat": 1,
+              "question": "What does “我后退一步，然后向左转” mean?",
+              "options": [
+                "I stepped back, then turned right",
+                "I stepped forwards, then turned left",
+                "I stepped back, then turned left",
+                "I stepped forwards, then turned right"
+              ],
+              "correct_answer": "I stepped back, then turned left",
+              "explanation": "后退 means stepped back, 左转 means turn left"
+            },
+            {
+              "gameformat": 1,
+              "question": "What is the Chinese translation for North?",
+              "options": ["东", "南", "西", "北"],
+              "correct_answer": "北",
+              "explanation": "北 means north"
+            },
+            {
+              "gameformat": 1,
+              "question": "How would you say Go Upstairs in Chinese?",
+              "options": ["下楼", "上楼", "出门", "停车"],
+              "correct_answer": "上楼",
+              "explanation": "上楼 means go upstairs"
+            }
+          ]
+        },
+        {
+          "topicName": "Topic 4: Sights and Sounds at the Market",
+          "questions": [
+            {
+              "gameformat": 0,
+              "word": "顾客",
+              "pinyin": "gù kè",
+              "Explaination": "customer",
+              "Example": "她正忙着为顾客服务",
+              "PinyinExample": "tā zhèng máng zhuó wéi gù kè fú wù",
+              "exampleTranslated": "She is busy serving the customer"
+            },
+            {
+              "gameformat": 0,
+              "word": "鱼",
+              "pinyin": "yú",
+              "Explaination": "fish",
+              "Example": "爸爸说今天市场上的鱼很新鲜",
+              "PinyinExample": "bà bà shuō jīn tiān shì cháng shàng de yú hěn xīn xiān",
+              "exampleTranslated": "Dad says the fish at the market today was very fresh"
+            },
+            {
+              "gameformat": 0,
+              "word": "购物篮",
+              "pinyin": "gòu wù lán",
+              "Explaination": "shopping cart",
+              "Example": "我们推着购物篮在市场里转悠",
+              "PinyinExample": "wǒ mén tuī zhuó gòu wù lán zài shì cháng lǐ zhuǎn yōu",
+              "exampleTranslated": "We pushed the shopping cart around the market"
+            },
+            {
+              "gameformat": 0,
+              "word": "收银台",
+              "pinyin": "shōu yín tái",
+              "Explaination": "checkout",
+              "Example": "我们去收银台付钱",
+              "PinyinExample": "wǒ mén qù shōu yín tái fù qián",
+              "exampleTranslated": "We went to the checkout area to pay"
+            },
+            {
+              "gameformat": 0,
+              "word": "巴刹",
+              "pinyin": "bā chà",
+              "Explaination": "market",
+              "Example": "今天我去了巴刹",
+              "PinyinExample": "jīn tiān wǒ qù liǎo bā chà",
+              "exampleTranslated": "Today I went to the market"
+            },
+            {
+              "gameformat": 1,
+              "question": "How do you say Customer in Chinese?",
+              "options": ["顾客", "购物篮", "收银台", "收据"],
+              "correct_answer": "顾客",
+              "explanation": "顾客 means customer"
+            },
+            {
+              "gameformat": 1,
+              "question": "What is the Chinese translation for Shopping cart?",
+              "options": ["收银台", "收据", "货架", "购物篮"],
+              "correct_answer": "购物篮",
+              "explanation": "购物篮 means shopping cart"
+            },
+            {
+              "gameformat": 1,
+              "question": "Translate “我买了一些鱼”",
+              "options": [
+                "I bought some eggs",
+                "I bought some vegetables",
+                "I bought some fish",
+                "I bought some meat"
+              ],
+              "correct_answer": "I bought some fish",
+              "explanation": "鱼 means fish"
+            }
+          ]
+        },
+        {
+          "topicName": "Topic 5: Cooking",
+          "questions": [
+            {
+              "gameformat": 0,
+              "word": "刀",
+              "pinyin": "dāo",
+              "Explaination": "knife",
+              "Example": "妈妈用刀切鸡肉",
+              "PinyinExample": "mā mā yòng dāo qiē jī ròu",
+              "exampleTranslated": "Mum uses a knife to cut chicken"
+            },
+            {
+              "gameformat": 0,
+              "word": "煮",
+              "pinyin": "zhǔ",
+              "Explaination": "cook",
+              "Example": "爷爷正在煮菜",
+              "PinyinExample": "yé yé zhèng zài zhǔ cài",
+              "exampleTranslated": "Grandpa is cooking dishes"
+            },
+            {
+              "gameformat": 0,
+              "word": "筷子",
+              "pinyin": "kuài zǐ",
+              "Explaination": "chopsticks",
+              "Example": "我用筷子夹食物",
+              "PinyinExample": "wǒ yòng kuài zǐ jiā shí wù",
+              "exampleTranslated": "I use chopsticks to grab my food"
+            },
+            {
+              "gameformat": 0,
+              "word": "炸",
+              "pinyin": "zhà",
+              "Explaination": "fry",
+              "Example": "我喜欢吃炸鸡",
+              "PinyinExample": "wǒ xǐ huān chī zhà jī",
+              "exampleTranslated": "I like to eat fried chicken"
+            },
+            {
+              "gameformat": 0,
+              "word": "晚餐",
+              "pinyin": "wǎn cān",
+              "Explaination": "dinner",
+              "Example": "今天爸爸带我们出去吃晚餐",
+              "PinyinExample": "jīn tiān bà bà dài wǒ mén chū qù chī wǎn cān",
+              "exampleTranslated": "Dad is bringing us out for dinner today"
+            },
+            {
+              "gameformat": 1,
+              "question": "What does “妈妈正在煮晚餐” mean?",
+              "options": [
+                "Father is cooking lunch",
+                "Mother is cooking breakfast",
+                "Mother is cooking dinner",
+                "Father is cooking breakfast"
+              ],
+              "correct_answer": "Mother is cooking dinner",
+              "explanation": "晚餐 means dinner"
+            },
+            {
+              "gameformat": 1,
+              "question": "What does “筷子” mean?",
+              "options": ["Chopsticks", "Spoon", "Fork", "Knife"],
+              "correct_answer": "Chopsticks",
+              "explanation": "筷子 means chopsticks"
+            },
+            {
+              "gameformat": 1,
+              "question": "What is the Chinese translation for Knife?",
+              "options": ["碗", "刀", "筷子", "炉子"],
+              "correct_answer": "刀",
+              "explanation": "刀 means knife"
+            }
+          ]
+        },
+        {
+          "topicName": "Topic 6: Review",
+          "questions": [
+            {
+              "gameformat": 1,
+              "question": "Translate “妈妈叫我去巴刹买菜”",
+              "options": [
+                "Mother told me to go to the market to buy groceries",
+                "Mother told me to go to school to study",
+                "Mother told me to go to the clinic to buy medicine",
+                "Mother told me to go to the hawker center to buy food "
+              ],
+              "correct_answer": "Mother told me to go to the market to buy groceries",
+              "explanation": "巴刹 means market"
+            },
+            {
+              "gameformat": 1,
+              "question": "What is “It looks like it is about to rain.” in Chinese?",
+              "options": [
+                "天气看起来要下雪了",
+                "天气看起来要下雨了",
+                "今天的天气很热",
+                "今天的天气很凉"
+              ],
+              "correct_answer": "天气看起来要下雨了",
+              "explanation": "下雨 means rain"
+            },
+            {
+              "gameformat": 1,
+              "question": "How would you say “the market is four bus stops away” in Chinese?",
+              "options": [
+                "距离巴刹有一个公交车站",
+                "距离巴刹有两个公交车站",
+                "距离巴刹有四个公交车站",
+                "距离巴刹有三个公交车站"
+              ],
+              "correct_answer": "距离巴刹有四个公交车站",
+              "explanation": "四 is four"
+            },
+            {
+              "gameformat": 1,
+              "question": "Translate “我买了两条鱼和一只鸡”",
+              "options": [
+                "I bought two fishes and three chickens",
+                "I bought two fishes and one chicken",
+                "I bought three fishes and one chicken",
+                "I bought one fish and two chickens"
+              ],
+              "correct_answer": "I bought two fishes and one chicken",
+              "explanation": "两条鱼 means two fishes, 一只鸡 means one chicken"
+            },
+            {
+              "gameformat": 1,
+              "question": "Translate “今天奶奶给我们做了晚餐”",
+              "options": [
+                "Grandma is making lunch today",
+                "Grandma is making breakfast today",
+                "Grandma is making supper today",
+                "Grandma is making dinner today"
+              ],
+              "correct_answer": "Grandma is making dinner today",
+              "explanation": "晚餐 means dinner"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "moduleName": "Module 3: Intermediate",
+      "topics": [
+        {
+          "topicName": "Topic 1: Family Greetings",
+          "questions": [
+            {
+              "gameformat": 0,
+              "word": "爸爸，妈妈",
+              "pinyin": "wǎn cān",
+              "Explaination": "Father, Mother",
+              "Example": "今天，爸爸和妈妈没做工",
+              "PinyinExample": "jīn tiān bà bà dài wǒ mén chū qù chī wǎn cān",
+              "exampleTranslated": "Dad is bringing us out for dinner today"
+            },
+            {
+              "gameformat": 0,
+              "word": "弟弟，妹妹，哥哥，姐姐",
+              "pinyin": "Younger brother, younger sister, Older brother, older sister",
+              "Explaination": "Father, Mother",
+              "Example": "今天，爸爸和妈妈没做工",
+              "PinyinExample": "jīn tiān bà bà dài wǒ mén chū qù chī wǎn cān",
+              "exampleTranslated": "Dad is bringing us out for dinner today"
+            },
+            {
+              "gameformat": 0,
+              "word": "爷爷，奶奶",
+              "pinyin": "Paternal Grandfather, paternal grandmother",
+              "Explaination": "Father, Mother",
+              "Example": "今天，爸爸和妈妈没做工",
+              "PinyinExample": "jīn tiān bà bà dài wǒ mén chū qù chī wǎn cān",
+              "exampleTranslated": "Dad is bringing us out for dinner today"
+            },
+            {
+              "gameformat": 0,
+              "word": "外公，外婆",
+              "pinyin": "Paternal Grandfather, paternal grandmother",
+              "Explaination": "Father, Mother",
+              "Example": "今天，爸爸和妈妈没做工",
+              "PinyinExample": "jīn tiān bà bà dài wǒ mén chū qù chī wǎn cān",
+              "exampleTranslated": "Dad is bringing us out for dinner today"
+            },
+            {
+              "gameformat": 0,
+              "word": "外公，外婆",
+              "pinyin": "Paternal Grandfather, paternal grandmother",
+              "Explaination": "Father, Mother",
+              "Example": "今天，爸爸和妈妈没做工",
+              "PinyinExample": "jīn tiān bà bà dài wǒ mén chū qù chī wǎn cān",
+              "exampleTranslated": "Dad is bringing us out for dinner today"
+            },
+            {
+              "gameformat": 0,
+              "word": "伯伯，叔叔，姑姑，姑妈",
+              "pinyin": "Paternal Grandfather, paternal grandmother",
+              "Explaination": "Father, Mother",
+              "Example": "今天，爸爸和妈妈没做工",
+              "PinyinExample": "jīn tiān bà bà dài wǒ mén chū qù chī wǎn cān",
+              "exampleTranslated": "Dad is bringing us out for dinner today"
+            },
+            {
+              "gameformat": 0,
+              "word": "阿姨，舅舅，姨妈",
+              "pinyin": "Paternal Grandfather, paternal grandmother",
+              "Explaination": "Father, Mother",
+              "Example": "今天，爸爸和妈妈没做工",
+              "PinyinExample": "jīn tiān bà bà dài wǒ mén chū qù chī wǎn cān",
+              "exampleTranslated": "Dad is bringing us out for dinner today"
+            }
+          ]
+        },
+        {
+          "topicName": "xxx",
+          "questions": []
+        }
+      ]
+    }
+  ]
+}

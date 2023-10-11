@@ -12,7 +12,9 @@ import Dropdown from '../common/DropdownButton';
 import LanguageChoice from '../common/LanguageChoice';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {colors} from 'react-native-elements';
-import Questions from '../data/Translation Questions.json';
+import Questions from '../data/ModuleQuestion.json';
+import Questions2 from '../data/Translation Questions.json';
+import TopicButton from '../common/TopicButton';
 
 interface HomeProps {
   route: any;
@@ -42,20 +44,13 @@ const Home = (props: HomeProps) => {
     },
   ];
 
-  const difficulty = [
-    {
-      title: 'Easy',
-      data: ['q1', 'q2', 'q3'],
-    },
-    {
-      title: 'Medium',
-      data: ['q1', 'q2', 'q3', 'q4', 'q5'],
-    },
-    {
-      title: 'Difficult',
-      data: ['q1', 'q2', 'q3', 'q4', 'q5'],
-    },
-  ];
+  const result: {title: string; data: string[]}[] = [];
+  Questions.modules.forEach((module: any) => {
+    const title = module.moduleName;
+    const data = module.topics.map((topic: any) => topic.topicName);
+
+    result.push({title, data});
+  });
 
   return (
     <View style={styles.mainContainer}>
@@ -77,15 +72,12 @@ const Home = (props: HomeProps) => {
         <SectionList
           showsVerticalScrollIndicator={false}
           stickySectionHeadersEnabled={true}
-          sections={difficulty}
-          renderItem={({item}) => (
-            <View style={styles.item}>
-              <Text style={styles.title}>{item}</Text>
-            </View>
-          )}
+          sections={result}
+          keyExtractor={(item, index) => item + index}
+          renderItem={({item}) => <TopicButton label={item} />}
           renderSectionHeader={({section: {title}}) => (
             <Text style={styles.header} variant={'titleLarge'}>
-              <LanguageChoice item={selectedItem} />: {title}
+              <LanguageChoice item={selectedItem} /> {title}
             </Text>
           )}
         />
