@@ -215,6 +215,15 @@ const Multiplayer = (props: MultiplayerProps) => {
     }, 100);
   };
 
+  const setLobbyInvalid = () => {
+    database()
+    .ref('/games/' + gameId)
+    .set({
+      lobbyStatus: 'Invalid',
+    })
+    .then(() => console.log('Data set.'));
+  };
+
   //Controls what is shown
   useEffect(() => {
     if (isPlaying) {
@@ -309,6 +318,7 @@ const Multiplayer = (props: MultiplayerProps) => {
           }
         });
     }
+    return (setLobbyInvalid)
   });
 
   return (
