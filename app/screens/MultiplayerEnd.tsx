@@ -15,11 +15,10 @@ interface MultiplayerEndProps {
   points: Record<string, unknown>[];
   userId: string;
   onRematchPress: () => void;
-  onPress: () => void;
 }
 
 const MultiplayerEnd = (props: MultiplayerEndProps) => {
-  const {route, navigation, points, userId, onRematchPress, onPress} = props;
+  const {route, navigation, points, userId, onRematchPress} = props;
 
   const isFirst = points[0].id === userId;
 
@@ -31,16 +30,14 @@ const MultiplayerEnd = (props: MultiplayerEndProps) => {
     extrapolate: 'clamp',
   });
 
-  //Game ID of the lobby
+  //game ID of the lobby
   const gameId: string = route.params.gameId;
   //set invalid for listener in multiplayer.tsx
   const setLobbyInvalid = () => {
     database()
-    .ref('/games/' + gameId + '/isValid/')
-    .set({
-      lobbyStatus: 'Invalid',
-    })
-    .then(() => navigation.navigate('Home'));
+    .ref('/games/' + gameId + '/isConnected/')
+    .update({[userId]: false});
+    navigation.navigate('Home');
   };
 
   return (

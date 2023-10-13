@@ -56,6 +56,7 @@ const Lobby = (props: LobbyProps) => {
       database()
         .ref('/games/' + lobbyId)
         .set({
+          isConnected: {[userId]: true},
           isWaiting: {[userId]: true},
           startTimestamp: 0,
           questions: randomQuestion(5, 9),

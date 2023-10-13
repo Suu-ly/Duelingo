@@ -325,7 +325,6 @@ const Multiplayer = (props: MultiplayerProps) => {
           points={points}
           userId={userId}
           onRematchPress={() => navigation.navigate('Home')}
-          onPress={() => navigation.navigate('Home')}
         />
       ) : (
         <>
