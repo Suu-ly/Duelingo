@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: Constants.mediumGap,
     borderRadius: Constants.radiusMedium,
-    borderWidth: 2,
+    borderWidth: 1,
     backgroundColor: Theme.colors.elevation.level0,
   },
 });

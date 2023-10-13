@@ -1,4 +1,5 @@
 import {View, StyleSheet, Animated, Easing} from 'react-native';
+import database from '@react-native-firebase/database';
 import {Text} from 'react-native-paper';
 import Theme from '../common/constants/theme.json';
 import CustomStatusBar from '../common/CustomStatusBar';
@@ -9,6 +10,8 @@ import {useRef} from 'react';
 import MultiplayerPlayers from '../common/MultiplayerPlayers';
 
 interface MultiplayerEndProps {
+  route: any;
+  navigation: any;
   points: Record<string, unknown>[];
   userId: string;
   onRematchPress: () => void;
@@ -16,7 +19,7 @@ interface MultiplayerEndProps {
 }
 
 const MultiplayerEnd = (props: MultiplayerEndProps) => {
-  const {points, userId, onRematchPress, onPress} = props;
+  const {route, navigation, points, userId, onRematchPress, onPress} = props;
 
   const isFirst = points[0].id === userId;
 
@@ -27,6 +30,18 @@ const MultiplayerEnd = (props: MultiplayerEndProps) => {
     outputRange: [1, 1.2, 1],
     extrapolate: 'clamp',
   });
+
+  //Game ID of the lobby
+  const gameId: string = route.params.gameId;
+  //set invalid for listener in multiplayer.tsx
+  const setLobbyInvalid = () => {
+    database()
+    .ref('/games/' + gameId + '/isValid/')
+    .set({
+      lobbyStatus: 'Invalid',
+    })
+    .then(() => navigation.navigate('Home'));
+  };
 
   return (
     <View style={styles.mainContainer}>
@@ -93,7 +108,7 @@ const MultiplayerEnd = (props: MultiplayerEndProps) => {
             backgroundColor={Theme.colors.primary}
             backgroundDark={Theme.colors.primaryDark}
             stretch={true}
-            onPress={onPress}
+            onPress={setLobbyInvalid}
             textColor={Theme.colors.onPrimary}>
             Back to Home
           </DuoButton>

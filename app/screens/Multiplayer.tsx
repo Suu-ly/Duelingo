@@ -215,15 +215,6 @@ const Multiplayer = (props: MultiplayerProps) => {
     }, 100);
   };
 
-  const setLobbyInvalid = () => {
-    database()
-    .ref('/games/' + gameId)
-    .set({
-      lobbyStatus: 'Invalid',
-    })
-    .then(() => console.log('Data set.'));
-  };
-
   //Controls what is shown
   useEffect(() => {
     if (isPlaying) {
@@ -318,7 +309,6 @@ const Multiplayer = (props: MultiplayerProps) => {
           }
         });
     }
-    return (setLobbyInvalid)
   });
 
   return (
@@ -330,6 +320,8 @@ const Multiplayer = (props: MultiplayerProps) => {
       />
       {remaining === 0 ? (
         <MultiplayerEnd
+          route={route}
+          navigation={navigation}
           points={points}
           userId={userId}
           onRematchPress={() => navigation.navigate('Home')}
