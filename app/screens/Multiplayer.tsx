@@ -215,6 +215,14 @@ const Multiplayer = (props: MultiplayerProps) => {
     }, 100);
   };
 
+  //active listener to see if player disconnects, updates isConnected gameId if so
+  useEffect(() => {
+    if (gameId !== null) {
+      const ref = database().ref('/games/' + gameId + '/isConnected');
+      ref.onDisconnect().update({[userId]: false});
+    }
+  });
+
   //Controls what is shown
   useEffect(() => {
     if (isPlaying) {

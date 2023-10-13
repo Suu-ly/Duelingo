@@ -29,7 +29,7 @@ const Home = (props: HomeProps) => {
     // Remove the node whenever the client disconnects
     reference
       .onDisconnect()
-      .remove()
+      .set(false)
       .then(() => console.log('On disconnect function configured.'));
   }, []);
 
