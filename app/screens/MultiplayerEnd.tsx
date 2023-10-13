@@ -38,6 +38,19 @@ const MultiplayerEnd = (props: MultiplayerEndProps) => {
     .ref('/games/' + gameId + '/isConnected/')
     .update({[userId]: false});
     navigation.navigate('Home');
+    deleteLobby();
+  };
+  //delete lobbyId if both players disconnected
+  const deleteLobby = () => {
+    database()
+    .ref('/games/' + gameId + '/isConnected/')
+    .once('value', snapshot => {
+      if (
+        Object.values(snapshot.val())[0] === false &&
+        Object.values(snapshot.val())[1] === false
+      )
+      database().ref('/games/' + gameId).remove();
+    })
   };
 
   return (
