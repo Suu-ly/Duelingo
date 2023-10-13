@@ -36,10 +36,12 @@ export const signUp = (props: AuthProps, email: any, password: any) => {
     });
 };
 
-export const signOut = () => {
+export const signOut = (props: AuthProps) => {
+  const {route, navigation} = props;
+
   auth()
     .signOut()
     .then(() => {
-      ToastAndroid.show('Signed Out', ToastAndroid.SHORT);
+      navigation.navigate('Landing');
     });
 };

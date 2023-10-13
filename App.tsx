@@ -5,6 +5,7 @@ import StackNavigator from './app/navigation/StackNavigator';
 import 'react-native-gesture-handler';
 import {PaperProvider, MD3LightTheme} from 'react-native-paper';
 import Theme from './app/common/constants/theme.json';
+import DetectChallenge from './app/common/DetectChallenge';
 
 const theme = {
   ...MD3LightTheme,
@@ -16,6 +17,7 @@ function App() {
     <NavigationContainer>
       <PaperProvider theme={theme}>
         <ErrorBoundary>
+          <DetectChallenge />
           <StackNavigator />
         </ErrorBoundary>
       </PaperProvider>

@@ -124,7 +124,7 @@ const Multiplayer = (props: MultiplayerProps) => {
       chosenQns.val().forEach((item: number) => {
         setQuestionBank(old => [...old, qns[difficulty][item]]);
       });
-      database()
+      await database()
         .ref('/games/' + gameId + '/isWaiting')
         .update({[userId]: false});
     } else {
@@ -148,27 +148,27 @@ const Multiplayer = (props: MultiplayerProps) => {
     tempPoints.reverse();
     setPoints(tempPoints);
     //Trigger countdown
-    database()
+    await database()
       .ref('/games/' + gameId + '/isWaiting')
       .update({[userId]: false});
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setSubmit(true);
     if (answer === question?.correct_answer) {
-      database()
+      await database()
         .ref('/games/' + gameId + '/points/' + userId)
         .transaction(currentPts => {
           return calculateScore(Date.now() - currentTime) + currentPts;
         });
     }
-    database()
+    await database()
       .ref('/games/' + gameId + '/isWaiting')
       .update({[userId]: true});
   };
 
   //Resets everything for the next round
-  const nextRound = () => {
+  const nextRound = async () => {
     if (remaining > 0) {
       setQuestion(questionBank[5 - remaining]);
     }
@@ -179,7 +179,7 @@ const Multiplayer = (props: MultiplayerProps) => {
     setTimeStamp(0);
     setOldPoints(points);
     if (host) {
-      database()
+      await database()
         .ref('/games/' + gameId)
         .update({startTimestamp: 0});
       setTimeUploaded(false);
@@ -263,6 +263,9 @@ const Multiplayer = (props: MultiplayerProps) => {
       update: {type: 'spring', springDamping: 100},
       delete: {type: 'easeOut', property: 'opacity'},
     });
+  }, [isPlaying, submit, points, secondsLeft]);
+
+  useEffect(() => {
     //Listens to the database for any updates
     if (questionBank.length === 0) getQuestions();
     database()
@@ -309,6 +312,16 @@ const Multiplayer = (props: MultiplayerProps) => {
           }
         });
     }
+    return () => {
+      database()
+        .ref('/games/' + gameId + '/isWaiting')
+        .off();
+      if (!host) {
+        database()
+          .ref('/games/' + gameId + '/startTimestamp')
+          .off();
+      }
+    };
   });
 
   return (
@@ -318,6 +331,31 @@ const Multiplayer = (props: MultiplayerProps) => {
           remaining === 0 ? Theme.colors.surface : Theme.colors.elevation.level1
         }
       />
+      <Portal>
+        <Dialog
+          visible={dialogVisible}
+          dismissable={false}
+          dismissableBackButton={false}>
+          <Dialog.Icon icon={'alert-circle-outline'} />
+          <Dialog.Title style={styles.title}>
+            Match still in progress.
+          </Dialog.Title>
+          <Dialog.Content>
+            <Text variant="bodyMedium">
+              The match is still in progress and will be recorded as a loss if
+              you leave now. Are you sure you want to leave?
+            </Text>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button mode="text" onPress={() => setDialogVisible(false)}>
+              Cancel
+            </Button>
+            <Button mode="text" onPress={() => navigation.navigate('Home')}>
+              Leave
+            </Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
       {remaining === 0 ? (
         <MultiplayerEnd
           points={points}
@@ -419,32 +457,6 @@ const Multiplayer = (props: MultiplayerProps) => {
           )}
         </>
       )}
-
-      <Portal>
-        <Dialog
-          visible={dialogVisible}
-          dismissable={false}
-          dismissableBackButton={false}>
-          <Dialog.Icon icon={'alert-circle-outline'} />
-          <Dialog.Title style={styles.title}>
-            Match still in progress.
-          </Dialog.Title>
-          <Dialog.Content>
-            <Text variant="bodyMedium">
-              The match is still in progress and will be recorded as a loss if
-              you leave now. Are you sure you want to leave?
-            </Text>
-          </Dialog.Content>
-          <Dialog.Actions>
-            <Button mode="text" onPress={() => setDialogVisible(false)}>
-              Cancel
-            </Button>
-            <Button mode="text" onPress={() => navigation.navigate('Home')}>
-              Leave
-            </Button>
-          </Dialog.Actions>
-        </Dialog>
-      </Portal>
     </View>
   );
 };

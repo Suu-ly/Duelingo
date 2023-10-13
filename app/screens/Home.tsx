@@ -8,6 +8,7 @@ import CustomStatusBar from '../common/CustomStatusBar';
 import Constants from '../common/constants/Constants';
 import DuoButton from '../common/DuoButton';
 import theme from '../common/constants/theme.json';
+import {signOut} from '../utils/auth';
 
 interface HomeProps {
   route: any;
@@ -34,8 +35,7 @@ const Home = (props: HomeProps) => {
   }, []);
 
   const handleSignOut = () => {
-    auth().signOut();
-    navigation.navigate('Landing');
+    signOut({route, navigation});
   };
 
   return (
@@ -43,36 +43,6 @@ const Home = (props: HomeProps) => {
       <CustomStatusBar />
       <View style={styles.container}>
         <Text variant={'headlineLarge'}>Home Screen</Text>
-        <Button
-          mode="outlined"
-          onPress={() =>
-            navigation.navigate('Quiz', {
-              language: 'chinese',
-              difficulty: 'easy',
-              questionNo: 0,
-              remaining: 5,
-              totalQuestions: 5,
-              timeElapsed: 0,
-              score: 0,
-            })
-          }>
-          Go to Easy Quiz
-        </Button>
-        <Button
-          mode="outlined"
-          onPress={() =>
-            navigation.navigate('Quiz', {
-              language: 'chinese',
-              difficulty: 'intermediate',
-              questionNo: 0,
-              remaining: 5,
-              totalQuestions: 5,
-              timeElapsed: 0,
-              score: 0,
-            })
-          }>
-          Go to Intermediate Quiz
-        </Button>
         <Button
           mode="outlined"
           onPress={() =>
@@ -100,11 +70,13 @@ const Home = (props: HomeProps) => {
           }>
           Go to Quiz End
         </Button>
-        <Button
-          icon="map-marker-outline"
-          mode="outlined"
-          onPress={() => navigation.navigate('Lobby')}>
+        <Button mode="outlined" onPress={() => navigation.navigate('Lobby')}>
           Lobby
+        </Button>
+        <Button
+          mode="outlined"
+          onPress={() => navigation.navigate('Challenge')}>
+          Challenge
         </Button>
         <Button mode="outlined" onPress={() => handleSignOut()}>
           Sign Out
