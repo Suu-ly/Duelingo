@@ -36,28 +36,20 @@ const DetectChallenge = () => {
       database()
         .ref('/challenge/' + user.uid)
         .on('value', snapshot => {
-          if (
-            snapshot.val() &&
-            Object.keys(snapshot.val()).length > 0 &&
-            snapshot.val().status === 'active'
-          ) {
+          if (snapshot.val() && Object.keys(snapshot.val()).length > 0) {
             setDialogVisible(true);
             setLanguage(snapshot.val().language);
             setDifficulty(snapshot.val().difficulty);
             setChallengerName(snapshot.val().challenger);
             setIsRematch(snapshot.val().isRematch);
             setLobbyId(snapshot.val().lobbyId);
-          } else if (
-            snapshot.val() &&
-            Object.keys(snapshot.val()).length > 0 &&
-            snapshot.val().status === 'cancelled'
-          ) {
-            //Challenge request cancelled
-            setCancelled(true);
-            setDialogVisible(false);
-            database()
-              .ref('/challenge/' + user.uid)
-              .remove();
+            if (!snapshot.val().status) {
+              setCancelled(true);
+              setDialogVisible(false);
+              database()
+                .ref('/challenge/' + user.uid)
+                .remove();
+            }
           }
         });
     }
@@ -79,7 +71,6 @@ const DetectChallenge = () => {
         .equalTo(lobbyId)
         .limitToFirst(1)
         .once('value', snapshot => {
-          setIsLoading(false);
           if (snapshot.val() !== null && user.uid) {
             database()
               .ref('/games/' + lobbyId + '/isWaiting')
@@ -96,6 +87,7 @@ const DetectChallenge = () => {
                   .ref('/challenge/' + user.uid)
                   .remove();
                 setDialogVisible(false);
+                setIsLoading(false);
                 navigation.navigate('Multiplayer', {
                   gameId: lobbyId,
                   host: false,

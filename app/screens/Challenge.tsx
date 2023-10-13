@@ -28,7 +28,7 @@ const ChallengePlayer = (props: ChallengePlayerProps) => {
   const [timeout, setTimeout] = useState<number | null>(null);
 
   const userId = auth().currentUser?.uid as string;
-  const [playerId, setPlayerId] = useState('ytnv4Xn4FYVNY6V53a5ded7DiI32');
+  const [playerId, setPlayerId] = useState('');
 
   const randomQuestion = (count: number, max: number) => {
     if (count > max) return;
@@ -56,11 +56,14 @@ const ChallengePlayer = (props: ChallengePlayerProps) => {
     setTimeout(null);
     setChallengeActive(false);
     database()
+      .ref('/games/' + lobbyId)
+      .remove();
+    database()
       .ref('/challenge/' + playerId)
       .off();
     database()
       .ref('/challenge/' + playerId)
-      .update({status: 'cancelled'});
+      .update({status: false});
   });
 
   useEffect(() => {
@@ -83,10 +86,11 @@ const ChallengePlayer = (props: ChallengePlayerProps) => {
     }
   }, [navigation, challengeActive]);
 
-  const handleChallenge = () => {
+  const handleChallenge = (player: string) => {
+    setPlayerId(player);
     database()
       .ref('/challenge/')
-      .equalTo(playerId)
+      .equalTo(player)
       .limitToFirst(1)
       .once('value', async snapshot => {
         if (snapshot.val() !== null) {
@@ -94,34 +98,35 @@ const ChallengePlayer = (props: ChallengePlayerProps) => {
           setChallengeClash(true);
         } else {
           setChallengeActive(true);
-          setLobbyId(generateCode(6));
+          var lobby = generateCode(6);
+          setLobbyId(lobby);
           await database()
-            .ref('/challenge/' + playerId)
+            .ref('/challenge/' + player)
             .set({
               language: language,
               difficulty: difficulty,
-              lobbyId: 'ChallengeTest',
+              lobbyId: lobby,
               challenger: 'Lance', //TODO Get username from database
               isRematch: false,
-              status: 'active',
+              status: true,
             });
           await database()
-            .ref('/games/' + 'ChallengeTest')
+            .ref('/games/' + lobby)
             .set({
               isWaiting: {[userId]: true},
               startTimestamp: 0,
               questions: randomQuestion(5, 9),
               points: {[userId]: 0},
             });
-          setTimeout(3);
+          setTimeout(30);
           database()
-            .ref('/games/' + lobbyId + '/isWaiting')
+            .ref('/games/' + lobby + '/isWaiting')
             .on('value', snapshot => {
               if (snapshot.val() && Object.keys(snapshot.val()).length > 1) {
                 setTimeout(null);
                 setChallengeActive(false);
                 navigation.navigate('Multiplayer', {
-                  gameId: lobbyId,
+                  gameId: lobby,
                   host: true,
                   language: language,
                   difficulty: difficulty,
@@ -129,14 +134,14 @@ const ChallengePlayer = (props: ChallengePlayerProps) => {
               }
             });
           database()
-            .ref('/challenge/' + playerId)
+            .ref('/challenge/' + player)
             .on('value', snapshot => {
               if (!snapshot.val()) {
                 setChallengeActive(false);
                 setDeclined(true);
                 setTimeout(null);
                 database()
-                  .ref('/challenge/' + playerId)
+                  .ref('/challenge/' + player)
                   .off();
               }
             });
@@ -149,7 +154,11 @@ const ChallengePlayer = (props: ChallengePlayerProps) => {
       <CustomStatusBar />
       <View style={styles.container}>
         <Text variant={'headlineLarge'}>Challenge Screen</Text>
-        <Button mode="outlined" onPress={handleChallenge}>
+        <Button
+          mode="outlined"
+          onPress={() => {
+            handleChallenge('ytnv4Xn4FYVNY6V53a5ded7DiI32');
+          }}>
           Challenge
         </Button>
       </View>
@@ -168,9 +177,13 @@ const ChallengePlayer = (props: ChallengePlayerProps) => {
               mode="text"
               onPress={() => {
                 setChallengeActive(false);
+                setTimeout(null);
                 database()
                   .ref('/challenge/' + playerId)
-                  .update({status: 'cancelled'});
+                  .update({status: false});
+                database()
+                  .ref('/games/' + lobbyId)
+                  .remove();
               }}>
               Cancel
             </Button>
@@ -233,6 +246,9 @@ const ChallengePlayer = (props: ChallengePlayerProps) => {
               mode="text"
               onPress={() => {
                 setDeclined(false);
+                database()
+                  .ref('/games/' + lobbyId)
+                  .remove();
               }}>
               Ok
             </Button>
