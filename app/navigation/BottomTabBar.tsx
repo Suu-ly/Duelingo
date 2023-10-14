@@ -20,7 +20,7 @@ const ProfileRoute = () => <Profile route={undefined} navigation={undefined} />;
 const BottomTabBar = () => {
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
-    {key: 'home', title: 'Favorites', focusedIcon: 'home-outline'},
+    {key: 'home', title: 'Home', focusedIcon: 'home-outline'},
     {key: 'leaderboard', title: 'Leaderboard', focusedIcon: 'medal-outline'},
     {key: 'challenge', title: 'Challenge', focusedIcon: 'trophy-outline'},
     {key: 'profile', title: 'Profile', focusedIcon: 'account-outline'},

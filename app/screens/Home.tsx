@@ -1,19 +1,15 @@
 import React, {useState} from 'react';
 import {View, StyleSheet, TouchableOpacity, SectionList} from 'react-native';
 
-import {Button, Text} from 'react-native-paper';
+import {Text} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Theme from '../common/constants/theme.json';
 
 import CustomStatusBar from '../common/CustomStatusBar';
 import Constants from '../common/constants/Constants';
-import DuoButton from '../common/DuoButton';
+import TopicColors from '../common/constants/TopicColors';
 import Dropdown from '../common/DropdownButton';
-import LanguageChoice from '../common/LanguageChoice';
-import {Colors} from 'react-native/Libraries/NewAppScreen';
-import {colors} from 'react-native-elements';
 import Questions from '../data/ModuleQuestion.json';
-import Questions2 from '../data/Translation Questions.json';
 import TopicButton from '../common/TopicButton';
 
 interface HomeProps {
@@ -23,14 +19,6 @@ interface HomeProps {
 
 const Home = (props: HomeProps) => {
   const {route, navigation} = props;
-  const [selectedItem, setSelectedItem] = useState<{
-    id: number;
-    value: string;
-    icon: string;
-  }>();
-  const onSelect = (item: any) => {
-    setSelectedItem(item);
-  };
   const language = [
     {
       id: 1,
@@ -43,13 +31,58 @@ const Home = (props: HomeProps) => {
       icon: 'https://hatscripts.github.io/circle-flags/flags/my.svg',
     },
   ];
+  const [selectedItem, setSelectedItem] = useState<{
+    id: number;
+    value: string;
+    icon: string;
+  }>(language[0]);
+  const onSelect = (item: any) => {
+    setSelectedItem(item);
+  };
 
-  const result: {title: string; data: string[]}[] = [];
-  Questions.modules.forEach((module: any) => {
+  const numberOfCompletedModule = 9;
+  const calculateOverallIndex = (
+    sections: {data: string | any[]}[],
+    sectionIndex: number,
+    itemIndex: number,
+  ) => {
+    let overallIndex = 0;
+    for (let i = 0; i < sectionIndex; i++) {
+      overallIndex += sections[i].data.length;
+    }
+    overallIndex += itemIndex;
+    return overallIndex;
+  };
+
+  const mandarinResult: {
+    id: number;
+    title: string;
+    data: string[];
+    backgroundColor: string;
+  }[] = [];
+
+  const malayResult: {
+    id: number;
+    title: string;
+    data: string[];
+    backgroundColor: string;
+  }[] = [];
+
+  Questions.modules.forEach((module: any, index: number) => {
+    const id = index;
     const title = module.moduleName;
     const data = module.topics.map((topic: any) => topic.topicName);
+    const backgroundColor = Object.values(TopicColors)[index];
+    mandarinResult.push({id, title, data, backgroundColor});
+  });
 
-    result.push({title, data});
+  Questions.modules.forEach((module: any, index: number) => {
+    const id = index;
+    const title = module.moduleName;
+    const data = module.topics.map((topic: any) => topic.topicName);
+    const backgroundColor =
+      Object.values(TopicColors)[Object.keys(TopicColors).length - 1 - index];
+    malayResult.push({id, title, data, backgroundColor});
   });
 
   return (
@@ -57,12 +90,7 @@ const Home = (props: HomeProps) => {
       {/* <CustomStatusBar /> */}
 
       <View style={styles.toprowContainer}>
-        <Dropdown
-          title={'language'}
-          data={language}
-          item={selectedItem}
-          onSelect={onSelect}
-        />
+        <Dropdown data={language} item={selectedItem} onSelect={onSelect} />
         <TouchableOpacity style={styles.button}>
           <Icon name="heart" size={24} color={Theme.colors.error} />
           <Text style={{color: Theme.colors.error}}>5</Text>
@@ -72,13 +100,42 @@ const Home = (props: HomeProps) => {
         <SectionList
           showsVerticalScrollIndicator={false}
           stickySectionHeadersEnabled={true}
-          sections={result}
+          sections={selectedItem.id === 1 ? mandarinResult : malayResult}
           keyExtractor={(item, index) => item + index}
-          renderItem={({item}) => <TopicButton label={item} />}
+          renderItem={({item, index, section}) => {
+            const overallIndex = calculateOverallIndex(
+              selectedItem.id === 1 ? mandarinResult : malayResult,
+              section.id,
+              index,
+            );
+            const isCompleted = overallIndex < numberOfCompletedModule;
+            const isLastItem =
+              section.data.indexOf(item) === section.data.length - 1;
+            const icon = isLastItem ? 'treasure-chest' : 'check-bold';
+            return (
+              <TopicButton
+                disabled={!isCompleted}
+                backgroundColor={section.backgroundColor}
+                borderColor={Theme.colors.onSurface}
+                icon={icon}
+                textColor={Theme.colors.onSurface}
+                onPress={() => {
+                  console.log('pressed');
+                }}>
+                {item}
+              </TopicButton>
+            );
+          }}
           renderSectionHeader={({section: {title}}) => (
             <Text style={styles.header} variant={'titleLarge'}>
-              <LanguageChoice item={selectedItem} /> {title}
+              {selectedItem.value} {title}
             </Text>
+          )}
+          ItemSeparatorComponent={() => (
+            <View style={{height: Constants.defaultGap}} />
+          )}
+          SectionSeparatorComponent={() => (
+            <View style={{paddingVertical: Constants.mediumGap}} />
           )}
         />
       </View>

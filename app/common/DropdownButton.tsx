@@ -4,14 +4,13 @@ import {Text, Chip} from 'react-native-paper';
 import Svg, {SvgUri, Circle} from 'react-native-svg';
 
 interface DropdownProps {
-  title: string;
   item: {id: Number; value: string; icon: string} | undefined;
   data: Array<{id: Number; value: string; icon: string}>;
   onSelect: (item: any) => void;
 }
 
 const Dropdown = (props: DropdownProps) => {
-  const {title, item, data, onSelect} = props;
+  const {item, data, onSelect} = props;
   const [showOption, setShowOption] = useState(false);
   const onSelectedItem = (value: any) => {
     setShowOption(false);
@@ -32,7 +31,7 @@ const Dropdown = (props: DropdownProps) => {
             uri={item ? item.icon : null}
           />
         }>
-        {!!item ? item.value : title}
+        {!!item ? item.value : data[0].value}
       </Chip>
       {showOption &&
         data.map((value, index) => {

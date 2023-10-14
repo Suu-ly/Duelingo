@@ -1,81 +1,115 @@
-import React, {useState} from 'react';
-import {View, StyleSheet, TouchableOpacity} from 'react-native';
+import AwesomeButton from 'react-native-really-awesome-button';
 import {Text} from 'react-native-paper';
-import Theme from '../common/constants/theme.json';
-import Constants from '../common/constants/Constants';
+import {VariantProp} from 'react-native-paper/lib/typescript/components/Typography/types';
+import theme from './constants/theme.json';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Constants from './constants/Constants';
+import {StyleSheet, View} from 'react-native';
 
-interface TopicButtonProps {
-  label: string;
-  //   item: {id: Number; value: string; icon: string} | undefined;
-  //   data: Array<{id: Number; value: string; icon: string}>;
-  //   onSelect: (item: any) => void;
+interface ButtonProps {
+  backgroundColor: string;
+  backgroundDark?: string;
+  disabled?: boolean;
+  inactive?: boolean;
+  filled?: boolean;
+  borderColor: string;
+  icon: string;
+  stretch?: boolean;
+  height?: number;
+  children?: React.ReactNode;
+  textVariant?: VariantProp<never>;
+  textColor: string;
+  onPress: (callback?: () => void) => void;
 }
 
-const TopicButton = (props: TopicButtonProps) => {
-  const {label} = props;
-  //   const [showOption, setShowOption] = useState(false);
-  //   const onSelectedItem = (value: any) => {
-  //     setShowOption(false);
-  //     onSelect(value);
-  //   };
-
+const TopicButton = (props: ButtonProps) => {
+  const {
+    backgroundColor,
+    backgroundDark = theme.colors.onSurface,
+    disabled = false,
+    inactive = false,
+    filled = true,
+    borderColor,
+    icon,
+    stretch = true,
+    height = 80,
+    children,
+    textVariant = 'titleMedium',
+    textColor,
+    onPress,
+  } = props;
   return (
-    <View style={styles.container}>
-      <TouchableOpacity>
-        <View style={styles.buttonParent}>
-          <View style={styles.cardContainer}>
-            <View style={styles.cardIcon}></View>
-            <View style={styles.cardContent}>
-              <Text style={styles.cardContentText} variant={'titleMedium'}>
-                {label}
-              </Text>
-            </View>
+    <AwesomeButton
+      height={height}
+      width={children ? null : Constants.buttonSize}
+      disabled={disabled || inactive}
+      borderRadius={Constants.radiusSmall}
+      paddingHorizontal={0}
+      stretch={stretch}
+      onPress={onPress}
+      springRelease={false}
+      backgroundShadow="transparent"
+      raiseLevel={disabled ? 0 : filled ? 4 : 2}
+      backgroundColor={
+        disabled && filled
+          ? theme.colors.surfaceDisabledInvert
+          : theme.colors.surface
+      }
+      backgroundDarker={filled ? backgroundDark : borderColor}
+      borderWidth={2}
+      borderColor={
+        disabled ? theme.colors.onSurfaceDisabledInvert : borderColor
+      } //for some reason the border draws as black with an overlay so we have to invert the colour
+    >
+      <View style={styles.container}>
+        {icon && (
+          <View
+            style={[styles.iconContainer, {backgroundColor: backgroundColor}]}>
+            <Icon
+              name={icon}
+              size={Constants.iconMedium}
+              color={
+                disabled
+                  ? theme.colors.surfaceDisabledInvert
+                  : theme.colors.surface
+              }
+            />
           </View>
-        </View>
-      </TouchableOpacity>
-    </View>
+        )}
+        {children && (
+          <View style={styles.textContainer}>
+            <Text
+              variant={textVariant}
+              style={[
+                disabled
+                  ? {color: theme.colors.onSurfaceDisabled}
+                  : {color: textColor},
+                {marginHorizontal: Constants.mediumGap},
+              ]}>
+              {children}
+            </Text>
+          </View>
+        )}
+      </View>
+    </AwesomeButton>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItem: 'center',
-    marginVertical: 16,
-    borderColor: Theme.colors.outlineVariant,
-    borderWidth: 1,
-    borderRadius: Constants.radiusMedium,
-  },
-  cardContainer: {
-    height: 80,
-    borderRadius: Constants.radiusMedium,
-    backgroundColor: Theme.colors.surface,
-    flex: 1,
     flexDirection: 'row',
-    bottom: 10,
+    alignItem: 'center',
   },
-  cardIcon: {
-    aspectRatio: 1,
-    backgroundColor: Theme.colors.primaryContainerDark,
-    borderTopLeftRadius: Constants.radiusMedium,
-    borderBottomLeftRadius: Constants.radiusMedium,
-  },
-  cardContent: {
-    flexDirection: 'column',
-    flexWrap: 'wrap',
+  iconContainer: {
+    alignItems: 'center',
     justifyContent: 'center',
-    marginHorizontal: Constants.largeGap,
-    minHeight: 40,
-  },
-  cardContentText: {
-    color: Theme.colors.onSurface,
-  },
-  buttonParent: {
     height: 80,
-    borderRadius: Constants.radiusMedium,
-    backgroundColor: Theme.colors.primaryContainerDark,
+    width: 80,
+    aspectRatio: 1,
+  },
+  textContainer: {
+    flex: 1,
+    justifyContent: 'center',
   },
 });
 
