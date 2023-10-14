@@ -230,10 +230,11 @@ const Multiplayer = (props: MultiplayerProps) => {
     .ref('/games/' + gameId + '/isConnected/')
     .once('value', snapshot => {
       if (
-        Object.values(snapshot.val())[0] === (null || false) &&
-        Object.values(snapshot.val())[1] === (null || false)
-      )
-      database().ref('/games/' + gameId).remove();
+        Object.values(typeof(snapshot.val())[0] === 'undefined' || (snapshot.val())[0] === false) &&
+        Object.values(typeof(snapshot.val())[1] === 'undefined' || (snapshot.val())[1] === false)
+      ) {
+        database().ref('/games/' + gameId).remove();
+      }
     })
     .then(navigation.navigate('Home'))
   };
@@ -313,8 +314,8 @@ const Multiplayer = (props: MultiplayerProps) => {
         else if (
           !isPlaying &&
           start &&
-          Object.values(snapshot.val())[0] === false &&
-          Object.values(snapshot.val())[1] === false &&
+          Object.values(typeof(snapshot.val())[0] === 'undefined' || (snapshot.val())[0] === false) &&
+          Object.values(typeof(snapshot.val())[1] === 'undefined' || (snapshot.val())[1] === false) &&
           host &&
           timeUploaded === false
         ) {
@@ -325,8 +326,8 @@ const Multiplayer = (props: MultiplayerProps) => {
           !isPlaying &&
           !start &&
           Object.keys(snapshot.val()).length === 2 &&
-          Object.values(snapshot.val())[0] === false &&
-          Object.values(snapshot.val())[1] === false &&
+          Object.values(typeof(snapshot.val())[0] === 'undefined' || (snapshot.val())[0] === false) &&
+          Object.values(typeof(snapshot.val())[1] === 'undefined' || (snapshot.val())[1] === false) &&
           host &&
           timeUploaded === false
         ) {
