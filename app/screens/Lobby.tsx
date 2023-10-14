@@ -104,6 +104,11 @@ const Lobby = (props: LobbyProps) => {
       .once('value', snapshot => {
         if (snapshot.val() !== null && userId) {
           database()
+            .ref('/games/' + joinId + '/isConnected')
+            .update({
+              [userId]: true,
+            });
+          database()
             .ref('/games/' + joinId + '/isWaiting')
             .update({
               [userId]: true,

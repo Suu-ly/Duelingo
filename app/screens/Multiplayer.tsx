@@ -215,6 +215,29 @@ const Multiplayer = (props: MultiplayerProps) => {
     }, 100);
   };
 
+  //set invalid for listener in multiplayer.tsx
+  const setLobbyInvalid = () => {
+    database()
+    .ref('/games/' + gameId + '/isConnected/')
+    .update({[userId]: false});
+    navigation.navigate('Home');
+    deleteLobby();
+  };
+
+  //delete lobbyId if both players disconnected
+  const deleteLobby = () => {
+    database()
+    .ref('/games/' + gameId + '/isConnected/')
+    .once('value', snapshot => {
+      if (
+        Object.values(snapshot.val())[0] === (null || false) &&
+        Object.values(snapshot.val())[1] === (null || false)
+      )
+      database().ref('/games/' + gameId).remove();
+    })
+    .then(navigation.navigate('Home'))
+  };
+
   //active listener to see if player disconnects, updates isConnected gameId if so
   useEffect(() => {
     if (gameId !== null) {
@@ -271,6 +294,9 @@ const Multiplayer = (props: MultiplayerProps) => {
       update: {type: 'spring', springDamping: 100},
       delete: {type: 'easeOut', property: 'opacity'},
     });
+  }, [isPlaying, submit, points, secondsLeft]);
+
+  useEffect(() => {
     //Listens to the database for any updates
     if (questionBank.length === 0) getQuestions();
     database()
@@ -317,6 +343,16 @@ const Multiplayer = (props: MultiplayerProps) => {
           }
         });
     }
+    return () => {
+      database()
+        .ref('/games/' + gameId + '/isWaiting')
+        .off();
+      if (!host) {
+        database()
+          .ref('/games/' + gameId + '/startTimestamp')
+          .off();
+      }
+    };
   });
 
   return (
@@ -326,6 +362,31 @@ const Multiplayer = (props: MultiplayerProps) => {
           remaining === 0 ? Theme.colors.surface : Theme.colors.elevation.level1
         }
       />
+      <Portal>
+        <Dialog
+          visible={dialogVisible}
+          dismissable={false}
+          dismissableBackButton={false}>
+          <Dialog.Icon icon={'alert-circle-outline'} />
+          <Dialog.Title style={styles.title}>
+            Match still in progress.
+          </Dialog.Title>
+          <Dialog.Content>
+            <Text variant="bodyMedium">
+              The match is still in progress and will be recorded as a loss if
+              you leave now. Are you sure you want to leave?
+            </Text>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button mode="text" onPress={() => setDialogVisible(false)}>
+              Cancel
+            </Button>
+            <Button mode="text" onPress={() => setLobbyInvalid()}>
+              Leave
+            </Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
       {remaining === 0 ? (
         <MultiplayerEnd
           route={route}
@@ -429,31 +490,6 @@ const Multiplayer = (props: MultiplayerProps) => {
         </>
       )}
 
-      <Portal>
-        <Dialog
-          visible={dialogVisible}
-          dismissable={false}
-          dismissableBackButton={false}>
-          <Dialog.Icon icon={'alert-circle-outline'} />
-          <Dialog.Title style={styles.title}>
-            Match still in progress.
-          </Dialog.Title>
-          <Dialog.Content>
-            <Text variant="bodyMedium">
-              The match is still in progress and will be recorded as a loss if
-              you leave now. Are you sure you want to leave?
-            </Text>
-          </Dialog.Content>
-          <Dialog.Actions>
-            <Button mode="text" onPress={() => setDialogVisible(false)}>
-              Cancel
-            </Button>
-            <Button mode="text" onPress={() => navigation.navigate('Home')}>
-              Leave
-            </Button>
-          </Dialog.Actions>
-        </Dialog>
-      </Portal>
     </View>
   );
 };
