@@ -230,8 +230,8 @@ const Multiplayer = (props: MultiplayerProps) => {
     .ref('/games/' + gameId + '/isConnected/')
     .once('value', snapshot => {
       if (
-        Object.values(snapshot.val())[0] === (null || false) &&
-        Object.values(snapshot.val())[1] === (null || false)
+        Object.values(snapshot.val())[0] === (false) &&
+        Object.values(snapshot.val())[1] === (false)
       )
       database().ref('/games/' + gameId).remove();
     })
