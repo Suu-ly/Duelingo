@@ -22,15 +22,16 @@ const Home = (props: HomeProps) => {
   const language = [
     {
       id: 1,
-      value: 'Mandarin',
+      value: Questions.Langauge[0].languageName,
       icon: 'https://hatscripts.github.io/circle-flags/flags/cn.svg',
     },
     {
       id: 2,
-      value: 'Malay',
+      value: Questions.Langauge[1].languageName,
       icon: 'https://hatscripts.github.io/circle-flags/flags/my.svg',
     },
   ];
+
   const [selectedItem, setSelectedItem] = useState<{
     id: number;
     value: string;
@@ -54,36 +55,21 @@ const Home = (props: HomeProps) => {
     return overallIndex;
   };
 
-  const mandarinResult: {
-    id: number;
-    title: string;
-    data: string[];
-    backgroundColor: string;
-  }[] = [];
+  const createResult = (languageIndex: number) =>
+    Questions.Langauge[languageIndex].modules.map((module, index) => ({
+      id: index,
+      title: module.moduleName,
+      data: module.topics.map(topic => topic.topicName),
+      backgroundColor:
+        Object.values(TopicColors)[
+          languageIndex === 0
+            ? index
+            : Object.keys(TopicColors).length - 1 - index
+        ],
+    }));
 
-  const malayResult: {
-    id: number;
-    title: string;
-    data: string[];
-    backgroundColor: string;
-  }[] = [];
-
-  Questions.modules.forEach((module: any, index: number) => {
-    const id = index;
-    const title = module.moduleName;
-    const data = module.topics.map((topic: any) => topic.topicName);
-    const backgroundColor = Object.values(TopicColors)[index];
-    mandarinResult.push({id, title, data, backgroundColor});
-  });
-
-  Questions.modules.forEach((module: any, index: number) => {
-    const id = index;
-    const title = module.moduleName;
-    const data = module.topics.map((topic: any) => topic.topicName);
-    const backgroundColor =
-      Object.values(TopicColors)[Object.keys(TopicColors).length - 1 - index];
-    malayResult.push({id, title, data, backgroundColor});
-  });
+  const mandarinResult = createResult(0);
+  const malayResult = createResult(1);
 
   return (
     <View style={styles.mainContainer}>
@@ -101,7 +87,7 @@ const Home = (props: HomeProps) => {
           showsVerticalScrollIndicator={false}
           stickySectionHeadersEnabled={true}
           sections={selectedItem.id === 1 ? mandarinResult : malayResult}
-          keyExtractor={(item, index) => item + index}
+          keyExtractor={(item: any, index: any) => item + index}
           renderItem={({item, index, section}) => {
             const overallIndex = calculateOverallIndex(
               selectedItem.id === 1 ? mandarinResult : malayResult,
