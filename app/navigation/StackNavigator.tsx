@@ -20,9 +20,10 @@ const StackNavigator = () => {
       <Stack.Screen name="SignUp" component={SignUp} />
       <Stack.Screen name="Home" component={BottomTabBar} />
       <Stack.Screen name="Leaderboard" component={BottomTabBar} />
-      <Stack.Screen name="Challenge" component={BottomTabBar} />
+      <Stack.Screen name="Filter" component={BottomTabBar} />
+      {/* <Stack.Screen name="Challenge" component={BottomTabBar} /> */}
       <Stack.Screen name="Profile" component={BottomTabBar} />
-      <Stack.Screen name="Filter" component={Filter} />
+      {/* <Stack.Screen name="Filter" component={Filter} /> */}
     </Stack.Navigator>
   );
 };

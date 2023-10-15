@@ -41,7 +41,8 @@ const Home = (props: HomeProps) => {
     setSelectedItem(item);
   };
 
-  const numberOfCompletedModule = 9;
+  const numberOfCompletedChineseModule = 15;
+  const numberOfCompletedMalayModule = 9;
   const calculateOverallIndex = (
     sections: {data: string | any[]}[],
     sectionIndex: number,
@@ -94,7 +95,11 @@ const Home = (props: HomeProps) => {
               section.id,
               index,
             );
-            const isCompleted = overallIndex < numberOfCompletedModule;
+            const isCompleted =
+              overallIndex <
+              (selectedItem.id === 1
+                ? numberOfCompletedChineseModule
+                : numberOfCompletedMalayModule);
             const isLastItem =
               section.data.indexOf(item) === section.data.length - 1;
             const icon = isLastItem ? 'treasure-chest' : 'check-bold';
@@ -106,7 +111,15 @@ const Home = (props: HomeProps) => {
                 icon={icon}
                 textColor={Theme.colors.onSurface}
                 onPress={() => {
-                  console.log('pressed');
+                  console.log(
+                    'Questions.Language[' +
+                      (selectedItem.id - 1) +
+                      '].modules[' +
+                      section.id +
+                      '].topics[' +
+                      section.data.indexOf(item) +
+                      ']',
+                  );
                 }}>
                 {item}
               </TopicButton>
