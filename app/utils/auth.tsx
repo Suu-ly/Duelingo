@@ -1,5 +1,6 @@
 import auth from '@react-native-firebase/auth';
 import {Alert, ToastAndroid} from 'react-native';
+import error from '../utils/error.json';
 
 interface AuthProps {
   route: any;
@@ -19,7 +20,7 @@ export const signIn = (props: AuthProps, email: any, password: any) => {
     })
     .catch(err => {
       console.log(err);
-      Alert.alert('Incorrect Email or Password');
+      Alert.alert(error[err.code as keyof typeof error]);
     });
 };
 
@@ -33,6 +34,7 @@ export const signUp = (props: AuthProps, email: any, password: any) => {
     })
     .catch(err => {
       console.log(err);
+      Alert.alert(error[err.code as keyof typeof error]);
     });
 };
 
