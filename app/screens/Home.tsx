@@ -9,6 +9,7 @@ import Constants from '../common/constants/Constants';
 import DuoButton from '../common/DuoButton';
 import theme from '../common/constants/theme.json';
 import {signOut} from '../utils/auth';
+import {EventArg, NavigationAction} from '@react-navigation/native';
 
 interface HomeProps {
   route: any;
@@ -18,25 +19,20 @@ interface HomeProps {
 const Home = (props: HomeProps) => {
   const {route, navigation} = props;
 
-  useEffect(() => {
-    // Assuming user is logged in
-    const userId = auth().currentUser?.uid;
-
-    const reference = database().ref(`/users/${userId}`);
-
-    // Set the /users/:userId value to true
-    reference.set(true).then(() => console.log('Online presence set'));
-
-    // Remove the node whenever the client disconnects
-    reference
-      .onDisconnect()
-      .remove()
-      .then(() => console.log('On disconnect function configured.'));
-  }, []);
-
-  const handleSignOut = () => {
-    signOut({route, navigation});
-  };
+  useEffect(
+    () =>
+      navigation.addListener(
+        'beforeRemove',
+        (e: EventArg<'beforeRemove', true, {action: NavigationAction}>) => {
+          if (e.data.action.type != 'GO_BACK') {
+            return;
+          }
+          // Prevent default behavior of leaving the screen
+          e.preventDefault();
+        },
+      ),
+    [navigation],
+  );
 
   return (
     <View style={styles.mainContainer}>
@@ -78,7 +74,7 @@ const Home = (props: HomeProps) => {
           onPress={() => navigation.navigate('Challenge')}>
           Challenge
         </Button>
-        <Button mode="outlined" onPress={() => handleSignOut()}>
+        <Button mode="outlined" onPress={() => signOut()}>
           Sign Out
         </Button>
       </View>

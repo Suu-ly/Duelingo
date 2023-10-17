@@ -1,11 +1,9 @@
-import * as React from 'react';
 import ErrorBoundary from 'react-native-error-boundary';
 import {NavigationContainer} from '@react-navigation/native';
-import StackNavigator from './app/navigation/StackNavigator';
 import 'react-native-gesture-handler';
 import {PaperProvider, MD3LightTheme} from 'react-native-paper';
 import Theme from './app/common/constants/theme.json';
-import DetectChallenge from './app/common/DetectChallenge';
+import AppContainer from './AppContainer';
 
 const theme = {
   ...MD3LightTheme,
@@ -17,8 +15,7 @@ function App() {
     <NavigationContainer>
       <PaperProvider theme={theme}>
         <ErrorBoundary>
-          <DetectChallenge />
-          <StackNavigator />
+          <AppContainer />
         </ErrorBoundary>
       </PaperProvider>
     </NavigationContainer>

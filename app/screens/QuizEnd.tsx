@@ -1,11 +1,12 @@
 import {View, StyleSheet, Animated, Easing} from 'react-native';
 import {Text} from 'react-native-paper';
+import {CountUp} from 'use-count-up';
+import {useRef} from 'react';
+
 import Theme from '../common/constants/theme.json';
 import CustomStatusBar from '../common/CustomStatusBar';
 import Constants from '../common/constants/Constants';
 import DuoButton from '../common/DuoButton';
-import {CountUp} from 'use-count-up';
-import {useRef} from 'react';
 
 interface QuizEndProps {
   route: any;

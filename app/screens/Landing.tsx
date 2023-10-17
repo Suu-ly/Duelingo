@@ -18,23 +18,6 @@ theme.colors.background = 'white';
 const Landing = (props: LandingProps) => {
   const {route, navigation} = props;
 
-  const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
-
-  //Remember logged in user
-  useEffect(() => {
-    const subscriber = auth().onAuthStateChanged(userState => {
-      setUser(userState);
-      if (userState) {
-        navigation.reset({
-          index: 0,
-          routes: [{name: 'Home'}],
-        });
-      }
-    });
-
-    return subscriber;
-  }, []);
-
   return (
     <View style={styles.mainContainer}>
       <CustomStatusBar />

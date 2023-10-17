@@ -1,4 +1,4 @@
-import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
+import {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
 import {
   Dialog,
@@ -19,51 +19,77 @@ import Theme from './constants/theme.json';
 import DuoButton from './DuoButton';
 import Constants from './constants/Constants';
 
-const DetectChallenge = () => {
+interface detectProps {
+  user: FirebaseAuthTypes.User | null;
+  appState: 'active' | 'background' | 'inactive' | 'unknown' | 'extension';
+}
+
+const DetectChallenge = (props: detectProps) => {
+  const {user, appState} = props;
+  const [oldUser, setOldUser] = useState(user);
+  //Visibility of dialogs
   const [dialogVisible, setDialogVisible] = useState(false);
   const [cancelled, setCancelled] = useState(false);
+  const [isRematch, setIsRematch] = useState(false);
+  //Lobby settings
   const [language, setLanguage] = useState('');
   const [difficulty, setDifficulty] = useState('');
   const [challengerName, setChallengerName] = useState('');
-  const [isRematch, setIsRematch] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [lobbyId, setLobbyId] = useState('');
-  const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
+
+  const removeChallenge = () => {
+    if (user) {
+      database()
+        .ref('/challenge/' + user.uid)
+        .remove();
+    }
+  };
+
+  //Removes dialogs if user goes back to home screen
+  useEffect(() => {
+    if (appState !== 'active') {
+      removeChallenge();
+      setDialogVisible(false);
+      setCancelled(false);
+      setIsRematch(false);
+    }
+  }, [appState]);
 
   useEffect(() => {
     if (user) {
+      removeChallenge();
+      setOldUser(user);
       database()
         .ref('/challenge/' + user.uid)
         .on('value', snapshot => {
           if (snapshot.val() && Object.keys(snapshot.val()).length > 0) {
-            setDialogVisible(true);
             setLanguage(snapshot.val().language);
             setDifficulty(snapshot.val().difficulty);
             setChallengerName(snapshot.val().challenger);
             setIsRematch(snapshot.val().isRematch);
             setLobbyId(snapshot.val().lobbyId);
-            if (!snapshot.val().status) {
+            if (snapshot.val().status) {
+              setDialogVisible(true);
+            } else {
               setCancelled(true);
               setDialogVisible(false);
-              database()
-                .ref('/challenge/' + user.uid)
-                .remove();
+              removeChallenge();
             }
           }
         });
+    } else {
+      if (oldUser) {
+        database()
+          .ref('/challenge/' + oldUser.uid)
+          .off();
+      }
     }
-
-    const subscriber = auth().onAuthStateChanged(userState => {
-      setUser(userState);
-    });
-
-    return subscriber;
-  });
+  }, [user]);
 
   const handleOnPress = async () => {
     setIsLoading(true);
-
     if (user) {
       await database()
         .ref('/games/')
@@ -83,9 +109,7 @@ const DetectChallenge = () => {
                 [user.uid]: 0,
               })
               .then(() => {
-                database()
-                  .ref('/challenge/' + user.uid)
-                  .remove();
+                removeChallenge();
                 setDialogVisible(false);
                 setIsLoading(false);
                 navigation.navigate('Multiplayer', {
@@ -107,7 +131,7 @@ const DetectChallenge = () => {
   return (
     <Portal>
       <Dialog
-        visible={dialogVisible}
+        visible={dialogVisible && !isRematch}
         dismissable={false}
         dismissableBackButton={false}>
         <Dialog.Icon icon={'karate'} />
@@ -140,9 +164,47 @@ const DetectChallenge = () => {
               <Button
                 mode="text"
                 onPress={() => {
-                  database()
-                    .ref('/challenge/' + user.uid)
-                    .remove();
+                  removeChallenge();
+                  setDialogVisible(false);
+                }}>
+                Decline
+              </Button>
+            </>
+          )}
+        </Dialog.Actions>
+      </Dialog>
+      <Dialog
+        visible={dialogVisible && isRematch}
+        dismissable={false}
+        dismissableBackButton={false}>
+        <Dialog.Icon icon={'karate'} />
+        <Dialog.Title style={styles.title}>Rematch!</Dialog.Title>
+        <Dialog.Content>
+          <Text variant="bodyMedium">
+            {challengerName} wants a rematch! Go again?
+          </Text>
+        </Dialog.Content>
+        <Dialog.Actions style={styles.actions}>
+          {user && (
+            <>
+              <View style={styles.buttonContainer}>
+                <DuoButton
+                  backgroundColor={Theme.colors.primary}
+                  backgroundDark={Theme.colors.primaryDark}
+                  stretch={true}
+                  onPress={handleOnPress}
+                  textColor={Theme.colors.onPrimary}>
+                  {!isLoading ? (
+                    'Rematch'
+                  ) : (
+                    <ActivityIndicator color={Theme.colors.onPrimary} />
+                  )}
+                </DuoButton>
+              </View>
+              <Button
+                mode="text"
+                onPress={() => {
+                  removeChallenge();
                   setDialogVisible(false);
                 }}>
                 Decline
@@ -166,9 +228,6 @@ const DetectChallenge = () => {
             <Button
               mode="text"
               onPress={() => {
-                database()
-                  .ref('/challenge/' + user.uid)
-                  .remove();
                 setDialogVisible(false);
                 setCancelled(false);
               }}>
