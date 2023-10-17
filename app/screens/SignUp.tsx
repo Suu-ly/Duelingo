@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {signUp} from '../utils/auth';
+import {createUser} from '../utils/database';
 import {Appbar, Text, TextInput, HelperText} from 'react-native-paper';
 import {View, StyleSheet} from 'react-native';
 
@@ -15,6 +16,8 @@ interface SignUpProps {
 
 const SignUp = (props: SignUpProps) => {
   const {route, navigation} = props;
+  const [username, setUsername] = useState('');
+  const [displayName, setDisplayName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -24,7 +27,7 @@ const SignUp = (props: SignUpProps) => {
   const [confirmPasswordIcon, setConfirmPasswordIcon] = useState('eye-off');
 
   const handleOnSubmit = () => {
-    signUp(props, email, password);
+    signUp(props, email, password, username, displayName);
   };
 
   const handlePasswordVisibility = () => {
@@ -55,6 +58,24 @@ const SignUp = (props: SignUpProps) => {
         <View style={styles.title}>
           <Text variant={'headlineLarge'}>Create your account</Text>
         </View>
+        <TextInput
+          mode="outlined"
+          label="Username"
+          placeholder="Username"
+          value={username}
+          activeOutlineColor={theme.colors.primary}
+          autoCapitalize="none"
+          onChangeText={username => setUsername(username)}
+        />
+        <TextInput
+          mode="outlined"
+          label="Display Name"
+          placeholder="Display Name"
+          value={displayName}
+          activeOutlineColor={theme.colors.primary}
+          autoCapitalize="none"
+          onChangeText={displayName => setDisplayName(displayName)}
+        />
         <TextInput
           mode="outlined"
           label="Email"
@@ -114,6 +135,8 @@ const SignUp = (props: SignUpProps) => {
         <DuoButton
           filled={true}
           disabled={
+            username != '' &&
+            displayName != '' &&
             email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/) &&
             password.length >= 6 &&
             password == confirmPassword

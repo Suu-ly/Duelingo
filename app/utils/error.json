@@ -13,7 +13,7 @@
   "auth/dependent-sdk-initialized-before-auth": "Please initialize the Firebase Auth SDK before other dependent SDKs.",
   "auth/dynamic-link-not-activated": "Dynamic links are not activated.",
   "auth/email-change-needs-verification": "Please verify your new email address.",
-  "auth/email-already-in-use": "The account already exists.",
+  "auth/email-already-in-use": "An account with this email address already exists.",
   "auth/emulator-config-failed": "Emulator configuration failed.",
   "auth/expired-action-code": "The action code has expired.",
   "auth/cancelled-popup-request": "The popup request has been cancelled.",
