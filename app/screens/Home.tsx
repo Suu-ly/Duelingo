@@ -78,7 +78,7 @@ const Home = (props: HomeProps) => {
 
   return (
     <View style={styles.mainContainer}>
-      {/* <CustomStatusBar /> */}
+      <CustomStatusBar />
 
       <View style={styles.toprowContainer}>
         <Dropdown data={language} item={selectedItem} onSelect={onSelect} />
