@@ -50,7 +50,7 @@ const ChallengePlayer = (props: ChallengePlayerProps) => {
 
   useCountdown(timeout, setTimeout, () => {
     setTimedOut(true);
-    resetListeners();
+    resetListeners(playerId);
     setChallengeActive(false);
     database()
       .ref('/games/' + lobbyId)
@@ -60,16 +60,11 @@ const ChallengePlayer = (props: ChallengePlayerProps) => {
       .update({status: false});
   });
 
-  const resetListeners = () => {
+  const resetListeners = (player: string) => {
     setTimeout(null);
+    console.log('Resetting ' + player);
     database()
-      .ref('/challenge/' + playerId)
-      .off();
-    database()
-      .ref('/games/' + lobbyId + '/isWaiting')
-      .off();
-    database()
-      .ref('/users/' + playerId)
+      .ref('/challenge/' + player)
       .off();
   };
 
@@ -79,7 +74,7 @@ const ChallengePlayer = (props: ChallengePlayerProps) => {
       .ref('/challenge/')
       .equalTo(player)
       .limitToFirst(1)
-      .once('value', async snapshot => {
+      .once('value', snapshot => {
         if (snapshot.val() !== null) {
           //Challenge already exists
           setChallengeClash(true);
@@ -88,7 +83,7 @@ const ChallengePlayer = (props: ChallengePlayerProps) => {
           var lobby = generateCode(6);
           setLobbyId(lobby);
           //Create challenge record
-          await database()
+          database()
             .ref('/challenge/' + player)
             .set({
               language: language,
@@ -97,23 +92,31 @@ const ChallengePlayer = (props: ChallengePlayerProps) => {
               challenger: 'Lance', //TODO Get username from database
               isRematch: false,
               status: true,
+              accepted: false,
             });
           //Create lobby
-          await database()
+          database()
             .ref('/games/' + lobby)
             .set({
               isWaiting: {[userId]: true},
+              isConnected: {[userId]: true},
               startTimestamp: 0,
               questions: randomQuestion(5, 9),
               points: {[userId]: 0},
             });
+          //Sets the challenge to time out
           setTimeout(30);
-          //Checks if the other player joins the lobby
+
           database()
-            .ref('/games/' + lobby + '/isWaiting')
+            .ref('/challenge/' + player)
             .on('value', snapshot => {
-              if (snapshot.val() && Object.keys(snapshot.val()).length > 1) {
-                resetListeners();
+              //Checks if accepts
+              if (snapshot.val() && snapshot.val().accepted) {
+                console.log('I am turning off player ' + player);
+                resetListeners(player);
+                database()
+                  .ref('/challenge/' + player)
+                  .remove();
                 setChallengeActive(false);
                 navigation.navigate('Multiplayer', {
                   gameId: lobby,
@@ -122,25 +125,14 @@ const ChallengePlayer = (props: ChallengePlayerProps) => {
                   difficulty: difficulty,
                 });
               }
-            });
-          //Checks if the other player declines
-          database()
-            .ref('/challenge/' + player)
-            .on('value', snapshot => {
-              if (!snapshot.val()) {
-                resetListeners();
+              //Checks if the other player declines
+              else if (!snapshot.val()) {
+                resetListeners(player);
                 setChallengeActive(false);
                 setDeclined(true);
-              }
-            });
-          //Checks if the player goes offline
-          database()
-            .ref('/users/' + player)
-            .on('value', snapshot => {
-              if (!snapshot.val()) {
-                resetListeners();
-                setChallengeActive(false);
-                setDeclined(true);
+                database()
+                  .ref('/games/' + lobbyId)
+                  .remove();
               }
             });
         }
@@ -175,7 +167,7 @@ const ChallengePlayer = (props: ChallengePlayerProps) => {
               mode="text"
               onPress={() => {
                 setChallengeActive(false);
-                resetListeners();
+                resetListeners(playerId);
                 database()
                   .ref('/challenge/' + playerId)
                   .update({status: false});
@@ -244,9 +236,6 @@ const ChallengePlayer = (props: ChallengePlayerProps) => {
               mode="text"
               onPress={() => {
                 setDeclined(false);
-                database()
-                  .ref('/games/' + lobbyId)
-                  .remove();
               }}>
               Ok
             </Button>

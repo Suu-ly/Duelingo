@@ -64,7 +64,7 @@ const DetectChallenge = (props: detectProps) => {
       database()
         .ref('/challenge/' + user.uid)
         .on('value', snapshot => {
-          if (snapshot.val() && Object.keys(snapshot.val()).length > 0) {
+          if (snapshot.val() && !snapshot.val().accepted) {
             setLanguage(snapshot.val().language);
             setDifficulty(snapshot.val().difficulty);
             setChallengerName(snapshot.val().challenger);
@@ -107,9 +107,18 @@ const DetectChallenge = (props: detectProps) => {
               .ref('/games/' + lobbyId + '/points')
               .update({
                 [user.uid]: 0,
+              });
+            database()
+              .ref('/games/' + lobbyId + '/isConnected')
+              .update({
+                [user.uid]: true,
+              });
+            database()
+              .ref('/challenge/' + user.uid)
+              .update({
+                accepted: true,
               })
               .then(() => {
-                removeChallenge();
                 setDialogVisible(false);
                 setIsLoading(false);
                 navigation.navigate('Multiplayer', {

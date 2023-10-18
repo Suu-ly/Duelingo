@@ -30,9 +30,9 @@ function AppContainer() {
     //Handles navigation on logging in and out
     const subscriptionAuthState = auth().onAuthStateChanged(userState => {
       setUser(userState);
-      //For presence detection
       if (userState) {
         navigation.navigate('Home');
+        //For presence detection
         if (appStateVisible === 'active') {
           database()
             .ref('/users/' + userState.uid)

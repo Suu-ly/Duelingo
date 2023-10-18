@@ -89,8 +89,9 @@ const Multiplayer = (props: MultiplayerProps) => {
   //Keeps track of points for both players
   const [points, setPoints] = useState<Record<string, unknown>[]>([]);
   const [oldPoints, setOldPoints] = useState<Record<string, unknown>[]>([]);
-  //Decides whether to show the progress won't be saved dialog
+  //Decides whether to show the dialogs
   const [dialogVisible, setDialogVisible] = useState(false);
+  const [playerLeft, setPlayerLeft] = useState(false);
 
   //Need to standardise the formatting of the questions for this to work properly.
   //Right now it extracts the text contained within "" and puts it into a box
@@ -215,6 +216,31 @@ const Multiplayer = (props: MultiplayerProps) => {
     }, 100);
   };
 
+  //set invalid for listener in multiplayer.tsx
+  const setLobbyInvalid = async () => {
+    database()
+      .ref('/games/' + gameId + '/isConnected/')
+      .update({[userId]: false});
+    await deleteLobby();
+    navigation.navigate('Home');
+  };
+
+  //delete lobbyId if both players disconnected
+  const deleteLobby = async () => {
+    await database()
+      .ref('/games/' + gameId + '/isConnected/')
+      .once('value', snapshot => {
+        if (
+          Object.values(snapshot.val())[0] === false &&
+          Object.values(snapshot.val())[1] === false
+        )
+          database()
+            .ref('/games/' + gameId)
+            .remove();
+      })
+      .then(navigation.navigate('Home'));
+  };
+
   //Controls what is shown
   useEffect(() => {
     if (isPlaying) {
@@ -312,9 +338,32 @@ const Multiplayer = (props: MultiplayerProps) => {
           }
         });
     }
+
+    database()
+      .ref('/games/' + gameId + '/isConnected')
+      .onDisconnect()
+      .update({[userId]: false});
+
+    database()
+      .ref('/games/' + gameId + '/isConnected')
+      .on('value', snapshot => {
+        if (
+          snapshot.val() &&
+          Object.values(snapshot.val()).length > 1 &&
+          (Object.values(snapshot.val())[0] === false ||
+            Object.values(snapshot.val())[1] === false) &&
+          remaining > 0
+        ) {
+          setPlayerLeft(true);
+        }
+      });
+
     return () => {
       database()
         .ref('/games/' + gameId + '/isWaiting')
+        .off();
+      database()
+        .ref('/games/' + gameId + '/isConnected')
         .off();
       if (!host) {
         database()
@@ -350,8 +399,28 @@ const Multiplayer = (props: MultiplayerProps) => {
             <Button mode="text" onPress={() => setDialogVisible(false)}>
               Cancel
             </Button>
-            <Button mode="text" onPress={() => navigation.navigate('Home')}>
+            <Button mode="text" onPress={() => setLobbyInvalid()}>
               Leave
+            </Button>
+          </Dialog.Actions>
+        </Dialog>
+        <Dialog
+          visible={playerLeft}
+          dismissable={false}
+          dismissableBackButton={false}>
+          <Dialog.Icon icon={'alert-circle-outline'} />
+          <Dialog.Title style={styles.title}>
+            Other player has left the game.
+          </Dialog.Title>
+          <Dialog.Content>
+            <Text variant="bodyMedium">
+              The other player has quit the game. You will now return to the
+              home screen.
+            </Text>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button mode="text" onPress={() => setLobbyInvalid()}>
+              Ok
             </Button>
           </Dialog.Actions>
         </Dialog>
@@ -360,8 +429,8 @@ const Multiplayer = (props: MultiplayerProps) => {
         <MultiplayerEnd
           points={points}
           userId={userId}
-          onRematchPress={() => navigation.navigate('Home')}
-          onPress={() => navigation.navigate('Home')}
+          onRematchPress={() => setLobbyInvalid()}
+          onPress={() => setLobbyInvalid()}
         />
       ) : (
         <>
