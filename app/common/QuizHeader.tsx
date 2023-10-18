@@ -1,9 +1,10 @@
-import {StyleSheet, View} from 'react-native';
+import {Animated, Easing, StyleSheet, View} from 'react-native';
 import Theme from './constants/theme.json';
 import Constants from './constants/Constants';
 import {IconButton, ProgressBar, Text} from 'react-native-paper';
 import HeartContainer from './HeartContainer';
 import QuizTimer from './QuizTimer';
+import {useEffect, useRef} from 'react';
 
 interface QuizHeaderProps {
   backgroundColor?: string;
@@ -23,6 +24,7 @@ const QuizHeader = (props: QuizHeaderProps) => {
     multiplayer,
     onPress,
   } = props;
+
   return (
     <View style={[styles.barContainer, {backgroundColor: backgroundColor}]}>
       <IconButton
@@ -35,10 +37,9 @@ const QuizHeader = (props: QuizHeaderProps) => {
         <View style={styles.progressBar}>
           <ProgressBar
             progress={
-              totalQuestions - questionsRemaining === 1
+              totalQuestions - questionsRemaining === 0
                 ? 0.02
-                : (totalQuestions - questionsRemaining - 1) /
-                  (totalQuestions - 1)
+                : (totalQuestions - questionsRemaining) / totalQuestions
             }
           />
         </View>
