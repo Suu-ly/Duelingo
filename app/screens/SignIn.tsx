@@ -52,6 +52,7 @@ const SignIn = (props: SignInProps) => {
           value={email}
           activeOutlineColor={theme.colors.primary}
           autoCapitalize="none"
+          error={email != '' && !email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)}
           onChangeText={email => setEmail(email)}
         />
         {email != '' && !email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/) ? (
