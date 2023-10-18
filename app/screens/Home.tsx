@@ -32,6 +32,7 @@ const Home = (props: HomeProps) => {
     },
   ];
 
+  //Get the selected item of the language array
   const [selectedItem, setSelectedItem] = useState<{
     id: number;
     value: string;
@@ -43,6 +44,7 @@ const Home = (props: HomeProps) => {
 
   const numberOfCompletedChineseModule = 15;
   const numberOfCompletedMalayModule = 9;
+  //calculate the index of the topic in the entire language
   const calculateOverallIndex = (
     sections: {data: string | any[]}[],
     sectionIndex: number,
@@ -56,17 +58,19 @@ const Home = (props: HomeProps) => {
     return overallIndex;
   };
 
+  //Make arrays for chinese and malay for the sectionlist
   const createResult = (languageIndex: number) =>
     Questions.Langauge[languageIndex].modules.map((module, index) => ({
       id: index,
       title: module.moduleName,
+      //put all the topicnames into an array, this array will be nested in the result array
       data: module.topics.map(topic => topic.topicName),
       backgroundColor:
         Object.values(TopicColors)[
           languageIndex === 0
             ? index
             : Object.keys(TopicColors).length - 1 - index
-        ],
+        ], //if chinese, start from the first color of the TopicColors. If malay, start from the last color of the TopicColors
     }));
 
   const mandarinResult = createResult(0);
@@ -87,7 +91,7 @@ const Home = (props: HomeProps) => {
         <SectionList
           showsVerticalScrollIndicator={false}
           stickySectionHeadersEnabled={true}
-          sections={selectedItem.id === 1 ? mandarinResult : malayResult}
+          sections={selectedItem.id === 1 ? mandarinResult : malayResult} //if selectedItem is chinese, use chinese result array, else use malay resullt array
           keyExtractor={(item: any, index: any) => item + index}
           renderItem={({item, index, section}) => {
             const overallIndex = calculateOverallIndex(
@@ -95,11 +99,13 @@ const Home = (props: HomeProps) => {
               section.id,
               index,
             );
+            //Find out whether the current topic being rendered is completed
             const isCompleted =
               overallIndex <
               (selectedItem.id === 1
                 ? numberOfCompletedChineseModule
                 : numberOfCompletedMalayModule);
+            //Find out whether the item rendered is the last item of the section
             const isLastItem =
               section.data.indexOf(item) === section.data.length - 1;
             const icon = isLastItem ? 'treasure-chest' : 'check-bold';
@@ -175,8 +181,6 @@ const styles = StyleSheet.create({
   },
   header: {
     backgroundColor: Theme.colors.elevation.level0,
-    color: Theme.colors.onSurface,
-    paddingHorizontal: Constants.edgePadding,
     paddingVertical: Constants.mediumGap,
   },
   title: {

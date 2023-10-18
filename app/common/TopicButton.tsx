@@ -10,8 +10,6 @@ interface ButtonProps {
   backgroundColor: string;
   backgroundDark?: string;
   disabled?: boolean;
-  inactive?: boolean;
-  filled?: boolean;
   borderColor: string;
   icon: string;
   stretch?: boolean;
@@ -27,8 +25,6 @@ const TopicButton = (props: ButtonProps) => {
     backgroundColor,
     backgroundDark = theme.colors.onSurface,
     disabled = false,
-    inactive = false,
-    filled = true,
     borderColor,
     icon,
     stretch = true,
@@ -42,20 +38,18 @@ const TopicButton = (props: ButtonProps) => {
     <AwesomeButton
       height={height}
       width={children ? null : Constants.buttonSize}
-      disabled={disabled || inactive}
+      disabled={disabled}
       borderRadius={Constants.radiusSmall}
       paddingHorizontal={0}
       stretch={stretch}
       onPress={onPress}
       springRelease={false}
       backgroundShadow="transparent"
-      raiseLevel={disabled ? 0 : filled ? 4 : 2}
+      raiseLevel={disabled ? 0 : 4}
       backgroundColor={
-        disabled && filled
-          ? theme.colors.surfaceDisabledInvert
-          : theme.colors.surface
+        disabled ? theme.colors.surfaceDisabledInvert : theme.colors.surface
       }
-      backgroundDarker={filled ? backgroundDark : borderColor}
+      backgroundDarker={backgroundDark}
       borderWidth={2}
       borderColor={
         disabled ? theme.colors.onSurfaceDisabledInvert : borderColor

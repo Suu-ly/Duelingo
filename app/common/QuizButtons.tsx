@@ -33,7 +33,7 @@ const QuizButtons = (props: QuizButtonProps) => {
   const init_tts = async () => {
     Tts.setDefaultPitch(1);
     Tts.setDefaultLanguage(optionContainsEnglish ? 'en-US' : 'zh-CN');
-    Tts.setDefaultRate(optionContainsEnglish ? 0.4 : 0.6);
+    Tts.setDefaultRate(optionContainsEnglish ? 0.3 : 0.5);
   };
 
   init_tts();

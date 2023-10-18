@@ -34,7 +34,7 @@ const Filter = (props: FilterProps) => {
           </Button>
         </View>
         <QuizButtons
-          question={Questions.chinese.easy[1]}
+          question={Questions.chinese.easy[2]}
           backgroundColor={styles.mainContainer.backgroundColor}
           reveal={submit}
           onSelect={ans => setAnswer(ans)}
