@@ -83,6 +83,7 @@ const SignUp = (props: SignUpProps) => {
           value={email}
           activeOutlineColor={theme.colors.primary}
           autoCapitalize="none"
+          error={email != '' && !email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)}
           onChangeText={email => setEmail(email)}
         />
         {email != '' && !email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/) ? (
@@ -97,6 +98,7 @@ const SignUp = (props: SignUpProps) => {
           value={password}
           activeOutlineColor={theme.colors.primary}
           autoCapitalize="none"
+          error={password != '' && password.length < 6}
           secureTextEntry={showPassword}
           right={
             <TextInput.Icon
@@ -118,6 +120,7 @@ const SignUp = (props: SignUpProps) => {
           value={confirmPassword}
           activeOutlineColor={theme.colors.primary}
           autoCapitalize="none"
+          error={confirmPassword != '' && password != confirmPassword}
           secureTextEntry={showConfirmPassword}
           right={
             <TextInput.Icon

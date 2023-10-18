@@ -19,8 +19,11 @@ export const createUser = (email: any, username: any, displayName: any) => {
       username: username,
       email: email,
       exp: 0,
-      friends: [{username: ''}],
-      hearts: 5,
+      friends: [{uid: 0}],
+      hearts: {
+        amount: 5,
+        timestamp: 0,
+      },
       modules: {
         easy: 9,
         intermediate: 9,
