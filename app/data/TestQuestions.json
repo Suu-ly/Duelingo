@@ -477,448 +477,483 @@
         }
       },
       "Module 2: Easy": {
-        "topics": [
-          {
-            "topicName": "Colours",
-            "questions": [
-              {
-                "gameformat": 0,
-                "word": "红色",
-                "pinyin": "hóng sè",
-                "explanation": "Red Colour",
-                "example": "看到红灯时不能过马路",
-                "pinyinExample": "kàn dào hóng dēng shí bù néng guò mǎ lù",
-                "exampleTranslated": "Don't cross the road when you see a red light"
-              },
-              {
-                "gameformat": 0,
-                "word": "蓝色",
-                "pinyin": "lán sè",
-                "explanation": "Blue Colour",
-                "example": "天空中有一片湛蓝的蓝色",
-                "pinyinExample": "tiān kōng zhōng yǒu yī piàn zhàn lán de lán sè",
-                "exampleTranslated": "There is a clear blue in the sky"
-              },
-              {
-                "gameformat": 0,
-                "word": "绿色",
-                "pinyin": "lǜ sè",
-                "explanation": "Green Colour",
-                "example": "森林中的树叶是绿色的.",
-                "pinyinExample": "Sēn lín zhōng de shù yè shì lǜ sè de.",
-                "exampleTranslated": "The leaves in the forest are green."
-              },
-              {
-                "gameformat": 0,
-                "word": "白色",
-                "pinyin": "bái sè",
-                "explanation": "White Colour",
-                "example": "新鲜的雪覆盖了整个山坡, 一切都变得白色了.",
-                "pinyinExample": "xīn xiān de xuě fù gài le zhěng gè shān pō, yī qiè dōu biàn dé bái sè le.",
-                "exampleTranslated": "Fresh snow covered the entire hillside and everything turned white."
-              },
-              {
-                "gameformat": 0,
-                "word": "黑色",
-                "pinyin": "hēi sè",
-                "explanation": "Black Colour",
-                "example": "夜晚的天空中, 星星在的黑色背景下闪烁",
-                "pinyinExample": "yè wǎn de tiān kōng zhōng, xīng xīng zài de hēi sè bèi jǐng xià shǎn shuò",
-                "exampleTranslated": "Night sky with stars twinkling on black background"
-              },
-              {
-                "gameFormat": 1,
-                "question": "当我们看到________交通灯时我们必需停下来",
-                "options": ["黑色", "白色", "绿色", "红色"],
-                "correct_answer": "红色",
-                "explanation": "For a traffic light, we need to stop when we see red colour."
-              },
-              {
-                "gameFormat": 1,
-                "question": "那朵_________ 色的玫瑰花在阳光下闪闪发光.",
-                "options": ["红色", "黑色", "绿色", "蓝色"],
-                "correct_answer": "红色",
-                "explanation": "Roses are generally red in colour"
-              },
-              {
-                "gameFormat": 1,
-                "question": "桌子上放着一杯_________ 咖啡, 发出阵阵香气.",
-                "options": ["绿色", "红色", "白色", "黑色"],
-                "correct_answer": "黑色",
-                "explanation": "Coffee are generally black in colour"
-              }
-            ]
+        "Topic 1: Colours": {
+          "Question1": {
+            "gameformat": 0,
+            "word": "红色",
+            "pinyin": "hóng sè",
+            "explanation": "Red Colour",
+            "example": "看到红灯时不能过马路",
+            "pinyinExample": "kàn dào hóng dēng shí bù néng guò mǎ lù",
+            "exampleTranslated": "Don't cross the road when you see a red light"
           },
-          {
-            "topicName": "Topic 2: Weather",
-            "questions": [
-              {
-                "gameformat": 0,
-                "word": "气温",
-                "pinyin": "qì wēn",
-                "explanation": "temperature",
-                "Example": "今天的气温很热",
-                "PinyinExample": "jīn tiān de qì wēn hěn rè",
-                "exampleTranslated": "Today's temperature is very hot"
-              },
-              {
-                "gameformat": 0,
-                "word": "多云",
-                "pinyin": "duō yún",
-                "Explaination": "cloudy",
-                "Example": "今天的天空多云",
-                "PinyinExample": "jīn tiān de tiān kōng duō yún",
-                "exampleTranslated": "The sky looks cloudy today"
-              },
-              {
-                "gameformat": 0,
-                "word": "下雨",
-                "pinyin": "xià yǔ",
-                "Explaination": "raining",
-                "Example": "目前正在下雨",
-                "PinyinExample": "mù qián zhèng zài xià yǔ",
-                "exampleTranslated": "It is currently raining"
-              },
-              {
-                "gameformat": 0,
-                "word": "雷雨",
-                "pinyin": "léi yǔ",
-                "Explaination": "thunderstorm",
-                "Example": "天气预报预计有雷雨",
-                "PinyinExample": "tiān qì yù bào yù jì yǒu léi yǔ",
-                "exampleTranslated": "The weather forecast predicts a thunderstorm"
-              },
-              {
-                "gameformat": 0,
-                "word": "下雪",
-                "pinyin": "xià xuě",
-                "Explaination": "snow",
-                "Example": "新加坡不下雪",
-                "PinyinExample": "xīn jiā pō bù xià xuě",
-                "exampleTranslated": "It does not snow in Singapore"
-              },
-              {
-                "gameformat": 1,
-                "question": "What does “今天的天气很热” mean?",
-                "options": [
-                  "Today’s weather is very cold",
-                  "Today’s weather is very windy",
-                  "Today’s weather is very hot",
-                  "Today’s weather is very snowy"
-                ],
-                "correct_answer": "Today’s weather is very hot",
-                "explanation": "热 means hot"
-              },
-              {
-                "gameformat": 1,
-                "question": "How do you say Cloudy in Chinese?",
-                "options": ["多云", "雾天", "冰雹", "寒冷"],
-                "correct_answer": "多云",
-                "explanation": "多云 means cloudy"
-              },
-              {
-                "gameformat": 1,
-                "question": "What does “下雨” mean?",
-                "options": ["Raining", "Snowing", "Sunny", "Windy"],
-                "correct_answer": "Raining",
-                "explanation": "下雨 means raining"
-              }
-            ]
+          "Question2": {
+            "gameformat": 0,
+            "word": "蓝色",
+            "pinyin": "lán sè",
+            "explanation": "Blue Colour",
+            "example": "天空中有一片湛蓝的蓝色",
+            "pinyinExample": "tiān kōng zhōng yǒu yī piàn zhàn lán de lán sè",
+            "exampleTranslated": "There is a clear blue in the sky"
           },
-          {
-            "topicName": "Topic 3: Directions",
-            "questions": [
-              {
-                "gameformat": 0,
-                "word": "东, 南, 西, 北",
-                "pinyin": "dōng, nán, xī, běi",
-                "Explaination": "east, south, west, north",
-                "Example": "太阳从东方升起",
-                "PinyinExample": "tài yáng cóng dōng fāng shēng qǐ",
-                "exampleTranslated": "The sun rises from the east"
-              },
-              {
-                "gameformat": 0,
-                "word": "左,",
-                "pinyin": "xī",
-                "Explaination": "west",
-                "Example": "太阳在西方落下",
-                "PinyinExample": "tài yáng zài xī fāng luò xià",
-                "exampleTranslated": "The sun sets in the west"
-              },
-              {
-                "gameformat": 0,
-                "word": "左, 右, 上, 下",
-                "pinyin": "zuǒ, yòu, shàng, xià",
-                "Explaination": "left, right, up, down",
-                "Example": "他叫我左转",
-                "PinyinExample": "tā jiào wǒ zuǒ zhuǎn",
-                "exampleTranslated": "He told me to turn left"
-              },
-              {
-                "gameformat": 0,
-                "word": "直走, 后退",
-                "pinyin": "zhí zǒu, hòu tuì",
-                "Explaination": "straight ahead, back/reverse",
-                "Example": "如果我直走我就会到达商店",
-                "PinyinExample": "rú guǒ wǒ zhí zǒu wǒ jiù huì dào dá shāng diàn",
-                "exampleTranslated": "I will reach the store if I walk straight"
-              },
-              {
-                "gameformat": 0,
-                "word": "上楼, 下楼",
-                "pinyin": "shàng lóu,  xià lóu",
-                "Explaination": "go upstairs",
-                "Example": "她上楼去找妈妈",
-                "PinyinExample": "tā shàng lóu qù zhǎo mā mā",
-                "exampleTranslated": "She went upstairs to look for mother"
-              },
-              {
-                "gameformat": 1,
-                "question": "What does “我后退一步, 然后向左转” mean?",
-                "options": [
-                  "I stepped back, then turned right",
-                  "I stepped forwards, then turned left",
-                  "I stepped back, then turned left",
-                  "I stepped forwards, then turned right"
-                ],
-                "correct_answer": "I stepped back, then turned left",
-                "explanation": "后退 means stepped back, 左转 means turn left"
-              },
-              {
-                "gameformat": 1,
-                "question": "What is the Chinese translation for North?",
-                "options": ["东", "南", "西", "北"],
-                "correct_answer": "北",
-                "explanation": "北 means north"
-              },
-              {
-                "gameformat": 1,
-                "question": "How would you say Go Upstairs in Chinese?",
-                "options": ["下楼", "上楼", "出门", "停车"],
-                "correct_answer": "上楼",
-                "explanation": "上楼 means go upstairs"
-              }
-            ]
+          "Question3": {
+            "gameformat": 0,
+            "word": "绿色",
+            "pinyin": "lǜ sè",
+            "explanation": "Green Colour",
+            "example": "森林中的树叶是绿色的.",
+            "pinyinExample": "Sēn lín zhōng de shù yè shì lǜ sè de.",
+            "exampleTranslated": "The leaves in the forest are green."
           },
-          {
-            "topicName": "Topic 4: Sights and Sounds at the Market",
-            "questions": [
-              {
-                "gameformat": 0,
-                "word": "顾客",
-                "pinyin": "gù kè",
-                "Explaination": "customer",
-                "Example": "她正忙着为顾客服务",
-                "PinyinExample": "tā zhèng máng zhuó wéi gù kè fú wù",
-                "exampleTranslated": "She is busy serving the customer"
-              },
-              {
-                "gameformat": 0,
-                "word": "鱼",
-                "pinyin": "yú",
-                "Explaination": "fish",
-                "Example": "爸爸说今天市场上的鱼很新鲜",
-                "PinyinExample": "bà bà shuō jīn tiān shì cháng shàng de yú hěn xīn xiān",
-                "exampleTranslated": "Dad says the fish at the market today was very fresh"
-              },
-              {
-                "gameformat": 0,
-                "word": "购物篮",
-                "pinyin": "gòu wù lán",
-                "Explaination": "shopping cart",
-                "Example": "我们推着购物篮在市场里转悠",
-                "PinyinExample": "wǒ mén tuī zhuó gòu wù lán zài shì cháng lǐ zhuǎn yōu",
-                "exampleTranslated": "We pushed the shopping cart around the market"
-              },
-              {
-                "gameformat": 0,
-                "word": "收银台",
-                "pinyin": "shōu yín tái",
-                "Explaination": "checkout",
-                "Example": "我们去收银台付钱",
-                "PinyinExample": "wǒ mén qù shōu yín tái fù qián",
-                "exampleTranslated": "We went to the checkout area to pay"
-              },
-              {
-                "gameformat": 0,
-                "word": "巴刹",
-                "pinyin": "bā chà",
-                "Explaination": "market",
-                "Example": "今天我去了巴刹",
-                "PinyinExample": "jīn tiān wǒ qù liǎo bā chà",
-                "exampleTranslated": "Today I went to the market"
-              },
-              {
-                "gameformat": 1,
-                "question": "How do you say Customer in Chinese?",
-                "options": ["顾客", "购物篮", "收银台", "收据"],
-                "correct_answer": "顾客",
-                "explanation": "顾客 means customer"
-              },
-              {
-                "gameformat": 1,
-                "question": "What is the Chinese translation for Shopping cart?",
-                "options": ["收银台", "收据", "货架", "购物篮"],
-                "correct_answer": "购物篮",
-                "explanation": "购物篮 means shopping cart"
-              },
-              {
-                "gameformat": 1,
-                "question": "Translate “我买了一些鱼”",
-                "options": [
-                  "I bought some eggs",
-                  "I bought some vegetables",
-                  "I bought some fish",
-                  "I bought some meat"
-                ],
-                "correct_answer": "I bought some fish",
-                "explanation": "鱼 means fish"
-              }
-            ]
+          "Question4": {
+            "gameformat": 0,
+            "word": "白色",
+            "pinyin": "bái sè",
+            "explanation": "White Colour",
+            "example": "新鲜的雪覆盖了整个山坡, 一切都变得白色了.",
+            "pinyinExample": "xīn xiān de xuě fù gài le zhěng gè shān pō, yī qiè dōu biàn dé bái sè le.",
+            "exampleTranslated": "Fresh snow covered the entire hillside and everything turned white."
           },
-          {
-            "topicName": "Topic 5: Cooking",
-            "questions": [
-              {
-                "gameformat": 0,
-                "word": "刀",
-                "pinyin": "dāo",
-                "Explaination": "knife",
-                "Example": "妈妈用刀切鸡肉",
-                "PinyinExample": "mā mā yòng dāo qiē jī ròu",
-                "exampleTranslated": "Mum uses a knife to cut chicken"
-              },
-              {
-                "gameformat": 0,
-                "word": "煮",
-                "pinyin": "zhǔ",
-                "Explaination": "cook",
-                "Example": "爷爷正在煮菜",
-                "PinyinExample": "yé yé zhèng zài zhǔ cài",
-                "exampleTranslated": "Grandpa is cooking dishes"
-              },
-              {
-                "gameformat": 0,
-                "word": "筷子, 叉子, 汤匙, 碗",
-                "pinyin": "kuài zǐ, chā zi, tāng chí,  wǎn",
-                "Explaination": "Chopsticks, forks, spoons, bowls",
-                "Example": "我用筷子夹食物",
-                "PinyinExample": "wǒ yòng kuài zǐ jiā shí wù",
-                "exampleTranslated": "I use chopsticks to grab my food"
-              },
-              {
-                "gameformat": 0,
-                "word": "炸, 炒, 蒸",
-                "pinyin": "zhá, chǎo, zhēng",
-                "Explaination": "fry",
-                "Example": "我喜欢吃炸鸡",
-                "PinyinExample": "wǒ xǐ huān chī zhà jī",
-                "exampleTranslated": "I like to eat fried chicken"
-              },
-              {
-                "gameformat": 0,
-                "word": "早餐, 午餐, 晚餐",
-                "pinyin": "zǎo cān, wǔ cān, wǎn cān",
-                "Explaination": "breakfast, lunch, dinner",
-                "Example": "今天爸爸带我们出去吃晚餐",
-                "PinyinExample": "jīn tiān bà bà dài wǒ mén chū qù chī wǎn cān",
-                "exampleTranslated": "Dad is bringing us out for dinner today"
-              },
-              {
-                "gameformat": 1,
-                "question": "What does “妈妈正在煮晚餐” mean?",
-                "options": [
-                  "Father is cooking lunch",
-                  "Mother is cooking breakfast",
-                  "Mother is cooking dinner",
-                  "Father is cooking breakfast"
-                ],
-                "correct_answer": "Mother is cooking dinner",
-                "explanation": "晚餐 means dinner"
-              },
-              {
-                "gameformat": 1,
-                "question": "What does “筷子” mean?",
-                "options": ["Chopsticks", "Spoon", "Fork", "Knife"],
-                "correct_answer": "Chopsticks",
-                "explanation": "筷子 means chopsticks"
-              },
-              {
-                "gameformat": 1,
-                "question": "What is the Chinese translation for Knife?",
-                "options": ["碗", "刀", "筷子", "炉子"],
-                "correct_answer": "刀",
-                "explanation": "刀 means knife"
-              }
-            ]
+          "Question5": {
+            "gameformat": 0,
+            "word": "黑色",
+            "pinyin": "hēi sè",
+            "explanation": "Black Colour",
+            "example": "夜晚的天空中, 星星在的黑色背景下闪烁",
+            "pinyinExample": "yè wǎn de tiān kōng zhōng, xīng xīng zài de hēi sè bèi jǐng xià shǎn shuò",
+            "exampleTranslated": "Night sky with stars twinkling on black background"
           },
-          {
-            "topicName": "Topic 6: Review",
-            "questions": [
-              {
-                "gameformat": 1,
-                "question": "Translate “妈妈叫我去巴刹买菜”",
-                "options": [
-                  "Mother told me to go to the market to buy groceries",
-                  "Mother told me to go to school to study",
-                  "Mother told me to go to the clinic to buy medicine",
-                  "Mother told me to go to the hawker center to buy food "
-                ],
-                "correct_answer": "Mother told me to go to the market to buy groceries",
-                "explanation": "巴刹 means market"
-              },
-              {
-                "gameformat": 1,
-                "question": "What is “It looks like it is about to rain.” in Chinese?",
-                "options": [
-                  "天气看起来要下雪了",
-                  "天气看起来要下雨了",
-                  "今天的天气很热",
-                  "今天的天气很凉"
-                ],
-                "correct_answer": "天气看起来要下雨了",
-                "explanation": "下雨 means rain"
-              },
-              {
-                "gameformat": 1,
-                "question": "How would you say “the market is four bus stops away” in Chinese?",
-                "options": [
-                  "距离巴刹有一个巴士车站",
-                  "距离巴刹有两个公巴士站",
-                  "距离巴刹有四个巴士车站",
-                  "距离巴刹有三个巴士车站"
-                ],
-                "correct_answer": "距离巴刹有四个公巴士站",
-                "explanation": "四 is four"
-              },
-              {
-                "gameformat": 1,
-                "question": "Translate 今天蔬菜颜色鲜绿, 看起来很新鲜. ",
-                "options": [
-                  "The vegetables today are bright green, it looks fresh.",
-                  "The vegetables today are black, it looks fresh.",
-                  "The vegetables today are blue, it looks fresh.",
-                  "The vegetables today are white, it looks fresh."
-                ],
-                "correct_answer": "The vegetables today are bright green, it looks fresh.",
-                "explanation": "鲜绿 means bright green, hence it would be the logical option to say as the vegtables look fresh"
-              },
-              {
-                "gameformat": 1,
-                "question": "Translate “今天奶奶给我们做了晚餐”",
-                "options": [
-                  "Grandma is making lunch today",
-                  "Grandma is making breakfast today",
-                  "Grandma is making supper today",
-                  "Grandma is making dinner today"
-                ],
-                "correct_answer": "Grandma is making dinner today",
-                "explanation": "晚餐 means dinner"
-              }
-            ]
+          "Question6": {
+            "gameFormat": 1,
+            "question": "当我们看到________交通灯时我们必需停下来",
+            "options": {
+              "option1": "黑色",
+              "option2": "白色",
+              "option3": "绿色",
+              "option4": "红色"
+            },
+            "correct_answer": "红色",
+            "explanation": "For a traffic light, we need to stop when we see red colour."
+          },
+          "Question7": {
+            "gameFormat": 1,
+            "question": "那朵_________ 色的玫瑰花在阳光下闪闪发光.",
+            "options": {
+              "option1": "红色",
+              "option2": "黑色",
+              "option3": "绿色",
+              "option4": "蓝色"
+            },
+            "correct_answer": "红色",
+            "explanation": "Roses are generally red in colour"
+          },
+          "Question8": {
+            "gameFormat": 1,
+            "question": "桌子上放着一杯_________ 咖啡, 发出阵阵香气.",
+            "options": {
+              "option1": "绿色",
+              "option2": "红色",
+              "option3": "白色",
+              "option4": "黑色"
+            },
+            "correct_answer": "黑色",
+            "explanation": "Coffee are generally black in colour"
           }
-        ]
+        },
+        "Topic 2: Weather": {
+          "Question1": {
+            "gameformat": 0,
+            "word": "气温",
+            "pinyin": "qì wēn",
+            "explanation": "temperature",
+            "Example": "今天的气温很热",
+            "PinyinExample": "jīn tiān de qì wēn hěn rè",
+            "exampleTranslated": "Today's temperature is very hot"
+          },
+          "Question2": {
+            "gameformat": 0,
+            "word": "多云",
+            "pinyin": "duō yún",
+            "Explaination": "cloudy",
+            "Example": "今天的天空多云",
+            "PinyinExample": "jīn tiān de tiān kōng duō yún",
+            "exampleTranslated": "The sky looks cloudy today"
+          },
+          "Question3": {
+            "gameformat": 0,
+            "word": "下雨",
+            "pinyin": "xià yǔ",
+            "Explaination": "raining",
+            "Example": "目前正在下雨",
+            "PinyinExample": "mù qián zhèng zài xià yǔ",
+            "exampleTranslated": "It is currently raining"
+          },
+          "Question4": {
+            "gameformat": 0,
+            "word": "雷雨",
+            "pinyin": "léi yǔ",
+            "Explaination": "thunderstorm",
+            "Example": "天气预报预计有雷雨",
+            "PinyinExample": "tiān qì yù bào yù jì yǒu léi yǔ",
+            "exampleTranslated": "The weather forecast predicts a thunderstorm"
+          },
+          "Question5": {
+            "gameformat": 0,
+            "word": "下雪",
+            "pinyin": "xià xuě",
+            "Explaination": "snow",
+            "Example": "新加坡不下雪",
+            "PinyinExample": "xīn jiā pō bù xià xuě",
+            "exampleTranslated": "It does not snow in Singapore"
+          },
+          "Question6": {
+            "gameformat": 1,
+            "question": "What does “今天的天气很热” mean?",
+            "options": {
+              "option1": "Today’s weather is very cold",
+              "option2": "Today’s weather is very windy",
+              "option3": "Today’s weather is very hot",
+              "option4": "Today’s weather is very snowy"
+            },
+            "correct_answer": "Today’s weather is very hot",
+            "explanation": "热 means hot"
+          },
+          "Question7": {
+            "gameformat": 1,
+            "question": "How do you say Cloudy in Chinese?",
+            "options": {
+              "option1": "多云",
+              "option2": "雾天",
+              "option3": "冰雹",
+              "option4": "寒冷"
+            },
+            "correct_answer": "多云",
+            "explanation": "多云 means cloudy"
+          },
+          "Question8": {
+            "gameformat": 1,
+            "question": "What does “下雨” mean?",
+            "options": {
+              "option1": "Raining",
+              "option2": "Snowing",
+              "option3": "Sunny",
+              "option4": "Windy"
+            },
+            "correct_answer": "Raining",
+            "explanation": "下雨 means raining"
+          }
+        },
+        "Topic 3: Directions": {
+          "Question1": {
+            "gameformat": 0,
+            "word": "东, 南, 西, 北",
+            "pinyin": "dōng, nán, xī, běi",
+            "Explaination": "east, south, west, north",
+            "Example": "太阳从东方升起",
+            "PinyinExample": "tài yáng cóng dōng fāng shēng qǐ",
+            "exampleTranslated": "The sun rises from the east"
+          },
+          "Question2": {
+            "gameformat": 0,
+            "word": "左,",
+            "pinyin": "xī",
+            "Explaination": "west",
+            "Example": "太阳在西方落下",
+            "PinyinExample": "tài yáng zài xī fāng luò xià",
+            "exampleTranslated": "The sun sets in the west"
+          },
+          "Question3": {
+            "gameformat": 0,
+            "word": "左, 右, 上, 下",
+            "pinyin": "zuǒ, yòu, shàng, xià",
+            "Explaination": "left, right, up, down",
+            "Example": "他叫我左转",
+            "PinyinExample": "tā jiào wǒ zuǒ zhuǎn",
+            "exampleTranslated": "He told me to turn left"
+          },
+          "Question4": {
+            "gameformat": 0,
+            "word": "直走, 后退",
+            "pinyin": "zhí zǒu, hòu tuì",
+            "Explaination": "straight ahead, back/reverse",
+            "Example": "如果我直走我就会到达商店",
+            "PinyinExample": "rú guǒ wǒ zhí zǒu wǒ jiù huì dào dá shāng diàn",
+            "exampleTranslated": "I will reach the store if I walk straight"
+          },
+          "Question5": {
+            "gameformat": 0,
+            "word": "上楼, 下楼",
+            "pinyin": "shàng lóu,  xià lóu",
+            "Explaination": "go upstairs",
+            "Example": "她上楼去找妈妈",
+            "PinyinExample": "tā shàng lóu qù zhǎo mā mā",
+            "exampleTranslated": "She went upstairs to look for mother"
+          },
+          "Question6": {
+            "gameformat": 1,
+            "question": "What does “我后退一步, 然后向左转” mean?",
+            "options": {
+              "option1": "I stepped back, then turned right",
+              "option2": "I stepped forwards, then turned left",
+              "option3": "I stepped back, then turned left",
+              "option4": "I stepped forwards, then turned right"
+            },
+            "correct_answer": "I stepped back, then turned left",
+            "explanation": "后退 means stepped back, 左转 means turn left"
+          },
+          "Question7": {
+            "gameformat": 1,
+            "question": "What is the Chinese translation for North?",
+            "options": {
+              "option1": "东",
+              "option2": "南",
+              "option3": "西",
+              "option4": "北"
+            },
+            "correct_answer": "北",
+            "explanation": "北 means north"
+          },
+          "Question8": {
+            "gameformat": 1,
+            "question": "How would you say Go Upstairs in Chinese?",
+            "options": {
+              "option1": "下楼",
+              "option2": "上楼",
+              "option3": "出门",
+              "option4": "停车"
+            },
+            "correct_answer": "上楼",
+            "explanation": "上楼 means go upstairs"
+          }
+        },
+        "Topic 4: Sights and Sounds at the Market": {
+          "Question1": {
+            "gameformat": 0,
+            "word": "顾客",
+            "pinyin": "gù kè",
+            "Explaination": "customer",
+            "Example": "她正忙着为顾客服务",
+            "PinyinExample": "tā zhèng máng zhuó wéi gù kè fú wù",
+            "exampleTranslated": "She is busy serving the customer"
+          },
+          "Question2": {
+            "gameformat": 0,
+            "word": "鱼",
+            "pinyin": "yú",
+            "Explaination": "fish",
+            "Example": "爸爸说今天市场上的鱼很新鲜",
+            "PinyinExample": "bà bà shuō jīn tiān shì cháng shàng de yú hěn xīn xiān",
+            "exampleTranslated": "Dad says the fish at the market today was very fresh"
+          },
+          "Question3": {
+            "gameformat": 0,
+            "word": "购物篮",
+            "pinyin": "gòu wù lán",
+            "Explaination": "shopping cart",
+            "Example": "我们推着购物篮在市场里转悠",
+            "PinyinExample": "wǒ mén tuī zhuó gòu wù lán zài shì cháng lǐ zhuǎn yōu",
+            "exampleTranslated": "We pushed the shopping cart around the market"
+          },
+          "Question4": {
+            "gameformat": 0,
+            "word": "收银台",
+            "pinyin": "shōu yín tái",
+            "Explaination": "checkout",
+            "Example": "我们去收银台付钱",
+            "PinyinExample": "wǒ mén qù shōu yín tái fù qián",
+            "exampleTranslated": "We went to the checkout area to pay"
+          },
+          "Question5": {
+            "gameformat": 0,
+            "word": "巴刹",
+            "pinyin": "bā chà",
+            "Explaination": "market",
+            "Example": "今天我去了巴刹",
+            "PinyinExample": "jīn tiān wǒ qù liǎo bā chà",
+            "exampleTranslated": "Today I went to the market"
+          },
+          "Question6": {
+            "gameformat": 1,
+            "question": "How do you say Customer in Chinese?",
+            "options": {
+              "option1": "顾客",
+              "option2": "购物篮",
+              "option3": "收银台",
+              "option4": "收据"
+            },
+            "correct_answer": "顾客",
+            "explanation": "顾客 means customer"
+          },
+          "Question7": {
+            "gameformat": 1,
+            "question": "What is the Chinese translation for Shopping cart?",
+            "options": {
+              "option1": "收银台",
+              "option2": "收据",
+              "option3": "货架",
+              "option4": "购物篮"
+            },
+            "correct_answer": "购物篮",
+            "explanation": "购物篮 means shopping cart"
+          },
+          "Question8": {
+            "gameformat": 1,
+            "question": "Translate “我买了一些鱼”",
+            "options": {
+              "option1": "I bought some eggs",
+              "option2": "I bought some vegetables",
+              "option3": "I bought some fish",
+              "option4": "I bought some meat"
+            },
+            "correct_answer": "I bought some fish",
+            "explanation": "鱼 means fish"
+          }
+        },
+        "Topic 5: Cooking": {
+          "Question1": {
+            "gameformat": 0,
+            "word": "刀",
+            "pinyin": "dāo",
+            "Explaination": "knife",
+            "Example": "妈妈用刀切鸡肉",
+            "PinyinExample": "mā mā yòng dāo qiē jī ròu",
+            "exampleTranslated": "Mum uses a knife to cut chicken"
+          },
+          "Question2": {
+            "gameformat": 0,
+            "word": "煮",
+            "pinyin": "zhǔ",
+            "Explaination": "cook",
+            "Example": "爷爷正在煮菜",
+            "PinyinExample": "yé yé zhèng zài zhǔ cài",
+            "exampleTranslated": "Grandpa is cooking dishes"
+          },
+          "Question3": {
+            "gameformat": 0,
+            "word": "筷子, 叉子, 汤匙, 碗",
+            "pinyin": "kuài zǐ, chā zi, tāng chí,  wǎn",
+            "Explaination": "Chopsticks, forks, spoons, bowls",
+            "Example": "我用筷子夹食物",
+            "PinyinExample": "wǒ yòng kuài zǐ jiā shí wù",
+            "exampleTranslated": "I use chopsticks to grab my food"
+          },
+          "Question4": {
+            "gameformat": 0,
+            "word": "炸, 炒, 蒸",
+            "pinyin": "zhá, chǎo, zhēng",
+            "Explaination": "fry",
+            "Example": "我喜欢吃炸鸡",
+            "PinyinExample": "wǒ xǐ huān chī zhà jī",
+            "exampleTranslated": "I like to eat fried chicken"
+          },
+          "Question5": {
+            "gameformat": 0,
+            "word": "早餐, 午餐, 晚餐",
+            "pinyin": "zǎo cān, wǔ cān, wǎn cān",
+            "Explaination": "breakfast, lunch, dinner",
+            "Example": "今天爸爸带我们出去吃晚餐",
+            "PinyinExample": "jīn tiān bà bà dài wǒ mén chū qù chī wǎn cān",
+            "exampleTranslated": "Dad is bringing us out for dinner today"
+          },
+          "Question6": {
+            "gameformat": 1,
+            "question": "What does “妈妈正在煮晚餐” mean?",
+            "options": {
+              "option1": "Father is cooking lunch",
+              "option2": "Mother is cooking breakfast",
+              "option3": "Mother is cooking dinner",
+              "option4": "Father is cooking breakfast"
+            },
+            "correct_answer": "Mother is cooking dinner",
+            "explanation": "晚餐 means dinner"
+          },
+          "Question7": {
+            "gameformat": 1,
+            "question": "What does “筷子” mean?",
+            "options": {
+              "option1": "Chopsticks",
+              "option2": "Spoon",
+              "option3": "Fork",
+              "option4": "Knife"
+            },
+            "correct_answer": "Chopsticks",
+            "explanation": "筷子 means chopsticks"
+          },
+          "Question8": {
+            "gameformat": 1,
+            "question": "What is the Chinese translation for Knife?",
+            "options": {
+              "option1": "碗",
+              "option2": "刀",
+              "option3": "筷子",
+              "option4": "炉子"
+            },
+            "correct_answer": "刀",
+            "explanation": "刀 means knife"
+          }
+        },
+        "Topic 6: Review": {
+          "Question1": {
+            "gameformat": 1,
+            "question": "Translate “妈妈叫我去巴刹买菜”",
+            "options": {
+              "option1": "Mother told me to go to the market to buy groceries",
+              "option2": "Mother told me to go to school to study",
+              "option3": "Mother told me to go to the clinic to buy medicine",
+              "option4": "Mother told me to go to the hawker center to buy food "
+            },
+            "correct_answer": "Mother told me to go to the market to buy groceries",
+            "explanation": "巴刹 means market"
+          },
+          "Question2": {
+            "gameformat": 1,
+            "question": "What is “It looks like it is about to rain.” in Chinese?",
+            "options": {
+              "option1": "天气看起来要下雪了",
+              "option2": "天气看起来要下雨了",
+              "option3": "今天的天气很热",
+              "option4": "今天的天气很凉"
+            },
+            "correct_answer": "天气看起来要下雨了",
+            "explanation": "下雨 means rain"
+          },
+          "Question3": {
+            "gameformat": 1,
+            "question": "How would you say “the market is four bus stops away” in Chinese?",
+            "options": {
+              "option1": "距离巴刹有一个巴士车站",
+              "option2": "距离巴刹有两个公巴士站",
+              "option3": "距离巴刹有四个巴士车站",
+              "option4": "距离巴刹有三个巴士车站"
+            },
+            "correct_answer": "距离巴刹有四个公巴士站",
+            "explanation": "四 is four"
+          },
+          "Question4": {
+            "gameformat": 1,
+            "question": "Translate 今天蔬菜颜色鲜绿, 看起来很新鲜. ",
+            "options": {
+              "option1": "The vegetables today are bright green, it looks fresh.",
+              "option2": "The vegetables today are black, it looks fresh.",
+              "option3": "The vegetables today are blue, it looks fresh.",
+              "option4": "The vegetables today are white, it looks fresh."
+            },
+            "correct_answer": "The vegetables today are bright green, it looks fresh.",
+            "explanation": "鲜绿 means bright green, hence it would be the logical option to say as the vegtables look fresh"
+          },
+          "Question5": {
+            "gameformat": 1,
+            "question": "Translate “今天奶奶给我们做了晚餐”",
+            "options": {
+              "option1": "Grandma is making lunch today",
+              "option2": "Grandma is making breakfast today",
+              "option3": "Grandma is making supper today",
+              "option4": "Grandma is making dinner today"
+            },
+            "correct_answer": "Grandma is making dinner today",
+            "explanation": "晚餐 means dinner"
+          }
+        }
       }
     },
     "Module 3: Intermediate": {
