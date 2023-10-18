@@ -77,6 +77,11 @@ const Home = (props: HomeProps) => {
           }>
           Go to Quiz End
         </Button>
+        <Button
+          mode="outlined"
+          onPress={() => navigation.navigate('Settings', {})}>
+          Settings
+        </Button>
       </View>
     </View>
   );

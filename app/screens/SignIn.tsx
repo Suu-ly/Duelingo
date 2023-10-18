@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {signIn} from '../utils/auth';
-import {Appbar, Text, TextInput} from 'react-native-paper';
+import {Appbar, Text, TextInput, HelperText} from 'react-native-paper';
 import {View, StyleSheet} from 'react-native';
 
 import CustomStatusBar from '../common/CustomStatusBar';
@@ -52,8 +52,14 @@ const SignIn = (props: SignInProps) => {
           value={email}
           activeOutlineColor={theme.colors.primary}
           autoCapitalize="none"
+          error={email != '' && !email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)}
           onChangeText={email => setEmail(email)}
         />
+        {email != '' && !email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/) ? (
+          <HelperText type="error" visible={true}>
+            Invalid email address format.
+          </HelperText>
+        ) : null}
         <TextInput
           mode="outlined"
           label="Password"
@@ -72,7 +78,11 @@ const SignIn = (props: SignInProps) => {
         />
         <DuoButton
           filled={true}
-          disabled={email != '' && password != '' ? false : true}
+          disabled={
+            email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/) && password != ''
+              ? false
+              : true
+          }
           stretch={true}
           backgroundColor={theme.colors.primary}
           backgroundDark={theme.colors.primaryDark}

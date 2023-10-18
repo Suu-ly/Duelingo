@@ -1,20 +1,13 @@
 import React, {useState} from 'react';
 import {signUp} from '../utils/auth';
-import {
-  Button,
-  Dialog,
-  Portal,
-  Appbar,
-  Text,
-  TextInput,
-} from 'react-native-paper';
+import {createUser} from '../utils/users';
+import {Appbar, Text, TextInput, HelperText} from 'react-native-paper';
 import {View, StyleSheet} from 'react-native';
 
 import CustomStatusBar from '../common/CustomStatusBar';
 import Constants from '../common/constants/Constants';
 import DuoButton from '../common/DuoButton';
 import theme from '../common/constants/theme.json';
-
 interface SignUpProps {
   route: any;
   navigation: any;
@@ -22,6 +15,8 @@ interface SignUpProps {
 
 const SignUp = (props: SignUpProps) => {
   const {route, navigation} = props;
+  const [username, setUsername] = useState('');
+  const [displayName, setDisplayName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -29,24 +24,9 @@ const SignUp = (props: SignUpProps) => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(true);
   const [passwordIcon, setPasswordIcon] = useState('eye-off');
   const [confirmPasswordIcon, setConfirmPasswordIcon] = useState('eye-off');
-  const [visible, setVisible] = useState(false);
-  const [errorTitle, setErrorTitle] = useState('');
-  const [errorContent, setErrorContent] = useState('');
 
   const handleOnSubmit = () => {
-    if (email != '' && password != '' && confirmPassword != '') {
-      if (password.length < 6) {
-        setErrorTitle('Password is too weak');
-        setErrorContent('Password must be at least 6 characters.');
-        setVisible(true);
-      } else if (password != confirmPassword) {
-        setErrorTitle('Password did not match');
-        setErrorContent('Please check your confirm password.');
-        setVisible(true);
-      } else {
-        signUp(props, email, password);
-      }
-    }
+    signUp(props, email, password, username, displayName);
   };
 
   const handlePasswordVisibility = () => {
@@ -55,31 +35,15 @@ const SignUp = (props: SignUpProps) => {
       : setPasswordIcon('eye');
     setShowPassword(!showPassword);
   };
-
   const handleConfirmPasswordVisibility = () => {
     confirmPasswordIcon === 'eye'
       ? setConfirmPasswordIcon('eye-off')
       : setConfirmPasswordIcon('eye');
     setShowConfirmPassword(!showConfirmPassword);
   };
-
   return (
     <View style={styles.mainContainer}>
       <CustomStatusBar />
-      <Portal>
-        <Dialog
-          visible={visible}
-          onDismiss={() => setVisible(false)}
-          style={styles.appbar}>
-          <Dialog.Title>{errorTitle}</Dialog.Title>
-          <Dialog.Content>
-            <Text variant="bodyMedium">{errorContent}</Text>
-          </Dialog.Content>
-          <Dialog.Actions>
-            <Button onPress={() => setVisible(false)}>OK</Button>
-          </Dialog.Actions>
-        </Dialog>
-      </Portal>
       <Appbar.Header style={styles.appbar}>
         <Appbar.BackAction
           onPress={() => {
@@ -91,7 +55,24 @@ const SignUp = (props: SignUpProps) => {
         <View style={styles.title}>
           <Text variant={'headlineLarge'}>Create your account</Text>
         </View>
-
+        <TextInput
+          mode="outlined"
+          label="Username"
+          placeholder="Username"
+          value={username}
+          activeOutlineColor={theme.colors.primary}
+          autoCapitalize="none"
+          onChangeText={username => setUsername(username)}
+        />
+        <TextInput
+          mode="outlined"
+          label="Display Name"
+          placeholder="Display Name"
+          value={displayName}
+          activeOutlineColor={theme.colors.primary}
+          autoCapitalize="none"
+          onChangeText={displayName => setDisplayName(displayName)}
+        />
         <TextInput
           mode="outlined"
           label="Email"
@@ -101,6 +82,11 @@ const SignUp = (props: SignUpProps) => {
           autoCapitalize="none"
           onChangeText={email => setEmail(email)}
         />
+        {email != '' && !email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/) ? (
+          <HelperText type="error" visible={true}>
+            Invalid email address format.
+          </HelperText>
+        ) : null}
         <TextInput
           mode="outlined"
           label="Password"
@@ -117,6 +103,11 @@ const SignUp = (props: SignUpProps) => {
           }
           onChangeText={password => setPassword(password)}
         />
+        {password != '' && password.length < 6 ? (
+          <HelperText type="error" visible={true}>
+            Password must be at least 6 characters.
+          </HelperText>
+        ) : null}
         <TextInput
           mode="outlined"
           label="Confirm Password"
@@ -133,10 +124,19 @@ const SignUp = (props: SignUpProps) => {
           }
           onChangeText={confirmPassword => setConfirmPassword(confirmPassword)}
         />
+        {confirmPassword != '' && password != confirmPassword ? (
+          <HelperText type="error" visible={true}>
+            Password does not match.
+          </HelperText>
+        ) : null}
         <DuoButton
           filled={true}
           disabled={
-            email != '' && password != '' && confirmPassword != ''
+            username != '' &&
+            displayName != '' &&
+            email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/) &&
+            password.length >= 6 &&
+            password == confirmPassword
               ? false
               : true
           }
@@ -152,9 +152,7 @@ const SignUp = (props: SignUpProps) => {
     </View>
   );
 };
-
 export default SignUp;
-
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,

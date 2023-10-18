@@ -1,65 +1,128 @@
 import firestore from '@react-native-firebase/firestore';
 
-const usersCollection = firestore().collection('Users');
+function getUserExp(documentSnapshot) {
+  return documentSnapshot.get('exp');
+}
 
-export const users = () => {
-  return firestore().collection('Users').get();
+export const Leaderboard = () => {
+  return firestore()
+  .collection('Users')
+    .get()
+    .then(collectionSnapshot => {
+        console.log('Total users: ', collectionSnapshot.size);});
+    .then(documentSnapshot => getUserExp(documentSnapshot))
+    .then(exp => {
+      console.log('Users exp is: ', exp);
+    });
+
 };
 
-firestore()
-  .collection('Users')
-  .doc('vkOP5HVmFdF0Y0ByAoeF')
-  .update({
-    name: 'aussie',
-  })
-  .then(() => {
-    console.log('User added!');
-  });
 
-// const usersCollection = firestore()
-//     .collection('Users')
-//     .get()
-//     .then(collectionSnapshot => {
-//         console.log('Total users: ', collectionSnapshot.size);
-//         collectionSnapshot
-//             .forEach(documentSnapshot => {
-//                 console.log('User ID: ', documentSnapshot.id,
-//                     documentSnapshot.data());
-//             });
-//     });
+export const createUser = (email: any, username: any, displayName: any) => {
+  return firestore()
+    .collection('Users')
+    .add({
+      displayName: displayName,
+      username: username,
+      email: email,
+      exp: 0,
+      friends: [{username: '', exp:0}],
+      hearts: 5,
+      modules: {
+        easy: 9,
+        intermediate: 9,
+        hard: 9,
+      },
+    })
+    .then(() => {
+      console.log('User created.');
+    });
+};
 
-//     firestore()
-//     .collection('Users')
-//     .add({
-//         name: 'austin123',
-//         exp: '0',
-//         hearts: '5',
-//         modules: {easy: 9, medium: 9, hard: 9},
-//         friends: [{name:"ap", exp:0}]
 
-//     })
-//     .then(() => {
-//         console.log('User added!');
-//     });
+export const getUserID = () => {
+  return firestore()
+    .collection('Users')
+    .get()
+    .then(collectionSnapshot => {
+      collectionSnapshot.forEach(documentSnapshot => {
+        console.log('User ID: ', documentSnapshot.id);
+      });
+    });
+};
 
-//     firestore()
-//     .collection('Users')
-//     .doc('vkOP5HVmFdF0Y0ByAoeF')
-//     .update({
-//         name: 'austin123',
-//         exp: '0',
-//         hearts: '5',
-//         modules: {easy:0, medium:0, hard:0},
-//         friends: [{name:"ap", exp:0}, {name: "ap2", exp:50}]
-//     })
-//     .then(() => {
-//         console.log('User added!');
-//     });
 
-//     firestore()
-//     .collection('Users')
-//     .doc('vkOP5HVmFdF0Y0ByAoeF')
-//     .delete()
-//     .then(() => {
-//         console.log('User deleted!');
-//     });
+export const UpdateUsername = (userAccount: any, username: any) => {
+  return firestore()
+    .collection('Users')
+    .doc(userAccount)
+    .update({
+      name: username,
+    })
+    .then(() => {
+      console.log('User updated!');
+    });
+};
+
+export const AddFriend = (userAccount: any, username: any, exp: any) => {
+  return firestore()
+    .collection('Users')
+    .doc(userAccount)
+    .update({
+      friends: [{name: username, exp: exp}],
+    })
+    .then(() => {
+      console.log('User updated!');
+    });
+};
+
+export const UpdateHearts = (userAccount: any, hearts: any) => {
+  return firestore()
+    .collection('Users')
+    .doc(userAccount)
+    .update({
+      hearts: hearts,
+    })
+    .then(() => {
+      console.log('User updated!');
+    });
+};
+
+export const UpdateModules = (
+  userAccount: any,
+  easy: any,
+  medium: any,
+  hard: any,
+) => {
+  return firestore()
+    .collection('Users')
+    .doc(userAccount)
+    .update({
+      modules: {easy: easy, medium: medium, hard: hard},
+    })
+    .then(() => {
+      console.log('User updated!');
+    });
+};
+
+export const UpdateExp = (userAccount: any, exp: any) => {
+  return firestore()
+    .collection('Users')
+    .doc(userAccount)
+    .update({
+      exp: exp,
+    })
+    .then(() => {
+      console.log('User updated!');
+    });
+};
+
+export const DeleteAccount = (userAccount: any) => {
+  return firestore()
+    .collection('Users')
+    .doc(userAccount)
+    .delete()
+    .then(() => {
+      console.log('User deleted!');
+    });
+};
