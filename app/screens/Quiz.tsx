@@ -116,7 +116,7 @@ const Quiz = (props: QuizProps) => {
           timeElapsed: timePassed,
           multiplayer: false,
           totalQuestions: totalQuestions,
-          score: answer === question.correct_answer ? score + 1 : score,
+          score: answer === currentQuestion.correct_answer ? score + 1 : score,
         });
       } else {
         stopTimer();
