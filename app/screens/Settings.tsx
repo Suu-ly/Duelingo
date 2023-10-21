@@ -19,11 +19,17 @@ const Settings = (props: SettingsProps) => {
 
   const username = 'yuhao2';
   const username2 = 'new username';
-  const exp = 100;
-  const [Hearts, setHearts] = useState<number>(4);
+  const [Hearts, setHearts] = useState<number>(5);
+  const [Exp, setExp] = useState<number>(0);
 
   const MinusHeart = () => {
-    setHearts(Hearts - 1);
+    if (Hearts > 0) {
+      setHearts(Hearts - 1);
+    }
+  };
+
+  const IncreaseExp = () => {
+    setExp(Exp + 100);
   };
 
   return (
@@ -34,17 +40,34 @@ const Settings = (props: SettingsProps) => {
         <Button
           mode="outlined"
           onPress={() => {
-            MinusHeart;
+            setHearts(5);
+            console.log(Hearts);
+          }}>
+          Revive hearts
+        </Button>
+        <Button
+          mode="outlined"
+          onPress={() => {
+            MinusHeart();
             UpdateHearts(username, Hearts);
+            console.log(Hearts);
           }}>
           Update heart
         </Button>
         <Button
           mode="outlined"
           onPress={() => {
-            UpdateExp(username, exp);
+            IncreaseExp();
+            UpdateExp(username, Exp);
           }}>
           Update EXP
+        </Button>
+        <Button
+          mode="outlined"
+          onPress={() => {
+            setExp(0);
+          }}>
+          Reset EXP
         </Button>
         <Button
           mode="outlined"
