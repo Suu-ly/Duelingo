@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
 import {signUp} from '../utils/auth';
-import {createUser} from '../utils/database';
 import {Appbar, Text, TextInput, HelperText} from 'react-native-paper';
 import {View, StyleSheet} from 'react-native';
 
