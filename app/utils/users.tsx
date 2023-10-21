@@ -1,23 +1,5 @@
 import firestore from '@react-native-firebase/firestore';
 
-function getUserExp(documentSnapshot) {
-  return documentSnapshot.get('exp');
-}
-
-export const Leaderboard = () => {
-  return firestore()
-  .collection('Users')
-    .get()
-    .then(collectionSnapshot => {
-        console.log('Total users: ', collectionSnapshot.size);});
-    .then(documentSnapshot => getUserExp(documentSnapshot))
-    .then(exp => {
-      console.log('Users exp is: ', exp);
-    });
-
-};
-
-
 export const createUser = (email: any, username: any, displayName: any) => {
   return firestore()
     .collection('Users')
@@ -26,7 +8,7 @@ export const createUser = (email: any, username: any, displayName: any) => {
       username: username,
       email: email,
       exp: 0,
-      friends: [{username: '', exp:0}],
+      friends: [{username: '', exp: 0}],
       hearts: 5,
       modules: {
         easy: 9,
@@ -39,7 +21,6 @@ export const createUser = (email: any, username: any, displayName: any) => {
     });
 };
 
-
 export const getUserID = () => {
   return firestore()
     .collection('Users')
@@ -50,7 +31,6 @@ export const getUserID = () => {
       });
     });
 };
-
 
 export const UpdateUsername = (userAccount: any, username: any) => {
   return firestore()
