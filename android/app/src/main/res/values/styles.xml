@@ -3,7 +3,7 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="android:editTextBackground">@android/app/src/main/res/layout/launch_screen.xml</item>
+        <item name="android:editTextBackground">@layout/launch_screen </item>
     </style>
 
 </resources>
