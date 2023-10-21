@@ -18,9 +18,9 @@ const Settings = (props: SettingsProps) => {
   const {route, navigation} = props;
 
   const username = 'yuhao2';
-  const username2 = 'ap';
+  const username2 = 'new username';
   const exp = 100;
-  const [Hearts, setHearts] = useState<number>(5);
+  const [Hearts, setHearts] = useState<number>(4);
 
   const MinusHeart = () => {
     setHearts(Hearts - 1);
