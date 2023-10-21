@@ -12,7 +12,15 @@ interface SettingsProps {
   navigation: any;
 }
 
-import {UpdateHearts, UpdateExp, UpdateUsername} from '../utils/users';
+import {
+  UpdateHearts,
+  UpdateExp,
+  UpdateUsername,
+  UpdateModules,
+  DeleteUserdata,
+} from '../utils/users';
+
+import {deleteAccount} from '../utils/auth';
 
 const Settings = (props: SettingsProps) => {
   const {route, navigation} = props;
@@ -75,6 +83,29 @@ const Settings = (props: SettingsProps) => {
             UpdateUsername(username, username2);
           }}>
           Update Username
+        </Button>
+        <Button
+          mode="outlined"
+          onPress={() => {
+            UpdateModules(username, 0, 0, 0);
+          }}>
+          Update Modules
+        </Button>
+        <Button
+          mode="outlined"
+          onPress={() => {
+            UpdateModules(username, 9, 9, 9);
+          }}>
+          Reset Modules
+        </Button>
+        <Button
+          mode="outlined"
+          onPress={() => {
+            navigation.navigate('Landing');
+            deleteAccount();
+            DeleteUserdata(username);
+          }}>
+          Delete Account
         </Button>
       </View>
     </View>

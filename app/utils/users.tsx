@@ -115,28 +115,53 @@ export const UpdateExp = (userAccount: any, exp: any) => {
 export const UpdateModules = (
   userAccount: any,
   easy: any,
-  medium: any,
+  intermediate: any,
   hard: any,
 ) => {
-  return firestore()
-    .collection('Users')
-    .doc(userAccount)
-    .update({
-      modules: {easy: easy, medium: medium, hard: hard},
-    })
-    .then(() => {
-      console.log('User updated!');
-    });
+  auth().onAuthStateChanged(user => {
+    if (user) {
+      const uid = user.uid;
+      firestore()
+        .collection('Users')
+        .where('username', '==', userAccount)
+        .get()
+        .then(querySnapshot => {
+          querySnapshot.forEach(documentSnapshot => {
+            console.log(documentSnapshot.id);
+            firestore()
+              .collection('Users')
+              .doc(uid)
+              .update({
+                modules: {easy: easy, intermediate: intermediate, hard: hard},
+              });
+          });
+        })
+        .then(() => {
+          console.log('User updated!');
+        });
+    }
+  });
 };
 
-export const DeleteAccount = (userAccount: any) => {
-  return firestore()
-    .collection('Users')
-    .doc(userAccount)
-    .delete()
-    .then(() => {
-      console.log('User deleted!');
-    });
+export const DeleteUserdata = (userAccount: any) => {
+  auth().onAuthStateChanged(user => {
+    if (user) {
+      const uid = user.uid;
+      firestore()
+        .collection('Users')
+        .where('username', '==', userAccount)
+        .get()
+        .then(querySnapshot => {
+          querySnapshot.forEach(documentSnapshot => {
+            console.log(documentSnapshot.id);
+            firestore().collection('Users').doc(uid).delete();
+          });
+        })
+        .then(() => {
+          console.log('User deleted!');
+        });
+    }
+  });
 };
 
 export const createFriend = (username: any) => {
@@ -184,3 +209,29 @@ export const getFriendList: any = () => {
     }
   });
 };
+
+// export const deleteFriend = (friendUser: any) => {
+//   auth().onAuthStateChanged(user => {
+//     if (user) {
+//       const uid = user.uid;
+//       firestore()
+//         .collection('Users')
+//         .where('username', '==', friendUser)
+//         .get()
+//         .then(querySnapshot => {
+//           querySnapshot.forEach(documentSnapshot => {
+//             console.log(documentSnapshot.id);
+//             firestore()
+//               .collection('Users')
+//               .doc(uid)
+//               .collection('Friends')
+//               .doc(documentSnapshot.id)
+//               .delete();
+//           });
+//         })
+//         .then(() => {
+//           console.log('User deleted!');
+//         });
+//     }
+//   });
+// };

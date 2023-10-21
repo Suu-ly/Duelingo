@@ -1,5 +1,5 @@
 import auth from '@react-native-firebase/auth';
-import firestore from '@react-native-firebase/firestore';
+import firestore, {firebase} from '@react-native-firebase/firestore';
 import {Alert, ToastAndroid} from 'react-native';
 import {createUser} from './users';
 import error from './error.json';
@@ -69,4 +69,19 @@ export const signOut = () => {
     .then(() => {
       ToastAndroid.show('Signed Out', ToastAndroid.SHORT);
     });
+};
+
+export const deleteAccount = async () => {
+  try {
+    const user = firebase.auth().currentUser;
+
+    if (user) {
+      await user.delete();
+      console.log('User deleted successfully');
+    } else {
+      console.log('No user is currently signed in.');
+    }
+  } catch (error) {
+    console.error('Error deleting user:', error);
+  }
 };

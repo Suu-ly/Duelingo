@@ -98,7 +98,12 @@ const Home = (props: HomeProps) => {
         </Button>
         <Button
           mode="outlined"
-          onPress={() => navigation.navigate('Settings', {})}>
+          onPress={() => {
+            console.log('Friend deleted!');
+          }}>
+          Delete Friend
+        </Button>
+        <Button mode="outlined" onPress={() => navigation.navigate('Settings')}>
           Settings
         </Button>
       </View>
