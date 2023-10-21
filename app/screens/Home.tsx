@@ -7,6 +7,8 @@ import Constants from '../common/constants/Constants';
 import DuoButton from '../common/DuoButton';
 import theme from '../common/constants/theme.json';
 
+import {createFriend, getFriendList} from '../utils/users';
+
 interface HomeProps {
   route: any;
   navigation: any;
@@ -14,6 +16,9 @@ interface HomeProps {
 
 const Home = (props: HomeProps) => {
   const {route, navigation} = props;
+
+  // change to whatever way to get the username
+  const username = 'yuhao2';
 
   return (
     <View style={styles.mainContainer}>
@@ -76,6 +81,20 @@ const Home = (props: HomeProps) => {
             })
           }>
           Go to Quiz End
+        </Button>
+        <Button
+          mode="outlined"
+          onPress={() => {
+            createFriend(username);
+          }}>
+          Add Friend
+        </Button>
+        <Button
+          mode="outlined"
+          onPress={() => {
+            getFriendList();
+          }}>
+          Get Friend List
         </Button>
         <Button
           mode="outlined"

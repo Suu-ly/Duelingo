@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
 import {signUp} from '../utils/auth';
-import {createUser} from '../utils/users';
 import {Appbar, Text, TextInput, HelperText} from 'react-native-paper';
 import {View, StyleSheet} from 'react-native';
 
@@ -8,6 +7,7 @@ import CustomStatusBar from '../common/CustomStatusBar';
 import Constants from '../common/constants/Constants';
 import DuoButton from '../common/DuoButton';
 import theme from '../common/constants/theme.json';
+
 interface SignUpProps {
   route: any;
   navigation: any;
@@ -35,12 +35,14 @@ const SignUp = (props: SignUpProps) => {
       : setPasswordIcon('eye');
     setShowPassword(!showPassword);
   };
+
   const handleConfirmPasswordVisibility = () => {
     confirmPasswordIcon === 'eye'
       ? setConfirmPasswordIcon('eye-off')
       : setConfirmPasswordIcon('eye');
     setShowConfirmPassword(!showConfirmPassword);
   };
+
   return (
     <View style={styles.mainContainer}>
       <CustomStatusBar />
@@ -80,6 +82,7 @@ const SignUp = (props: SignUpProps) => {
           value={email}
           activeOutlineColor={theme.colors.primary}
           autoCapitalize="none"
+          error={email != '' && !email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)}
           onChangeText={email => setEmail(email)}
         />
         {email != '' && !email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/) ? (
@@ -94,6 +97,7 @@ const SignUp = (props: SignUpProps) => {
           value={password}
           activeOutlineColor={theme.colors.primary}
           autoCapitalize="none"
+          error={password != '' && password.length < 6}
           secureTextEntry={showPassword}
           right={
             <TextInput.Icon
@@ -115,6 +119,7 @@ const SignUp = (props: SignUpProps) => {
           value={confirmPassword}
           activeOutlineColor={theme.colors.primary}
           autoCapitalize="none"
+          error={confirmPassword != '' && password != confirmPassword}
           secureTextEntry={showConfirmPassword}
           right={
             <TextInput.Icon
@@ -152,7 +157,9 @@ const SignUp = (props: SignUpProps) => {
     </View>
   );
 };
+
 export default SignUp;
+
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,

@@ -47,8 +47,13 @@ export const signUp = (
         auth()
           .createUserWithEmailAndPassword(email, password)
           .then(() => {
-            createUser(email, username, displayName);
-            navigation.navigate('SignIn');
+            signIn(props, email, password);
+            auth().onAuthStateChanged(user => {
+              if (user) {
+                const uid = user.uid;
+                createUser(email, username, displayName, uid);
+              }
+            });
           })
           .catch(err => {
             console.log(err);
