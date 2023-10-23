@@ -43,21 +43,33 @@ export const createUser = (
 //     });
 // };
 
-export const UpdateUsername = (userAccount: any, username: any) => {
+export const UpdateUsername = (username: any) => {
   auth().onAuthStateChanged(user => {
     if (user) {
       const uid = user.uid;
       firestore()
         .collection('Users')
-        .where('username', '==', userAccount)
-        .get()
-        .then(querySnapshot => {
-          querySnapshot.forEach(documentSnapshot => {
-            console.log(documentSnapshot.id);
-            firestore().collection('Users').doc(uid).update({
-              displayName: username,
-            });
-          });
+        .doc(uid)
+        .update({
+          displayName: username,
+        })
+
+        .then(() => {
+          console.log('User updated!');
+        });
+    }
+  });
+};
+
+export const UpdateHearts = (hearts: any) => {
+  auth().onAuthStateChanged(user => {
+    if (user) {
+      const uid = user.uid;
+      firestore()
+        .collection('Users')
+        .doc(uid)
+        .update({
+          hearts: {amount: hearts, timestamp: 0},
         })
         .then(() => {
           console.log('User updated!');
@@ -66,21 +78,15 @@ export const UpdateUsername = (userAccount: any, username: any) => {
   });
 };
 
-export const UpdateHearts = (userAccount: any, hearts: any) => {
+export const UpdateExp = (exp: any) => {
   auth().onAuthStateChanged(user => {
     if (user) {
       const uid = user.uid;
       firestore()
         .collection('Users')
-        .where('username', '==', userAccount)
-        .get()
-        .then(querySnapshot => {
-          querySnapshot.forEach(documentSnapshot => {
-            console.log(documentSnapshot.id);
-            firestore().collection('Users').doc(uid).update({
-              hearts: hearts,
-            });
-          });
+        .doc(uid)
+        .update({
+          exp: exp,
         })
         .then(() => {
           console.log('User updated!');
@@ -89,52 +95,15 @@ export const UpdateHearts = (userAccount: any, hearts: any) => {
   });
 };
 
-export const UpdateExp = (userAccount: any, exp: any) => {
+export const UpdateModules = (easy: any, intermediate: any, hard: any) => {
   auth().onAuthStateChanged(user => {
     if (user) {
       const uid = user.uid;
       firestore()
         .collection('Users')
-        .where('username', '==', userAccount)
-        .get()
-        .then(querySnapshot => {
-          querySnapshot.forEach(documentSnapshot => {
-            console.log(documentSnapshot.id);
-            firestore().collection('Users').doc(uid).update({
-              exp: exp,
-            });
-          });
-        })
-        .then(() => {
-          console.log('User updated!');
-        });
-    }
-  }); 
-};
-
-export const UpdateModules = (
-  userAccount: any,
-  easy: any,
-  intermediate: any,
-  hard: any,
-) => {
-  auth().onAuthStateChanged(user => {
-    if (user) {
-      const uid = user.uid;
-      firestore()
-        .collection('Users')
-        .where('username', '==', userAccount)
-        .get()
-        .then(querySnapshot => {
-          querySnapshot.forEach(documentSnapshot => {
-            console.log(documentSnapshot.id);
-            firestore()
-              .collection('Users')
-              .doc(uid)
-              .update({
-                modules: {easy: easy, intermediate: intermediate, hard: hard},
-              });
-          });
+        .doc(uid)
+        .update({
+          modules: {easy: easy, intermediate: intermediate, hard: hard},
         })
         .then(() => {
           console.log('User updated!');
@@ -143,20 +112,14 @@ export const UpdateModules = (
   });
 };
 
-export const DeleteUserdata = (userAccount: any) => {
+export const DeleteUserdata = () => {
   auth().onAuthStateChanged(user => {
     if (user) {
       const uid = user.uid;
       firestore()
         .collection('Users')
-        .where('username', '==', userAccount)
-        .get()
-        .then(querySnapshot => {
-          querySnapshot.forEach(documentSnapshot => {
-            console.log(documentSnapshot.id);
-            firestore().collection('Users').doc(uid).delete();
-          });
-        })
+        .doc(uid)
+        .delete()
         .then(() => {
           console.log('User deleted!');
         });

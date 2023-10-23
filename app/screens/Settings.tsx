@@ -25,8 +25,7 @@ import {deleteAccount} from '../utils/auth';
 const Settings = (props: SettingsProps) => {
   const {route, navigation} = props;
 
-  const username = 'yuhao2';
-  const username2 = 'new username';
+  const username = 'new username';
   const [Hearts, setHearts] = useState<number>(5);
   const [Exp, setExp] = useState<number>(0);
 
@@ -57,7 +56,7 @@ const Settings = (props: SettingsProps) => {
           mode="outlined"
           onPress={() => {
             MinusHeart();
-            UpdateHearts(username, Hearts);
+            UpdateHearts(Hearts);
             console.log(Hearts);
           }}>
           Update heart
@@ -66,7 +65,7 @@ const Settings = (props: SettingsProps) => {
           mode="outlined"
           onPress={() => {
             IncreaseExp();
-            UpdateExp(username, Exp);
+            UpdateExp(Exp);
           }}>
           Update EXP
         </Button>
@@ -80,21 +79,21 @@ const Settings = (props: SettingsProps) => {
         <Button
           mode="outlined"
           onPress={() => {
-            UpdateUsername(username, username2);
+            UpdateUsername(username);
           }}>
           Update Username
         </Button>
         <Button
           mode="outlined"
           onPress={() => {
-            UpdateModules(username, 0, 0, 0);
+            UpdateModules(0, 0, 0);
           }}>
           Update Modules
         </Button>
         <Button
           mode="outlined"
           onPress={() => {
-            UpdateModules(username, 9, 9, 9);
+            UpdateModules(9, 9, 9);
           }}>
           Reset Modules
         </Button>
@@ -103,7 +102,7 @@ const Settings = (props: SettingsProps) => {
           onPress={() => {
             navigation.navigate('Landing');
             deleteAccount();
-            DeleteUserdata(username);
+            DeleteUserdata();
           }}>
           Delete Account
         </Button>
