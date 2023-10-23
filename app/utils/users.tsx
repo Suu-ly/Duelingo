@@ -109,7 +109,7 @@ export const UpdateExp = (userAccount: any, exp: any) => {
           console.log('User updated!');
         });
     }
-  });
+  }); 
 };
 
 export const UpdateModules = (
