@@ -1,12 +1,13 @@
 import {View, StyleSheet} from 'react-native';
 import {Button, Dialog, Portal, Text} from 'react-native-paper';
-import React, {useState} from 'react';
+import {useState} from 'react';
 import auth from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
 
 import CustomStatusBar from '../common/CustomStatusBar';
 import Constants from '../common/constants/Constants';
 import useCountdown from '../utils/useCountdown';
+import ChallengeDialogs from '../common/ChallengeDialogs';
 
 interface ChallengePlayerProps {
   route: any;
@@ -62,7 +63,6 @@ const ChallengePlayer = (props: ChallengePlayerProps) => {
 
   const resetListeners = (player: string) => {
     setTimeout(null);
-    console.log('Resetting ' + player);
     database()
       .ref('/challenge/' + player)
       .off();
@@ -90,7 +90,6 @@ const ChallengePlayer = (props: ChallengePlayerProps) => {
               difficulty: difficulty,
               lobbyId: lobby,
               challenger: 'Lance', //TODO Get username from database
-              isRematch: false,
               status: true,
               accepted: false,
             });
@@ -99,7 +98,6 @@ const ChallengePlayer = (props: ChallengePlayerProps) => {
             .ref('/games/' + lobby)
             .set({
               isWaiting: {[userId]: true},
-              isConnected: {[userId]: true},
               startTimestamp: 0,
               questions: randomQuestion(5, 9),
               points: {[userId]: 0},
@@ -112,7 +110,6 @@ const ChallengePlayer = (props: ChallengePlayerProps) => {
             .on('value', snapshot => {
               //Checks if accepts
               if (snapshot.val() && snapshot.val().accepted) {
-                console.log('I am turning off player ' + player);
                 resetListeners(player);
                 database()
                   .ref('/challenge/' + player)
@@ -152,96 +149,26 @@ const ChallengePlayer = (props: ChallengePlayerProps) => {
           Challenge
         </Button>
       </View>
-      <Portal>
-        <Dialog
-          visible={challengeActive}
-          dismissable={false}
-          dismissableBackButton={false}>
-          <Dialog.Icon icon={'karate'} />
-          <Dialog.Title style={styles.title}>Challenge requested!</Dialog.Title>
-          <Dialog.Content>
-            <Text variant="bodyMedium">Waiting for player to respond...</Text>
-          </Dialog.Content>
-          <Dialog.Actions style={styles.actions}>
-            <Button
-              mode="text"
-              onPress={() => {
-                setChallengeActive(false);
-                resetListeners(playerId);
-                database()
-                  .ref('/challenge/' + playerId)
-                  .update({status: false});
-                database()
-                  .ref('/games/' + lobbyId)
-                  .remove();
-              }}>
-              Cancel
-            </Button>
-          </Dialog.Actions>
-        </Dialog>
-        <Dialog
-          visible={timedOut}
-          dismissable={false}
-          dismissableBackButton={false}>
-          <Dialog.Title>Challenge timed out.</Dialog.Title>
-          <Dialog.Content>
-            <Text variant="bodyMedium">
-              The player has taken too long to respond to the challenge and the
-              request has been automatically declined.
-            </Text>
-          </Dialog.Content>
-          <Dialog.Actions>
-            <Button
-              mode="text"
-              onPress={() => {
-                setTimedOut(false);
-              }}>
-              Ok
-            </Button>
-          </Dialog.Actions>
-        </Dialog>
-        <Dialog
-          visible={challengeClash}
-          dismissable={false}
-          dismissableBackButton={false}>
-          <Dialog.Title>Challenge already exists.</Dialog.Title>
-          <Dialog.Content>
-            <Text variant="bodyMedium">
-              Another player has already challenged this player to a duel,
-              please wait before issuing another challenge.
-            </Text>
-          </Dialog.Content>
-          <Dialog.Actions>
-            <Button
-              mode="text"
-              onPress={() => {
-                setChallengeClash(false);
-              }}>
-              Ok
-            </Button>
-          </Dialog.Actions>
-        </Dialog>
-        <Dialog
-          visible={declined}
-          dismissable={false}
-          dismissableBackButton={false}>
-          <Dialog.Title>Challenge declined.</Dialog.Title>
-          <Dialog.Content>
-            <Text variant="bodyMedium">
-              The other player has declined the challenge request.
-            </Text>
-          </Dialog.Content>
-          <Dialog.Actions>
-            <Button
-              mode="text"
-              onPress={() => {
-                setDeclined(false);
-              }}>
-              Ok
-            </Button>
-          </Dialog.Actions>
-        </Dialog>
-      </Portal>
+      <ChallengeDialogs
+        challengeActive={challengeActive}
+        challengeActiveOnPress={() => {
+          setChallengeActive(false);
+          resetListeners(playerId);
+          database()
+            .ref('/challenge/' + playerId)
+            .update({status: false});
+          database()
+            .ref('/games/' + lobbyId)
+            .remove();
+        }}
+        timedOut={timedOut}
+        timedOutOnPress={() => setTimedOut(false)}
+        challengeClash={challengeClash}
+        challengeClashOnPress={() => setChallengeClash(false)}
+        declined={declined}
+        declinedOnPress={() => setDeclined(false)}
+        isRematch={false}
+      />
     </View>
   );
 };

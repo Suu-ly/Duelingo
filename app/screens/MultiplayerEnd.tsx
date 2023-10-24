@@ -13,10 +13,11 @@ interface MultiplayerEndProps {
   userId: string;
   onRematchPress: () => void;
   onPress: () => void;
+  rematchDisabled: boolean;
 }
 
 const MultiplayerEnd = (props: MultiplayerEndProps) => {
-  const {points, userId, onRematchPress, onPress} = props;
+  const {points, userId, onRematchPress, onPress, rematchDisabled} = props;
 
   const isFirst = points[0].id === userId;
 
@@ -82,6 +83,7 @@ const MultiplayerEnd = (props: MultiplayerEndProps) => {
             borderColor={Theme.colors.outline}
             stretch={true}
             filled={false}
+            disabled={rematchDisabled}
             onPress={onRematchPress}
             textColor={Theme.colors.onSurface}>
             Rematch

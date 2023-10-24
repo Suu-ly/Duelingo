@@ -38,7 +38,7 @@ const Home = (props: HomeProps) => {
     <View style={styles.mainContainer}>
       <CustomStatusBar />
       <View style={styles.container}>
-        <Text variant={'headlineLarge'}>Home Screen</Text>
+        <Text variant={'headlineLarge'}>Debug Screen</Text>
         <Button
           mode="outlined"
           onPress={() =>

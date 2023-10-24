@@ -135,7 +135,7 @@ const Lobby = (props: LobbyProps) => {
         <Button
           icon="map-marker-outline"
           mode="outlined"
-          onPress={() => navigation.navigate('Home')}>
+          onPress={() => navigation.navigate('Debug')}>
           Go to Home
         </Button>
         <View style={styles.rowContainer}>

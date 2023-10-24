@@ -177,7 +177,7 @@ const Quiz = (props: QuizProps) => {
             <Button mode="text" onPress={() => setDialogVisible(false)}>
               Cancel
             </Button>
-            <Button mode="text" onPress={() => navigation.navigate('Home')}>
+            <Button mode="text" onPress={() => navigation.navigate('Debug')}>
               Leave
             </Button>
           </Dialog.Actions>

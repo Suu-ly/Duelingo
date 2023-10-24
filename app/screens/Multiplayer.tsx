@@ -27,6 +27,9 @@ import QuizFooter from '../common/QuizFooter';
 import MultiplayerQuizStandings from '../common/MultiplayerQuizStandings';
 import MultiplayerPlayers from '../common/MultiplayerPlayers';
 import MultiplayerEnd from './MultiplayerEnd';
+import ChallengeDialogs from '../common/ChallengeDialogs';
+import useCountdown from '../utils/useCountdown';
+import DuoButton from '../common/DuoButton';
 
 interface MultiplayerProps {
   route: any;
@@ -79,8 +82,9 @@ const Multiplayer = (props: MultiplayerProps) => {
   //Keeps track of the current game state
   const [isPlaying, setIsPlaying] = useState(false);
   const [timeUploaded, setTimeUploaded] = useState(false);
-  //Keeps track of whether the game has started
+  //Keeps track of whether the game has started or ended
   const [start, setStart] = useState(false);
+  const [end, setEnd] = useState(false);
   //Keeps track of time taken to answer for points
   const [currentTime, setCurrentTime] = useState(-1);
   //Keeps track of seconds left before next screen
@@ -89,9 +93,16 @@ const Multiplayer = (props: MultiplayerProps) => {
   //Keeps track of points for both players
   const [points, setPoints] = useState<Record<string, unknown>[]>([]);
   const [oldPoints, setOldPoints] = useState<Record<string, unknown>[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   //Decides whether to show the dialogs
   const [dialogVisible, setDialogVisible] = useState(false);
   const [playerLeft, setPlayerLeft] = useState(false);
+  const [challengeActive, setChallengeActive] = useState(false);
+  const [rematchRequest, setRematchRequest] = useState(false);
+  const [cancelled, setCancelled] = useState(false);
+  const [declined, setDeclined] = useState(false);
+  const [timedOut, setTimedOut] = useState(false);
+  const [timeout, setTimeout] = useState<number | null>(null);
 
   //Need to standardise the formatting of the questions for this to work properly.
   //Right now it extracts the text contained within "" and puts it into a box
@@ -109,10 +120,22 @@ const Multiplayer = (props: MultiplayerProps) => {
   };
 
   const calculateScore = (timeTaken: number) => {
-    if (timeTaken < 1000) return 1000;
-    else if (1000 <= timeTaken && timeTaken < 15000)
-      return Math.floor(-8.19232 * Math.sqrt(timeTaken - 1000) + 1000);
+    if (timeTaken < 2000) return 1000;
+    else if (2000 <= timeTaken && timeTaken < 15000)
+      return Math.floor(-8 * Math.sqrt(timeTaken - 2000) + 1000);
     else return 0;
+  };
+
+  const randomQuestion = (count: number, max: number) => {
+    if (count > max) return;
+    const qns = [];
+    while (qns.length < count) {
+      const no = Math.floor(Math.random() * max);
+      if (qns.indexOf(no) === -1) {
+        qns.push(no);
+      }
+    }
+    return qns;
   };
 
   //Gets the quiz questions from database
@@ -135,6 +158,7 @@ const Multiplayer = (props: MultiplayerProps) => {
 
   //Gets the points from the database
   const getPoints = async () => {
+    setIsLoading(true);
     var tempPoints: Record<string, unknown>[] = [];
     await database()
       .ref('/games/' + gameId + '/points')
@@ -148,6 +172,7 @@ const Multiplayer = (props: MultiplayerProps) => {
       });
     tempPoints.reverse();
     setPoints(tempPoints);
+    setIsLoading(false);
     //Trigger countdown
     await database()
       .ref('/games/' + gameId + '/isWaiting')
@@ -168,8 +193,24 @@ const Multiplayer = (props: MultiplayerProps) => {
       .update({[userId]: true});
   };
 
+  useCountdown(timeout, setTimeout, () => {
+    setTimedOut(true);
+    setChallengeActive(false);
+    database()
+      .ref('/games/' + gameId)
+      .update({rematch: 'cancel'});
+  });
+
+  const handleRematch = () => {
+    setChallengeActive(true);
+    setTimeout(30);
+    database()
+      .ref('/games/' + gameId)
+      .update({rematch: 'request'});
+  };
+
   //Resets everything for the next round
-  const nextRound = async () => {
+  const nextRound = () => {
     if (remaining > 0) {
       setQuestion(questionBank[5 - remaining]);
     }
@@ -180,26 +221,50 @@ const Multiplayer = (props: MultiplayerProps) => {
     setTimeStamp(0);
     setOldPoints(points);
     if (host) {
-      await database()
+      database()
         .ref('/games/' + gameId)
         .update({startTimestamp: 0});
       setTimeUploaded(false);
     }
   };
 
+  //When the round ends
   const onRoundEnd = () => {
-    getPoints();
     if (remaining === 1) {
-      database()
-        .ref('/games/' + gameId + '/isWaiting')
-        .off();
-      if (!host) {
-        database()
-          .ref('/games/' + gameId + '/startTimestamp')
-          .off();
-      }
+      setEnd(true);
+    } else {
+      setRemaining(remaining - 1);
     }
-    setRemaining(remaining - 1);
+    getPoints();
+  };
+
+  const resetGame = async () => {
+    setIsLoading(true);
+    await database()
+      .ref('/games/' + gameId + '/points/')
+      .update({[userId]: 0});
+    await database()
+      .ref('/games/' + gameId + '/isWaiting')
+      .update({[userId]: true});
+    if (challengeActive) {
+      await database()
+        .ref('/games/' + gameId)
+        .update({questions: randomQuestion(5, 9)})
+        .then(() => {
+          database()
+            .ref('/games/' + gameId)
+            .update({rematch: 'active'});
+        });
+    }
+    setRemaining(5);
+    setQuestionBank([]);
+    setPoints([]);
+    setOldPoints([]);
+    setEnd(false);
+    setStart(false);
+    setIsPlaying(false);
+    setIsLoading(false);
+    getQuestions();
   };
 
   //Countdown between rounds
@@ -214,31 +279,6 @@ const Multiplayer = (props: MultiplayerProps) => {
         nextRound();
       }
     }, 100);
-  };
-
-  //set invalid for listener in multiplayer.tsx
-  const setLobbyInvalid = async () => {
-    database()
-      .ref('/games/' + gameId + '/isConnected/')
-      .update({[userId]: false});
-    await deleteLobby();
-    navigation.navigate('Home');
-  };
-
-  //delete lobbyId if both players disconnected
-  const deleteLobby = async () => {
-    await database()
-      .ref('/games/' + gameId + '/isConnected/')
-      .once('value', snapshot => {
-        if (
-          Object.values(snapshot.val())[0] === false &&
-          Object.values(snapshot.val())[1] === false
-        )
-          database()
-            .ref('/games/' + gameId)
-            .remove();
-      })
-      .then(navigation.navigate('Home'));
   };
 
   //Controls what is shown
@@ -257,7 +297,10 @@ const Multiplayer = (props: MultiplayerProps) => {
       navigation.addListener(
         'beforeRemove',
         (e: EventArg<'beforeRemove', true, {action: NavigationAction}>) => {
-          if (e.data.action.type != 'GO_BACK') {
+          if (e.data.action.type != 'GO_BACK' || end) {
+            database()
+              .ref('/games/' + gameId)
+              .remove();
             return;
           }
           // Prevent default behavior of leaving the screen
@@ -297,37 +340,78 @@ const Multiplayer = (props: MultiplayerProps) => {
     database()
       .ref('/games/' + gameId + '/isWaiting')
       .on('value', snapshot => {
-        if (
-          isPlaying &&
-          Object.values(snapshot.val())[0] === true &&
-          Object.values(snapshot.val())[1] === true
-        ) {
-          setIsPlaying(false);
-        }
-        //Waiting in between rounds
-        else if (
-          !isPlaying &&
-          start &&
-          Object.values(snapshot.val())[0] === false &&
-          Object.values(snapshot.val())[1] === false &&
-          host &&
-          timeUploaded === false
-        ) {
-          setTimeUploaded(true);
-        }
-        //Before the game starts
-        else if (
-          !isPlaying &&
-          !start &&
-          Object.keys(snapshot.val()).length === 2 &&
-          Object.values(snapshot.val())[0] === false &&
-          Object.values(snapshot.val())[1] === false &&
-          host &&
-          timeUploaded === false
-        ) {
-          setTimeUploaded(true);
+        if (snapshot.val()) {
+          if (
+            isPlaying &&
+            Object.values(snapshot.val())[0] === true &&
+            Object.values(snapshot.val())[1] === true
+          ) {
+            setIsPlaying(false);
+          }
+          //Waiting in between rounds
+          else if (
+            !isPlaying &&
+            start &&
+            !end &&
+            Object.values(snapshot.val())[0] === false &&
+            Object.values(snapshot.val())[1] === false &&
+            host &&
+            timeUploaded === false
+          ) {
+            setTimeUploaded(true);
+          }
+          //Before the game starts
+          else if (
+            !isPlaying &&
+            !start &&
+            Object.keys(snapshot.val()).length === 2 &&
+            Object.values(snapshot.val())[0] === false &&
+            Object.values(snapshot.val())[1] === false &&
+            host &&
+            timeUploaded === false
+          ) {
+            setTimeUploaded(true);
+          }
+        } else {
+          setPlayerLeft(true);
         }
       });
+
+    database()
+      .ref('/games/' + gameId + '/rematch')
+      .on('value', snapshot => {
+        if (end && snapshot.val()) {
+          if (snapshot.val() === 'request' && !challengeActive) {
+            setRematchRequest(true);
+          } else if (snapshot.val() === 'accept' && challengeActive) {
+            setTimeout(null);
+            setChallengeActive(false);
+            resetGame();
+          } else if (snapshot.val() === 'decline') {
+            if (challengeActive) {
+              setTimeout(null);
+              setChallengeActive(false);
+              setDeclined(true);
+            }
+            setPlayerLeft(true);
+          } else if (snapshot.val() === 'cancel' && rematchRequest) {
+            setCancelled(true);
+            setRematchRequest(false);
+          } else if (snapshot.val() === 'active') {
+            resetGame();
+            setRematchRequest(false);
+            database()
+              .ref('/games/' + gameId + '/rematch')
+              .remove();
+          }
+        }
+      });
+
+    //Removes lobby on disconnect
+    database()
+      .ref('/games/' + gameId)
+      .onDisconnect()
+      .remove();
 
     if (!host) {
       database()
@@ -339,37 +423,19 @@ const Multiplayer = (props: MultiplayerProps) => {
         });
     }
 
-    database()
-      .ref('/games/' + gameId + '/isConnected')
-      .onDisconnect()
-      .update({[userId]: false});
-
-    database()
-      .ref('/games/' + gameId + '/isConnected')
-      .on('value', snapshot => {
-        if (
-          snapshot.val() &&
-          Object.values(snapshot.val()).length > 1 &&
-          (Object.values(snapshot.val())[0] === false ||
-            Object.values(snapshot.val())[1] === false) &&
-          remaining > 0
-        ) {
-          setPlayerLeft(true);
-        }
-      });
-
+    //Turns off listeners on unmount
     return () => {
       database()
         .ref('/games/' + gameId + '/isWaiting')
-        .off();
-      database()
-        .ref('/games/' + gameId + '/isConnected')
         .off();
       if (!host) {
         database()
           .ref('/games/' + gameId + '/startTimestamp')
           .off();
       }
+      database()
+        .ref('/games/' + gameId + '/rematch')
+        .off();
     };
   });
 
@@ -381,6 +447,67 @@ const Multiplayer = (props: MultiplayerProps) => {
         }
       />
       <Portal>
+        <Dialog
+          visible={rematchRequest}
+          dismissable={false}
+          dismissableBackButton={false}>
+          <Dialog.Icon icon={'karate'} />
+          <Dialog.Title style={styles.title}>Rematch!</Dialog.Title>
+          <Dialog.Content>
+            <Text variant="bodyMedium">wants a rematch! Go again?</Text>
+          </Dialog.Content>
+          <Dialog.Actions style={styles.actions}>
+            <View style={styles.buttonContainer}>
+              <DuoButton
+                backgroundColor={Theme.colors.primary}
+                backgroundDark={Theme.colors.primaryDark}
+                stretch={true}
+                onPress={() => {
+                  database()
+                    .ref('/games/' + gameId)
+                    .update({rematch: 'accept'});
+                  setIsLoading(true);
+                }}
+                textColor={Theme.colors.onPrimary}>
+                {!isLoading ? (
+                  'Rematch'
+                ) : (
+                  <ActivityIndicator color={Theme.colors.onPrimary} />
+                )}
+              </DuoButton>
+            </View>
+            <Button
+              mode="text"
+              onPress={() => {
+                setRematchRequest(false);
+                database()
+                  .ref('/games/' + gameId)
+                  .update({rematch: 'decline'});
+              }}>
+              Decline
+            </Button>
+          </Dialog.Actions>
+        </Dialog>
+        <Dialog
+          visible={cancelled}
+          dismissable={false}
+          dismissableBackButton={false}>
+          <Dialog.Title>Challenge cancelled.</Dialog.Title>
+          <Dialog.Content>
+            <Text variant="bodyMedium">
+              The other player has cancelled the challenge request
+            </Text>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button
+              mode="text"
+              onPress={() => {
+                setCancelled(false);
+              }}>
+              Ok
+            </Button>
+          </Dialog.Actions>
+        </Dialog>
         <Dialog
           visible={dialogVisible}
           dismissable={false}
@@ -399,13 +526,13 @@ const Multiplayer = (props: MultiplayerProps) => {
             <Button mode="text" onPress={() => setDialogVisible(false)}>
               Cancel
             </Button>
-            <Button mode="text" onPress={() => setLobbyInvalid()}>
+            <Button mode="text" onPress={() => navigation.navigate('Debug')}>
               Leave
             </Button>
           </Dialog.Actions>
         </Dialog>
         <Dialog
-          visible={playerLeft}
+          visible={playerLeft && !end}
           dismissable={false}
           dismissableBackButton={false}>
           <Dialog.Icon icon={'alert-circle-outline'} />
@@ -419,18 +546,33 @@ const Multiplayer = (props: MultiplayerProps) => {
             </Text>
           </Dialog.Content>
           <Dialog.Actions>
-            <Button mode="text" onPress={() => setLobbyInvalid()}>
+            <Button mode="text" onPress={() => navigation.navigate('Debug')}>
               Ok
             </Button>
           </Dialog.Actions>
         </Dialog>
       </Portal>
-      {remaining === 0 ? (
+      <ChallengeDialogs
+        challengeActive={challengeActive}
+        challengeActiveOnPress={() => {
+          database()
+            .ref('/games/' + gameId)
+            .update({rematch: 'cancel'});
+          setChallengeActive(false);
+        }}
+        declined={declined}
+        declinedOnPress={() => setDeclined(false)}
+        isRematch={true}
+        timedOut={timedOut}
+        timedOutOnPress={() => setTimedOut(false)}
+      />
+      {end && !isLoading ? (
         <MultiplayerEnd
           points={points}
           userId={userId}
-          onRematchPress={() => setLobbyInvalid()}
-          onPress={() => setLobbyInvalid()}
+          onRematchPress={handleRematch}
+          onPress={() => navigation.navigate('Debug')}
+          rematchDisabled={playerLeft}
         />
       ) : (
         <>
@@ -442,7 +584,16 @@ const Multiplayer = (props: MultiplayerProps) => {
             }}
             onPress={() => setDialogVisible(true)}
           />
-          {!start ? (
+          {!start && isLoading ? (
+            <View style={styles.loadingScreen}>
+              <ActivityIndicator />
+              <Text
+                variant="bodyMedium"
+                style={{color: Theme.colors.onSurfaceVariant}}>
+                Loading game data...
+              </Text>
+            </View>
+          ) : !start ? (
             <View style={styles.entryScreen}>
               <Text variant="headlineSmall">
                 {language.charAt(0).toUpperCase() + language.slice(1)}:{' '}
@@ -505,24 +656,26 @@ const Multiplayer = (props: MultiplayerProps) => {
               </Text>
             </View>
           ) : (
-            <>
-              {points.length !== 0 && (
-                <MultiplayerQuizStandings
-                  data={points}
-                  oldData={oldPoints}
-                  userUID={userId}
-                  secondsLeft={secondsLeft}
+            !isLoading && (
+              <>
+                {points.length !== 0 && (
+                  <MultiplayerQuizStandings
+                    data={points}
+                    oldData={oldPoints}
+                    userUID={userId}
+                    secondsLeft={secondsLeft}
+                  />
+                )}
+                <QuizFooter
+                  correct={answer === question.correct_answer}
+                  explanation={question.explanation}
+                  selected={answer !== ''}
+                  submit={submit}
+                  handleSubmit={handleSubmit}
+                  multiplayer={true}
                 />
-              )}
-              <QuizFooter
-                correct={answer === question.correct_answer}
-                explanation={question.explanation}
-                selected={answer !== ''}
-                submit={submit}
-                handleSubmit={handleSubmit}
-                multiplayer={true}
-              />
-            </>
+              </>
+            )
           )}
         </>
       )}
@@ -563,5 +716,12 @@ const styles = StyleSheet.create({
   },
   title: {
     textAlign: 'center',
+  },
+  actions: {
+    flexDirection: 'column',
+    gap: Constants.mediumGap,
+  },
+  buttonContainer: {
+    width: '100%',
   },
 });

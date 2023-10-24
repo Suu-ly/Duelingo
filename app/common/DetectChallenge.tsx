@@ -30,7 +30,6 @@ const DetectChallenge = (props: detectProps) => {
   //Visibility of dialogs
   const [dialogVisible, setDialogVisible] = useState(false);
   const [cancelled, setCancelled] = useState(false);
-  const [isRematch, setIsRematch] = useState(false);
   //Lobby settings
   const [language, setLanguage] = useState('');
   const [difficulty, setDifficulty] = useState('');
@@ -53,7 +52,6 @@ const DetectChallenge = (props: detectProps) => {
       removeChallenge();
       setDialogVisible(false);
       setCancelled(false);
-      setIsRematch(false);
     }
   }, [appState]);
 
@@ -68,7 +66,6 @@ const DetectChallenge = (props: detectProps) => {
             setLanguage(snapshot.val().language);
             setDifficulty(snapshot.val().difficulty);
             setChallengerName(snapshot.val().challenger);
-            setIsRematch(snapshot.val().isRematch);
             setLobbyId(snapshot.val().lobbyId);
             if (snapshot.val().status) {
               setDialogVisible(true);
@@ -109,11 +106,6 @@ const DetectChallenge = (props: detectProps) => {
                 [user.uid]: 0,
               });
             database()
-              .ref('/games/' + lobbyId + '/isConnected')
-              .update({
-                [user.uid]: true,
-              });
-            database()
               .ref('/challenge/' + user.uid)
               .update({
                 accepted: true,
@@ -140,7 +132,7 @@ const DetectChallenge = (props: detectProps) => {
   return (
     <Portal>
       <Dialog
-        visible={dialogVisible && !isRematch}
+        visible={dialogVisible}
         dismissable={false}
         dismissableBackButton={false}>
         <Dialog.Icon icon={'karate'} />
@@ -165,46 +157,6 @@ const DetectChallenge = (props: detectProps) => {
                   textColor={Theme.colors.onPrimary}>
                   {!isLoading ? (
                     'Accept'
-                  ) : (
-                    <ActivityIndicator color={Theme.colors.onPrimary} />
-                  )}
-                </DuoButton>
-              </View>
-              <Button
-                mode="text"
-                onPress={() => {
-                  removeChallenge();
-                  setDialogVisible(false);
-                }}>
-                Decline
-              </Button>
-            </>
-          )}
-        </Dialog.Actions>
-      </Dialog>
-      <Dialog
-        visible={dialogVisible && isRematch}
-        dismissable={false}
-        dismissableBackButton={false}>
-        <Dialog.Icon icon={'karate'} />
-        <Dialog.Title style={styles.title}>Rematch!</Dialog.Title>
-        <Dialog.Content>
-          <Text variant="bodyMedium">
-            {challengerName} wants a rematch! Go again?
-          </Text>
-        </Dialog.Content>
-        <Dialog.Actions style={styles.actions}>
-          {user && (
-            <>
-              <View style={styles.buttonContainer}>
-                <DuoButton
-                  backgroundColor={Theme.colors.primary}
-                  backgroundDark={Theme.colors.primaryDark}
-                  stretch={true}
-                  onPress={handleOnPress}
-                  textColor={Theme.colors.onPrimary}>
-                  {!isLoading ? (
-                    'Rematch'
                   ) : (
                     <ActivityIndicator color={Theme.colors.onPrimary} />
                   )}

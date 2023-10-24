@@ -13,7 +13,7 @@ interface TimerProps {
 
 const QuizTimer = (props: TimerProps) => {
   const {seconds = 15, onEndTime} = props;
-  const [secondsLeft, setSecondsLeft] = useState(seconds);
+  const [secondsLeft, setSecondsLeft] = useState<number | null>(seconds);
 
   const animationValue = useRef(new Animated.Value(0)).current;
 
@@ -51,7 +51,7 @@ const QuizTimer = (props: TimerProps) => {
     <Animated.View style={[styles.container, {borderColor: color}]}>
       <Icon name="timer-outline" color={Theme.colors.onSurface} size={24} />
       <Text variant="titleMedium" style={{color: Theme.colors.onSurface}}>
-        {secondsLeft.toString().padStart(2, '0')}s
+        {secondsLeft && secondsLeft.toString().padStart(2, '0')}s
       </Text>
     </Animated.View>
   );

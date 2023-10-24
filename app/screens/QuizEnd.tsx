@@ -97,7 +97,7 @@ const QuizEnd = (props: QuizEndProps) => {
             backgroundColor={Theme.colors.primary}
             backgroundDark={Theme.colors.primaryDark}
             stretch={true}
-            onPress={() => navigation.navigate('Home')}
+            onPress={() => navigation.navigate('Debug')}
             textColor={Theme.colors.onPrimary}>
             Back to Home
           </DuoButton>
