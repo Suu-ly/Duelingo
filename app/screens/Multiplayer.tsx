@@ -29,7 +29,7 @@ import MultiplayerPlayers from '../common/MultiplayerPlayers';
 import MultiplayerEnd from './MultiplayerEnd';
 import ChallengeDialogs from '../common/ChallengeDialogs';
 import useCountdown from '../utils/useCountdown';
-import DuoButton from '../common/DuoButton';
+import RequestDialogs from '../common/RequestDialogs';
 
 interface MultiplayerProps {
   route: any;
@@ -120,9 +120,9 @@ const Multiplayer = (props: MultiplayerProps) => {
   };
 
   const calculateScore = (timeTaken: number) => {
-    if (timeTaken < 2000) return 1000;
+    if (timeTaken < 1500) return 1000;
     else if (2000 <= timeTaken && timeTaken < 15000)
-      return Math.floor(-8 * Math.sqrt(timeTaken - 2000) + 1000);
+      return Math.floor(-8 * Math.sqrt(timeTaken - 1500) + 1000);
     else return 0;
   };
 
@@ -201,6 +201,7 @@ const Multiplayer = (props: MultiplayerProps) => {
       .update({rematch: 'cancel'});
   });
 
+  //Start a rematch request
   const handleRematch = () => {
     setChallengeActive(true);
     setTimeout(30);
@@ -238,6 +239,7 @@ const Multiplayer = (props: MultiplayerProps) => {
     getPoints();
   };
 
+  //When a rematch occurs
   const resetGame = async () => {
     setIsLoading(true);
     await database()
@@ -258,8 +260,6 @@ const Multiplayer = (props: MultiplayerProps) => {
     }
     setRemaining(5);
     setQuestionBank([]);
-    setPoints([]);
-    setOldPoints([]);
     setEnd(false);
     setStart(false);
     setIsPlaying(false);
@@ -332,9 +332,12 @@ const Multiplayer = (props: MultiplayerProps) => {
       update: {type: 'spring', springDamping: 100},
       delete: {type: 'easeOut', property: 'opacity'},
     });
-  }, [isPlaying, submit, points, secondsLeft]);
+  }, [isPlaying, submit, points, secondsLeft, end]);
 
   useEffect(() => {
+    database()
+      .ref('/users/' + userId)
+      .set(false);
     //Listens to the database for any updates
     if (questionBank.length === 0) getQuestions();
     database()
@@ -374,6 +377,15 @@ const Multiplayer = (props: MultiplayerProps) => {
           }
         } else {
           setPlayerLeft(true);
+          if (challengeActive) {
+            setChallengeActive(false);
+            setDeclined(true);
+          }
+          if (rematchRequest) {
+            setRematchRequest(false);
+            setCancelled(true);
+          }
+          setIsLoading(false);
         }
       });
 
@@ -436,6 +448,9 @@ const Multiplayer = (props: MultiplayerProps) => {
       database()
         .ref('/games/' + gameId + '/rematch')
         .off();
+      database()
+        .ref('/users/' + userId)
+        .set(true);
     };
   });
 
@@ -447,67 +462,6 @@ const Multiplayer = (props: MultiplayerProps) => {
         }
       />
       <Portal>
-        <Dialog
-          visible={rematchRequest}
-          dismissable={false}
-          dismissableBackButton={false}>
-          <Dialog.Icon icon={'karate'} />
-          <Dialog.Title style={styles.title}>Rematch!</Dialog.Title>
-          <Dialog.Content>
-            <Text variant="bodyMedium">wants a rematch! Go again?</Text>
-          </Dialog.Content>
-          <Dialog.Actions style={styles.actions}>
-            <View style={styles.buttonContainer}>
-              <DuoButton
-                backgroundColor={Theme.colors.primary}
-                backgroundDark={Theme.colors.primaryDark}
-                stretch={true}
-                onPress={() => {
-                  database()
-                    .ref('/games/' + gameId)
-                    .update({rematch: 'accept'});
-                  setIsLoading(true);
-                }}
-                textColor={Theme.colors.onPrimary}>
-                {!isLoading ? (
-                  'Rematch'
-                ) : (
-                  <ActivityIndicator color={Theme.colors.onPrimary} />
-                )}
-              </DuoButton>
-            </View>
-            <Button
-              mode="text"
-              onPress={() => {
-                setRematchRequest(false);
-                database()
-                  .ref('/games/' + gameId)
-                  .update({rematch: 'decline'});
-              }}>
-              Decline
-            </Button>
-          </Dialog.Actions>
-        </Dialog>
-        <Dialog
-          visible={cancelled}
-          dismissable={false}
-          dismissableBackButton={false}>
-          <Dialog.Title>Challenge cancelled.</Dialog.Title>
-          <Dialog.Content>
-            <Text variant="bodyMedium">
-              The other player has cancelled the challenge request
-            </Text>
-          </Dialog.Content>
-          <Dialog.Actions>
-            <Button
-              mode="text"
-              onPress={() => {
-                setCancelled(false);
-              }}>
-              Ok
-            </Button>
-          </Dialog.Actions>
-        </Dialog>
         <Dialog
           visible={dialogVisible}
           dismissable={false}
@@ -552,6 +506,27 @@ const Multiplayer = (props: MultiplayerProps) => {
           </Dialog.Actions>
         </Dialog>
       </Portal>
+      <RequestDialogs
+        requestActive={rematchRequest}
+        requestText={'wants a rematch! Go again?'}
+        requestActiveAccept={() => {
+          database()
+            .ref('/games/' + gameId)
+            .update({rematch: 'accept'});
+          setIsLoading(true);
+        }}
+        requestActiveDecline={() => {
+          setRematchRequest(false);
+          database()
+            .ref('/games/' + gameId)
+            .update({rematch: 'decline'});
+        }}
+        cancelled={cancelled}
+        cancelledOnPress={() => {
+          setCancelled(false);
+        }}
+        isLoading={isLoading}
+      />
       <ChallengeDialogs
         challengeActive={challengeActive}
         challengeActiveOnPress={() => {
@@ -559,6 +534,7 @@ const Multiplayer = (props: MultiplayerProps) => {
             .ref('/games/' + gameId)
             .update({rematch: 'cancel'});
           setChallengeActive(false);
+          setTimeout(null);
         }}
         declined={declined}
         declinedOnPress={() => setDeclined(false)}
@@ -716,12 +692,5 @@ const styles = StyleSheet.create({
   },
   title: {
     textAlign: 'center',
-  },
-  actions: {
-    flexDirection: 'column',
-    gap: Constants.mediumGap,
-  },
-  buttonContainer: {
-    width: '100%',
   },
 });

@@ -18,6 +18,7 @@ import {useEffect, useState} from 'react';
 import Theme from './constants/theme.json';
 import DuoButton from './DuoButton';
 import Constants from './constants/Constants';
+import RequestDialogs from './RequestDialogs';
 
 interface detectProps {
   user: FirebaseAuthTypes.User | null;
@@ -130,74 +131,30 @@ const DetectChallenge = (props: detectProps) => {
   };
 
   return (
-    <Portal>
-      <Dialog
-        visible={dialogVisible}
-        dismissable={false}
-        dismissableBackButton={false}>
-        <Dialog.Icon icon={'karate'} />
-        <Dialog.Title style={styles.title}>Incoming challenge!</Dialog.Title>
-        <Dialog.Content>
-          <Text variant="bodyMedium">
-            {challengerName} has challenged you to a battle of{' '}
-            {language.charAt(0).toUpperCase() + language.slice(1)}:{' '}
-            {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}! Start a
-            duel?'
-          </Text>
-        </Dialog.Content>
-        <Dialog.Actions style={styles.actions}>
-          {user && (
-            <>
-              <View style={styles.buttonContainer}>
-                <DuoButton
-                  backgroundColor={Theme.colors.primary}
-                  backgroundDark={Theme.colors.primaryDark}
-                  stretch={true}
-                  onPress={handleOnPress}
-                  textColor={Theme.colors.onPrimary}>
-                  {!isLoading ? (
-                    'Accept'
-                  ) : (
-                    <ActivityIndicator color={Theme.colors.onPrimary} />
-                  )}
-                </DuoButton>
-              </View>
-              <Button
-                mode="text"
-                onPress={() => {
-                  removeChallenge();
-                  setDialogVisible(false);
-                }}>
-                Decline
-              </Button>
-            </>
-          )}
-        </Dialog.Actions>
-      </Dialog>
-      <Dialog
-        visible={cancelled}
-        dismissable={false}
-        dismissableBackButton={false}>
-        <Dialog.Title>Challenge cancelled.</Dialog.Title>
-        <Dialog.Content>
-          <Text variant="bodyMedium">
-            The other player has cancelled the challenge request
-          </Text>
-        </Dialog.Content>
-        <Dialog.Actions>
-          {user && (
-            <Button
-              mode="text"
-              onPress={() => {
-                setDialogVisible(false);
-                setCancelled(false);
-              }}>
-              Ok
-            </Button>
-          )}
-        </Dialog.Actions>
-      </Dialog>
-    </Portal>
+    <RequestDialogs
+      requestActive={dialogVisible}
+      requestText={
+        challengerName +
+        'has challenged you to a battle of ' +
+        language.charAt(0).toUpperCase() +
+        language.slice(1) +
+        ': ' +
+        difficulty.charAt(0).toUpperCase() +
+        difficulty.slice(1) +
+        '! Start a duel?'
+      }
+      requestActiveAccept={handleOnPress}
+      requestActiveDecline={() => {
+        removeChallenge();
+        setDialogVisible(false);
+      }}
+      cancelled={cancelled}
+      cancelledOnPress={() => {
+        setDialogVisible(false);
+        setCancelled(false);
+      }}
+      isLoading={isLoading}
+    />
   );
 };
 
