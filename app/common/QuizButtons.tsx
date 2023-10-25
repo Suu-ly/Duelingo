@@ -2,6 +2,7 @@ import {StyleSheet, View} from 'react-native';
 import DuoButton from './DuoButton';
 import Theme from './constants/theme.json';
 import Constants from './constants/Constants';
+import Tts from 'react-native-tts';
 
 interface QuizButtonProps {
   question: {
@@ -19,8 +20,30 @@ interface QuizButtonProps {
 const QuizButtons = (props: QuizButtonProps) => {
   const {question, backgroundColor, reveal, selected, onSelect} = props;
 
+  const containsEnglish = (text: string): boolean => {
+    // Regular expression to match English characters
+    const englishRegex = /^[A-Za-z]+$/;
+    return englishRegex.test(text);
+  };
+
+  const optionContainsEnglish = containsEnglish(question.options[0]);
+
+  const init_tts = async () => {
+    Tts.setDefaultPitch(1);
+    Tts.setDefaultLanguage(optionContainsEnglish ? 'en-US' : 'zh-CN');
+    Tts.setDefaultRate(optionContainsEnglish ? 0.3 : 0.5);
+  };
+
+  init_tts();
+
+  const readText = async (text: string) => {
+    Tts.stop();
+    Tts.speak(text);
+  };
+
   const selectHandler = (option: string) => {
     onSelect(option);
+    readText(option);
   };
 
   return (
