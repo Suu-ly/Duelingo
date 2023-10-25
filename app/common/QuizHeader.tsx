@@ -1,10 +1,9 @@
-import {Animated, Easing, StyleSheet, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import Theme from './constants/theme.json';
 import Constants from './constants/Constants';
 import {IconButton, ProgressBar, Text} from 'react-native-paper';
 import HeartContainer from './HeartContainer';
 import QuizTimer from './QuizTimer';
-import {useEffect, useRef} from 'react';
 
 interface QuizHeaderProps {
   backgroundColor?: string;
@@ -30,7 +29,7 @@ const QuizHeader = (props: QuizHeaderProps) => {
       <IconButton
         icon={'arrow-left'}
         iconColor={Theme.colors.onSurfaceVariant}
-        style={{marginRight: 12}}
+        style={styles.backButton}
         onPress={onPress}
       />
       {singleplayer && (
@@ -51,7 +50,8 @@ const QuizHeader = (props: QuizHeaderProps) => {
             <QuizTimer onEndTime={multiplayer.onEndTime} />
           ) : (
             <Text variant="titleMedium">
-              Round {totalQuestions - questionsRemaining} of {totalQuestions}
+              Round {totalQuestions - questionsRemaining + 1} of{' '}
+              {totalQuestions}
             </Text>
           )}
           <View style={styles.filler} />
@@ -76,8 +76,11 @@ const styles = StyleSheet.create({
   progressBar: {
     flex: 1,
   },
+  backButton: {
+    marginRight: Constants.largeGap,
+  },
   filler: {
-    width: 60,
+    width: 48,
     height: Constants.buttonSize,
   },
 });

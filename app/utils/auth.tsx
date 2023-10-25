@@ -14,12 +14,6 @@ export const signIn = (props: AuthProps, email: any, password: any) => {
 
   auth()
     .signInWithEmailAndPassword(email, password)
-    .then(() => {
-      navigation.reset({
-        index: 0,
-        routes: [{name: 'Home'}],
-      });
-    })
     .catch(err => {
       console.log(err);
       Alert.alert(error[err.code as keyof typeof error]);
@@ -64,9 +58,5 @@ export const signUp = (
 };
 
 export const signOut = () => {
-  auth()
-    .signOut()
-    .then(() => {
-      ToastAndroid.show('Signed Out', ToastAndroid.SHORT);
-    });
+  auth().signOut();
 };

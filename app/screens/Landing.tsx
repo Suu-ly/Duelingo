@@ -1,6 +1,7 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Text} from 'react-native-paper';
 import {View, StyleSheet, Image} from 'react-native';
+import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
 
 import CustomStatusBar from '../common/CustomStatusBar';
 import Constants from '../common/constants/Constants';

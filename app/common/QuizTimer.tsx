@@ -4,6 +4,7 @@ import Constants from './constants/Constants';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Text} from 'react-native-paper';
 import {useEffect, useRef, useState} from 'react';
+import useCountdown from '../utils/useCountdown';
 
 interface TimerProps {
   seconds?: number;
@@ -12,7 +13,7 @@ interface TimerProps {
 
 const QuizTimer = (props: TimerProps) => {
   const {seconds = 15, onEndTime} = props;
-  const [secondsLeft, setSecondsLeft] = useState(seconds);
+  const [secondsLeft, setSecondsLeft] = useState<number | null>(seconds);
 
   const animationValue = useRef(new Animated.Value(0)).current;
 
@@ -25,18 +26,10 @@ const QuizTimer = (props: TimerProps) => {
     }),
   );
 
-  useEffect(() => {
-    if (secondsLeft <= 0) {
-      pulse.reset();
-      return onEndTime();
-    }
-
-    const timeout = setTimeout(() => {
-      setSecondsLeft(secondsLeft - 1);
-    }, 1000);
-
-    return () => clearTimeout(timeout);
-  }, [secondsLeft]);
+  useCountdown(secondsLeft, setSecondsLeft, () => {
+    pulse.reset();
+    onEndTime();
+  });
 
   useEffect(() => {
     if (secondsLeft === 5) {
@@ -58,7 +51,7 @@ const QuizTimer = (props: TimerProps) => {
     <Animated.View style={[styles.container, {borderColor: color}]}>
       <Icon name="timer-outline" color={Theme.colors.onSurface} size={24} />
       <Text variant="titleMedium" style={{color: Theme.colors.onSurface}}>
-        {secondsLeft.toString().padStart(2, '0')}s
+        {secondsLeft && secondsLeft.toString().padStart(2, '0')}s
       </Text>
     </Animated.View>
   );

@@ -84,7 +84,7 @@ const QuizFooter = (props: QuizFooterProps) => {
         )}
         {(!multiplayer || (multiplayer && !submit)) && (
           <DuoButton
-            disabled={!submit && selected}
+            disabled={!submit && !selected}
             backgroundColor={
               submit && correct
                 ? Theme.colors.primary
