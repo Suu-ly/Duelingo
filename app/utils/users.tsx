@@ -19,10 +19,8 @@ export const createUser = (
         amount: 5,
         timestamp: 0,
       },
-      modules: {
-        chinese: 0,
-        malay: 0,
-      },
+      chinese: 0,
+      malay: 0,
       avatar: 0,
     });
   console.log('User created.');
@@ -94,7 +92,74 @@ export const UpdateExp = (exp: any) => {
   });
 };
 
-export const UpdateModules = (chinese: any, malay: any) => {
+// export const UpdateModules = (chinese: any, malay: any) => {
+//   auth().onAuthStateChanged(user => {
+//     if (user) {
+//       const uid = user.uid;
+//       firestore()
+//         .collection('Users')
+//         .doc(uid)
+//         .update({
+//           modules: {chinese: chinese, malay: malay},
+//         })
+//         .then(() => {
+//           console.log('User updated!');
+//         });
+//     }
+//   });
+// };
+
+function getChineseMod(documentSnapshot: any) {
+  return documentSnapshot.get('chinese');
+}
+
+export const UpdateChineseMod = () => {
+  auth().onAuthStateChanged(user => {
+    if (user) {
+      const uid = user.uid;
+      firestore()
+        .collection('Users')
+        .doc(uid)
+        .get()
+        .then(documentSnapshot => getChineseMod(documentSnapshot))
+        .then(module => {
+          firestore()
+            .collection('Users')
+            .doc(uid)
+            .update({
+              chinese: module + 1,
+            });
+        });
+    }
+  });
+};
+
+function getMalayMod(documentSnapshot: any) {
+  return documentSnapshot.get('malay');
+}
+
+export const UpdateMalayMod = () => {
+  auth().onAuthStateChanged(user => {
+    if (user) {
+      const uid = user.uid;
+      firestore()
+        .collection('Users')
+        .doc(uid)
+        .get()
+        .then(documentSnapshot => getMalayMod(documentSnapshot))
+        .then(module => {
+          firestore()
+            .collection('Users')
+            .doc(uid)
+            .update({
+              malay: module + 1,
+            });
+        });
+    }
+  });
+};
+
+export const ResetModules = () => {
   auth().onAuthStateChanged(user => {
     if (user) {
       const uid = user.uid;
@@ -102,7 +167,8 @@ export const UpdateModules = (chinese: any, malay: any) => {
         .collection('Users')
         .doc(uid)
         .update({
-          modules: {chinese: chinese, malay: malay},
+          chinese: 0,
+          malay: 0,
         })
         .then(() => {
           console.log('User updated!');
@@ -171,29 +237,3 @@ export const getFriendList: any = () => {
     }
   });
 };
-
-// export const deleteFriend = (friendUser: any) => {
-//   auth().onAuthStateChanged(user => {
-//     if (user) {
-//       const uid = user.uid;
-//       firestore()
-//         .collection('Users')
-//         .where('username', '==', friendUser)
-//         .get()
-//         .then(querySnapshot => {
-//           querySnapshot.forEach(documentSnapshot => {
-//             console.log(documentSnapshot.id);
-//             firestore()
-//               .collection('Users')
-//               .doc(uid)
-//               .collection('Friends')
-//               .doc(documentSnapshot.id)
-//               .delete();
-//           });
-//         })
-//         .then(() => {
-//           console.log('User deleted!');
-//         });
-//     }
-//   });
-// };

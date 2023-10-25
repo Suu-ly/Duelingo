@@ -16,8 +16,10 @@ import {
   UpdateHearts,
   UpdateExp,
   UpdateUsername,
-  UpdateModules,
   DeleteUserdata,
+  UpdateMalayMod,
+  UpdateChineseMod,
+  ResetModules,
 } from '../utils/users';
 
 import {deleteAccount} from '../utils/auth';
@@ -45,17 +47,6 @@ const Settings = (props: SettingsProps) => {
   const IncreaseExp = () => {
     Exp = Exp + 100;
   };
-
-  // const Add_chinesemod = () => {
-  //   var chinese = chineseMod + 1;
-  //   setchineseMod(chinese);
-  //   return chineseMod;
-  // };
-
-  // const Add_malaymod = () => {
-  //   setmalayMod(malayMod + 1);
-  //   return malayMod;
-  // };
 
   return (
     <View style={styles.mainContainer}>
@@ -106,29 +97,29 @@ const Settings = (props: SettingsProps) => {
         <Button
           mode="outlined"
           onPress={() => {
-            chinese = chinese + 1;
-            UpdateModules(chinese, malay);
-            console.log('Chinese:' + chinese);
-            console.log('Malay:' + malay);
+            // chinese = chinese + 1;
+            // UpdateModules(chinese, malay);
+            // console.log('Chinese:' + chinese);
+            // console.log('Malay:' + malay);
+            UpdateChineseMod();
           }}>
           Update Chinese Modules
         </Button>
         <Button
           mode="outlined"
           onPress={() => {
-            malay = malay + 1;
-            UpdateModules(chinese, malay);
-            console.log('Chinese:' + chinese);
-            console.log('Malay:' + malay);
+            // malay = malay + 1;
+            // UpdateModules(chinese, malay);
+            // console.log('Chinese:' + chinese);
+            // console.log('Malay:' + malay);
+            UpdateMalayMod();
           }}>
           Update Malay Modules
         </Button>
         <Button
           mode="outlined"
           onPress={() => {
-            UpdateModules(0, 0);
-            chinese = 0;
-            malay = 0;
+            ResetModules();
           }}>
           Reset Modules
         </Button>
@@ -140,6 +131,13 @@ const Settings = (props: SettingsProps) => {
             DeleteUserdata();
           }}>
           Delete Account
+        </Button>
+        <Button
+          mode="outlined"
+          onPress={() => {
+            UpdateMalayMod();
+          }}>
+          Test
         </Button>
       </View>
     </View>
