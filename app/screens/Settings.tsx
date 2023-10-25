@@ -25,19 +25,37 @@ import {deleteAccount} from '../utils/auth';
 const Settings = (props: SettingsProps) => {
   const {route, navigation} = props;
 
+  // const [Hearts, setHearts] = useState<number>(5);
+  // const [Exp, setExp] = useState<number>(0);
+  // const [chineseMod, setchineseMod] = useState(0);
+  // const [malayMod, setmalayMod] = useState<number>(0);
+
   const username = 'new username';
-  const [Hearts, setHearts] = useState<number>(5);
-  const [Exp, setExp] = useState<number>(0);
+  var Hearts = 0;
+  var chinese = 0;
+  var malay = 0;
+  var Exp = 0;
 
   const MinusHeart = () => {
     if (Hearts > 0) {
-      setHearts(Hearts - 1);
+      Hearts--;
     }
   };
 
   const IncreaseExp = () => {
-    setExp(Exp + 100);
+    Exp = Exp + 100;
   };
+
+  // const Add_chinesemod = () => {
+  //   var chinese = chineseMod + 1;
+  //   setchineseMod(chinese);
+  //   return chineseMod;
+  // };
+
+  // const Add_malaymod = () => {
+  //   setmalayMod(malayMod + 1);
+  //   return malayMod;
+  // };
 
   return (
     <View style={styles.mainContainer}>
@@ -47,7 +65,8 @@ const Settings = (props: SettingsProps) => {
         <Button
           mode="outlined"
           onPress={() => {
-            setHearts(5);
+            Hearts = 5;
+            UpdateHearts(Hearts);
             console.log(Hearts);
           }}>
           Revive hearts
@@ -72,7 +91,8 @@ const Settings = (props: SettingsProps) => {
         <Button
           mode="outlined"
           onPress={() => {
-            setExp(0);
+            Exp = 0;
+            UpdateExp(Exp);
           }}>
           Reset EXP
         </Button>
@@ -86,14 +106,29 @@ const Settings = (props: SettingsProps) => {
         <Button
           mode="outlined"
           onPress={() => {
-            UpdateModules(0, 0, 0);
+            chinese = chinese + 1;
+            UpdateModules(chinese, malay);
+            console.log('Chinese:' + chinese);
+            console.log('Malay:' + malay);
           }}>
-          Update Modules
+          Update Chinese Modules
         </Button>
         <Button
           mode="outlined"
           onPress={() => {
-            UpdateModules(9, 9, 9);
+            malay = malay + 1;
+            UpdateModules(chinese, malay);
+            console.log('Chinese:' + chinese);
+            console.log('Malay:' + malay);
+          }}>
+          Update Malay Modules
+        </Button>
+        <Button
+          mode="outlined"
+          onPress={() => {
+            UpdateModules(0, 0);
+            chinese = 0;
+            malay = 0;
           }}>
           Reset Modules
         </Button>

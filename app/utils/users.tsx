@@ -20,9 +20,8 @@ export const createUser = (
         timestamp: 0,
       },
       modules: {
-        easy: 9,
-        intermediate: 9,
-        hard: 9,
+        chinese: 0,
+        malay: 0,
       },
       avatar: 0,
     });
@@ -95,7 +94,7 @@ export const UpdateExp = (exp: any) => {
   });
 };
 
-export const UpdateModules = (easy: any, intermediate: any, hard: any) => {
+export const UpdateModules = (chinese: any, malay: any) => {
   auth().onAuthStateChanged(user => {
     if (user) {
       const uid = user.uid;
@@ -103,7 +102,7 @@ export const UpdateModules = (easy: any, intermediate: any, hard: any) => {
         .collection('Users')
         .doc(uid)
         .update({
-          modules: {easy: easy, intermediate: intermediate, hard: hard},
+          modules: {chinese: chinese, malay: malay},
         })
         .then(() => {
           console.log('User updated!');
@@ -121,7 +120,7 @@ export const DeleteUserdata = () => {
         .doc(uid)
         .delete()
         .then(() => {
-          console.log('User deleted!');
+          console.log('User data deleted!');
         });
     }
   });
