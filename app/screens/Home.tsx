@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, StyleSheet, TouchableOpacity, SectionList} from 'react-native';
 
 import {Text} from 'react-native-paper';
@@ -7,10 +7,10 @@ import Theme from '../common/constants/theme.json';
 
 import CustomStatusBar from '../common/CustomStatusBar';
 import Constants from '../common/constants/Constants';
-import TopicColors from '../common/constants/TopicColors';
 import Dropdown from '../common/DropdownButton';
 import Questions from '../data/ModuleQuestion.json';
 import TopicButton from '../common/TopicButton';
+import {getSectionListData} from '../utils/firestore';
 
 interface HomeProps {
   route: any;
@@ -58,23 +58,31 @@ const Home = (props: HomeProps) => {
     return overallIndex;
   };
 
-  //Make arrays for chinese and malay for the sectionlist
-  const createResult = (languageIndex: number) =>
-    Questions.Langauge[languageIndex].modules.map((module, index) => ({
-      id: index,
-      title: module.moduleName,
-      //put all the topicnames into an array, this array will be nested in the result array
-      data: module.topics.map(topic => topic.topicName),
-      backgroundColor:
-        Object.values(TopicColors)[
-          languageIndex === 0
-            ? index
-            : Object.keys(TopicColors).length - 1 - index
-        ], //if chinese, start from the first color of the TopicColors. If malay, start from the last color of the TopicColors
-    }));
+  type resultType = {
+    id: number;
+    title: any;
+    data: string[];
+    backgroundColor: string;
+  };
+  const [mandarinResult, setMandarinResult] = useState<resultType[] | null>(
+    null,
+  );
+  const [malayResult, setMalayResult] = useState<resultType[] | null>(null);
 
-  const mandarinResult = createResult(0);
-  const malayResult = createResult(1);
+  useEffect(() => {
+    const getChineseResult = async () => {
+      const mandarinResult = await getSectionListData('Chinese');
+      setMandarinResult(mandarinResult!);
+    };
+
+    const getMalayResult = async () => {
+      const malayResult = await getSectionListData('Malay');
+      setMalayResult(malayResult!);
+    };
+
+    getChineseResult();
+    getMalayResult();
+  }, []);
 
   return (
     <View style={styles.mainContainer}>
@@ -88,61 +96,63 @@ const Home = (props: HomeProps) => {
         </TouchableOpacity>
       </View>
       <View style={styles.container}>
-        <SectionList
-          showsVerticalScrollIndicator={false}
-          stickySectionHeadersEnabled={true}
-          sections={selectedItem.id === 1 ? mandarinResult : malayResult} //if selectedItem is chinese, use chinese result array, else use malay resullt array
-          keyExtractor={(item: any, index: any) => item + index}
-          renderItem={({item, index, section}) => {
-            const overallIndex = calculateOverallIndex(
-              selectedItem.id === 1 ? mandarinResult : malayResult,
-              section.id,
-              index,
-            );
-            //Find out whether the current topic being rendered is completed
-            const isCompleted =
-              overallIndex <
-              (selectedItem.id === 1
-                ? numberOfCompletedChineseModule
-                : numberOfCompletedMalayModule);
-            //Find out whether the item rendered is the last item of the section
-            const isLastItem =
-              section.data.indexOf(item) === section.data.length - 1;
-            const icon = isLastItem ? 'treasure-chest' : 'check-bold';
-            return (
-              <TopicButton
-                disabled={!isCompleted}
-                backgroundColor={section.backgroundColor}
-                borderColor={Theme.colors.onSurface}
-                icon={icon}
-                textColor={Theme.colors.onSurface}
-                onPress={() => {
-                  console.log(
-                    'Questions.Language[' +
-                      (selectedItem.id - 1) +
-                      '].modules[' +
-                      section.id +
-                      '].topics[' +
-                      section.data.indexOf(item) +
-                      ']',
-                  );
-                }}>
-                {item}
-              </TopicButton>
-            );
-          }}
-          renderSectionHeader={({section: {title}}) => (
-            <Text style={styles.header} variant={'titleLarge'}>
-              {selectedItem.value} {title}
-            </Text>
-          )}
-          ItemSeparatorComponent={() => (
-            <View style={{height: Constants.defaultGap}} />
-          )}
-          SectionSeparatorComponent={() => (
-            <View style={{paddingVertical: Constants.mediumGap}} />
-          )}
-        />
+        {mandarinResult !== null && malayResult !== null && (
+          <SectionList
+            showsVerticalScrollIndicator={false}
+            stickySectionHeadersEnabled={true}
+            sections={selectedItem.id === 1 ? mandarinResult : malayResult} //if selectedItem is chinese, use chinese result array, else use malay resullt array
+            keyExtractor={(item: any, index: any) => item + index}
+            renderItem={({item, index, section}) => {
+              const overallIndex = calculateOverallIndex(
+                selectedItem.id === 1 ? mandarinResult : malayResult,
+                section.id,
+                index,
+              );
+              //Find out whether the current topic being rendered is completed
+              const isCompleted =
+                overallIndex <
+                (selectedItem.id === 1
+                  ? numberOfCompletedChineseModule
+                  : numberOfCompletedMalayModule);
+              //Find out whether the item rendered is the last item of the section
+              const isLastItem =
+                section.data.indexOf(item) === section.data.length - 1;
+              const icon = isLastItem ? 'treasure-chest' : 'check-bold';
+              return (
+                <TopicButton
+                  disabled={!isCompleted}
+                  backgroundColor={section.backgroundColor}
+                  borderColor={Theme.colors.onSurface}
+                  icon={icon}
+                  textColor={Theme.colors.onSurface}
+                  onPress={() => {
+                    console.log(
+                      'Questions.Language[' +
+                        (selectedItem.id - 1) +
+                        '].modules[' +
+                        section.id +
+                        '].topics[' +
+                        section.data.indexOf(item) +
+                        ']',
+                    );
+                  }}>
+                  {item}
+                </TopicButton>
+              );
+            }}
+            renderSectionHeader={({section: {title}}) => (
+              <Text style={styles.header} variant={'titleLarge'}>
+                {selectedItem.value} {title}
+              </Text>
+            )}
+            ItemSeparatorComponent={() => (
+              <View style={{height: Constants.defaultGap}} />
+            )}
+            SectionSeparatorComponent={() => (
+              <View style={{paddingVertical: Constants.mediumGap}} />
+            )}
+          />
+        )}
       </View>
     </View>
   );

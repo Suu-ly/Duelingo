@@ -1,10 +1,9 @@
 import * as React from 'react';
-import {BottomNavigation, Text} from 'react-native-paper';
+import {BottomNavigation} from 'react-native-paper';
 import Home from '../screens/Home';
 import Leaderboard from '../screens/Leaderboard';
 import Challenge from '../screens/Challenge';
 import Profile from '../screens/Profile';
-import Filter from '../screens/Filter';
 import {Easing} from 'react-native';
 
 const HomeRoute = () => <Home route={undefined} navigation={undefined} />;
@@ -18,8 +17,6 @@ const ChallengeRoute = () => (
 );
 
 const ProfileRoute = () => <Profile route={undefined} navigation={undefined} />;
-
-const FilterRoute = () => <Filter route={undefined} navigation={undefined} />;
 
 const BottomTabBar = () => {
   const [index, setIndex] = React.useState(0);
@@ -36,13 +33,7 @@ const BottomTabBar = () => {
       focusedIcon: 'medal',
       unfocusedIcon: 'medal-outline',
     },
-    // {key: 'challenge', title: 'Challenge', focusedIcon: 'trophy-outline'},
-    {
-      key: 'filter',
-      title: 'Filter',
-      focusedIcon: 'trophy',
-      unfocusedIcon: 'trophy-outline',
-    },
+    {key: 'challenge', title: 'Challenge', focusedIcon: 'trophy-outline'},
     {
       key: 'profile',
       title: 'Profile',
@@ -54,8 +45,7 @@ const BottomTabBar = () => {
   const renderScene = BottomNavigation.SceneMap({
     home: HomeRoute,
     leaderboard: LeaderboardRoute,
-    // challenge: ChallengeRoute,
-    filter: FilterRoute,
+    challenge: ChallengeRoute,
     profile: ProfileRoute,
   });
 

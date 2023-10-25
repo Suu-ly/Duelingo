@@ -1,13 +1,14 @@
 {
   "project_info": {
-    "project_number": "637457265263",
-    "project_id": "duelingo-563d3",
-    "storage_bucket": "duelingo-563d3.appspot.com"
+    "project_number": "926334819803",
+    "firebase_url": "https://duelingo-33f9b-default-rtdb.firebaseio.com",
+    "project_id": "duelingo-33f9b",
+    "storage_bucket": "duelingo-33f9b.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:637457265263:android:2d24605c3cc2dcd7da539a",
+        "mobilesdk_app_id": "1:926334819803:android:76b217f62049a218fadbfe",
         "android_client_info": {
           "package_name": "com.Duelingo"
         }
@@ -15,7 +16,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyC_eCUmlS74me6GXndhQz8OBTRI51E3EbY"
+          "current_key": "AIzaSyCW-giNp2VjFapn8pJTNdNQeQpDgTISC1Y"
         }
       ],
       "services": {
