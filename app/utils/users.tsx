@@ -29,17 +29,6 @@ export const createUser = (
   firestore().collection('Users').doc(uid).collection('Friends').add({});
 };
 
-// export const getUserID = () => {
-//   return firestore()
-//     .collection('Users')
-//     .get()
-//     .then(collectionSnapshot => {
-//       collectionSnapshot.forEach(documentSnapshot => {
-//         console.log('User ID: ', documentSnapshot.id);
-//       });
-//     });
-// };
-
 export const UpdateUsername = (username: any) => {
   auth().onAuthStateChanged(user => {
     if (user) {
@@ -58,7 +47,7 @@ export const UpdateUsername = (username: any) => {
   });
 };
 
-export const UpdateHearts = (hearts: any) => {
+export const ResetHearts = () => {
   auth().onAuthStateChanged(user => {
     if (user) {
       const uid = user.uid;
@@ -66,7 +55,7 @@ export const UpdateHearts = (hearts: any) => {
         .collection('Users')
         .doc(uid)
         .update({
-          hearts: {amount: hearts, timestamp: 0},
+          hearts: {amount: 5, timestamp: 0},
         })
         .then(() => {
           console.log('User updated!');
@@ -75,7 +64,34 @@ export const UpdateHearts = (hearts: any) => {
   });
 };
 
-export const UpdateExp = (exp: any) => {
+function getHearts(documentSnapshot: any) {
+  return documentSnapshot.get('hearts.amount');
+}
+
+export const UpdateHearts = () => {
+  auth().onAuthStateChanged(user => {
+    if (user) {
+      const uid = user.uid;
+      firestore()
+        .collection('Users')
+        .doc(uid)
+        .get()
+        .then(documentSnapshot => getHearts(documentSnapshot))
+        .then(current => {
+          if (current > 0) {
+            firestore()
+              .collection('Users')
+              .doc(uid)
+              .update({
+                hearts: {amount: current - 1, timestamp: 0},
+              });
+          }
+        });
+    }
+  });
+};
+
+export const ResetExp = () => {
   auth().onAuthStateChanged(user => {
     if (user) {
       const uid = user.uid;
@@ -83,7 +99,7 @@ export const UpdateExp = (exp: any) => {
         .collection('Users')
         .doc(uid)
         .update({
-          exp: exp,
+          exp: 0,
         })
         .then(() => {
           console.log('User updated!');
@@ -92,6 +108,30 @@ export const UpdateExp = (exp: any) => {
   });
 };
 
+function getExp(documentSnapshot: any) {
+  return documentSnapshot.get('exp');
+}
+
+export const UpdateExp = () => {
+  auth().onAuthStateChanged(user => {
+    if (user) {
+      const uid = user.uid;
+      firestore()
+        .collection('Users')
+        .doc(uid)
+        .get()
+        .then(documentSnapshot => getExp(documentSnapshot))
+        .then(current => {
+          firestore()
+            .collection('Users')
+            .doc(uid)
+            .update({
+              exp: current + 100,
+            });
+        });
+    }
+  });
+};
 // export const UpdateModules = (chinese: any, malay: any) => {
 //   auth().onAuthStateChanged(user => {
 //     if (user) {

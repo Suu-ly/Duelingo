@@ -20,6 +20,8 @@ import {
   UpdateMalayMod,
   UpdateChineseMod,
   ResetModules,
+  ResetHearts,
+  ResetExp,
 } from '../utils/users';
 
 import {deleteAccount} from '../utils/auth';
@@ -33,20 +35,20 @@ const Settings = (props: SettingsProps) => {
   // const [malayMod, setmalayMod] = useState<number>(0);
 
   const username = 'new username';
-  var Hearts = 0;
-  var chinese = 0;
-  var malay = 0;
-  var Exp = 0;
+  // var Hearts = 0;
+  // var chinese = 0;
+  // var malay = 0;
+  // var Exp = 0;
 
-  const MinusHeart = () => {
-    if (Hearts > 0) {
-      Hearts--;
-    }
-  };
+  // const MinusHeart = () => {
+  //   if (Hearts > 0) {
+  //     Hearts--;
+  //   }
+  // };
 
-  const IncreaseExp = () => {
-    Exp = Exp + 100;
-  };
+  // const IncreaseExp = () => {
+  //   Exp = Exp + 100;
+  // };
 
   return (
     <View style={styles.mainContainer}>
@@ -56,34 +58,28 @@ const Settings = (props: SettingsProps) => {
         <Button
           mode="outlined"
           onPress={() => {
-            Hearts = 5;
-            UpdateHearts(Hearts);
-            console.log(Hearts);
+            ResetHearts();
           }}>
           Revive hearts
         </Button>
         <Button
           mode="outlined"
           onPress={() => {
-            MinusHeart();
-            UpdateHearts(Hearts);
-            console.log(Hearts);
+            UpdateHearts();
           }}>
           Update heart
         </Button>
         <Button
           mode="outlined"
           onPress={() => {
-            IncreaseExp();
-            UpdateExp(Exp);
+            UpdateExp();
           }}>
           Update EXP
         </Button>
         <Button
           mode="outlined"
           onPress={() => {
-            Exp = 0;
-            UpdateExp(Exp);
+            ResetExp();
           }}>
           Reset EXP
         </Button>
