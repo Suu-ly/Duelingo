@@ -6,19 +6,13 @@ import Challenge from '../screens/Challenge';
 import Profile from '../screens/Profile';
 import {Easing} from 'react-native';
 
-const HomeRoute = () => <Home route={undefined} navigation={undefined} />;
+interface BottomTabsProps {
+  route: any;
+  navigation: any;
+}
 
-const LeaderboardRoute = () => (
-  <Leaderboard route={undefined} navigation={undefined} />
-);
-
-const ChallengeRoute = () => (
-  <Challenge route={undefined} navigation={undefined} />
-);
-
-const ProfileRoute = () => <Profile route={undefined} navigation={undefined} />;
-
-const BottomTabBar = () => {
+const BottomTabBar = (props: BottomTabsProps) => {
+  const {route, navigation} = props;
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
     {
@@ -41,6 +35,17 @@ const BottomTabBar = () => {
       unfocusedIcon: 'account-outline',
     },
   ]);
+  const HomeRoute = () => <Home route={route} navigation={navigation} />;
+
+  const LeaderboardRoute = () => (
+    <Leaderboard route={route} navigation={navigation} />
+  );
+
+  const ChallengeRoute = () => (
+    <Challenge route={route} navigation={navigation} />
+  );
+
+  const ProfileRoute = () => <Profile route={route} navigation={navigation} />;
 
   const renderScene = BottomNavigation.SceneMap({
     home: HomeRoute,

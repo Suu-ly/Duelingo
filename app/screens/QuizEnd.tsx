@@ -18,7 +18,7 @@ const QuizEnd = (props: QuizEndProps) => {
 
   const timeTaken = route.params.timeElapsed;
   const score = route.params.score;
-  const totalQuestions = route.params.totalQuestions;
+  const totalScoreableQuestions = route.params.totalScoreableQuestions;
 
   const animationValue = useRef(new Animated.Value(0)).current;
 
@@ -73,7 +73,7 @@ const QuizEnd = (props: QuizEndProps) => {
             <Text
               variant="headlineSmall"
               style={{color: Theme.colors.onSurface}}>
-              {((score / totalQuestions) * 100).toFixed(0)}%
+              {((score / totalScoreableQuestions) * 100).toFixed(0)}%
             </Text>
           </View>
         </View>

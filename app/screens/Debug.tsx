@@ -43,31 +43,26 @@ const Debug = (props: DebugProps) => {
           mode="outlined"
           onPress={() =>
             navigation.navigate('Quiz', {
-              language: 'chinese',
-              difficulty: 'hard',
-              questionNo: 0,
-              remaining: 5,
-              totalQuestions: 5,
-              timeElapsed: 0,
-              score: 0,
+              language: 'Chinese',
+              module: 'Module1',
+              topic: 'Topic1',
             })
           }>
-          Go to Hard Quiz
+          Go to Quiz
         </Button>
         <Button
           mode="outlined"
           onPress={() =>
             navigation.navigate('QuizEnd', {
               timeElapsed: 80,
-              multiplayer: false,
               score: 3,
               totalQuestions: 7,
             })
           }>
           Go to Quiz End
         </Button>
-        <Button mode="outlined" onPress={() => navigation.navigate('Lobby')}>
-          Lobby
+        <Button mode="outlined" onPress={() => navigation.navigate('Home')}>
+          Home Page
         </Button>
         <Button
           mode="outlined"

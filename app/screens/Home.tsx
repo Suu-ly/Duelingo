@@ -11,7 +11,6 @@ import Dropdown from '../common/DropdownButton';
 import Questions from '../data/ModuleQuestion.json';
 import TopicButton from '../common/TopicButton';
 import {getSectionListData} from '../utils/firestore';
-import {EventArg, NavigationAction} from '@react-navigation/native';
 
 interface HomeProps {
   route: any;
@@ -20,6 +19,7 @@ interface HomeProps {
 
 const Home = (props: HomeProps) => {
   const {route, navigation} = props;
+
   const language = [
     {
       id: 1,

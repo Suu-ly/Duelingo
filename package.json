@@ -15,6 +15,7 @@
     "@react-native-firebase/database": "^18.4.0",
     "@react-native-firebase/firestore": "^18.4.0",
     "@react-native-firebase/storage": "^18.4.0",
+    "@react-navigation/bottom-tabs": "^6.5.11",
     "@react-navigation/native": "^6.1.7",
     "@react-navigation/native-stack": "^6.9.13",
     "firebase": "^10.4.0",

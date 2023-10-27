@@ -31,7 +31,7 @@ function AppContainer() {
     const subscriptionAuthState = auth().onAuthStateChanged(userState => {
       setUser(userState);
       if (userState) {
-        navigation.navigate('Home');
+        navigation.navigate('Debug');
         //For presence detection
         if (appStateVisible === 'active') {
           database()

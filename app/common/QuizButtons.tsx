@@ -5,12 +5,7 @@ import Constants from './constants/Constants';
 import Tts from 'react-native-tts';
 
 interface QuizButtonProps {
-  question: {
-    question: string;
-    options: Array<string>;
-    correct_answer: string;
-    explanation: string;
-  };
+  question: Record<string, any>;
   backgroundColor: string;
   reveal: boolean;
   selected: string;
@@ -48,7 +43,7 @@ const QuizButtons = (props: QuizButtonProps) => {
 
   return (
     <View style={styles.quizContainer}>
-      {question.options.map((option, index) => {
+      {question.options.map((option: string, index: number) => {
         return (
           <DuoButton
             key={index}
