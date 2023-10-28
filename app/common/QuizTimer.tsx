@@ -21,15 +21,12 @@ const QuizTimer = (props: TimerProps) => {
       toValue: 100,
       duration: 1000,
       easing: Easing.linear,
-      useNativeDriver: false,
+      useNativeDriver: true,
     }),
   );
 
   useEffect(() => {
-    if (secondsLeft <= 0) {
-      pulse.reset();
-      return onEndTime();
-    }
+    if (secondsLeft <= 0) return onEndTime();
 
     const timeout = setTimeout(() => {
       setSecondsLeft(secondsLeft - 1);
@@ -39,7 +36,7 @@ const QuizTimer = (props: TimerProps) => {
   }, [secondsLeft]);
 
   useEffect(() => {
-    if (secondsLeft === 5) {
+    if (secondsLeft <= 5) {
       pulse.start();
     }
   }, [secondsLeft]);
