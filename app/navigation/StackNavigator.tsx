@@ -10,6 +10,8 @@ import SignUp from '../screens/SignUp';
 import Lobby from '../screens/Lobby';
 import Waiting from '../screens/Waiting';
 import Multiplayer from '../screens/Multiplayer';
+import Profile from '../screens/Profile';
+
 
 const Stack = createNativeStackNavigator();
 
@@ -28,6 +30,7 @@ const StackNavigator = () => {
       <Stack.Screen name="Multiplayer" component={Multiplayer} />
       <Stack.Screen name="Quiz" component={Quiz} />
       <Stack.Screen name="QuizEnd" component={QuizEnd} />
+      <Stack.Screen name="Profile" component={Profile} />
     </Stack.Navigator>
   );
 };

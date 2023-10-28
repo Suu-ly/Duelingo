@@ -106,6 +106,12 @@ const Home = (props: HomeProps) => {
           onPress={() => navigation.navigate('Lobby')}>
           Lobby
         </Button>
+        <Button
+          icon="map-marker-outline"
+          mode="outlined"
+          onPress={() => navigation.navigate('Profile')}>
+          Profile
+        </Button>
         <Button mode="outlined" onPress={() => handleSignOut()}>
           Sign Out
         </Button>

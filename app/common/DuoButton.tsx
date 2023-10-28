@@ -4,6 +4,7 @@ import {VariantProp} from 'react-native-paper/lib/typescript/components/Typograp
 import theme from './constants/theme.json';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Constants from './constants/Constants';
+import {ScrollView, StyleSheet, View} from 'react-native';
 
 interface ButtonProps {
   backgroundColor: string;
