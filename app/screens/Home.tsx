@@ -74,6 +74,11 @@ const Home = (props: HomeProps) => {
           onPress={() => navigation.navigate('Challenge')}>
           Challenge
         </Button>
+        <Button
+          mode="outlined"
+          onPress={() => navigation.navigate('ChallengeFriend')}>
+          Challenge Friends
+        </Button>
         <Button mode="outlined" onPress={() => signOut()}>
           Sign Out
         </Button>
