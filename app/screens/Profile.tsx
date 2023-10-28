@@ -6,6 +6,7 @@ import {
   KeyboardAvoidingView,
   StyleSheet,
   Image,
+  Pressable,
 } from 'react-native';
 import {
   IconButton,
@@ -28,12 +29,14 @@ import Theme from '../common/constants/theme.json';
 interface ProfileProps {
   route: any;
   navigation: any;
+  userId?: string;
 }
 
 const Profile = (props: ProfileProps) => {
   const [index, setIndex] = useState(0);
   const {route, navigation} = props;
   const usersCollection = firestore().collection('Users').get();
+  const userId = auth().currentUser?.uid;
 
   return (
     <View style={styles.mainContainer}>
@@ -51,9 +54,17 @@ const Profile = (props: ProfileProps) => {
         <View style={styles.infoContainer}>
           <Text variant={'headlineLarge'}>Name</Text>
           <Text style={{color: Theme.colors.outline}} variant={'titleMedium'}>
-            UserID
+            {userId}
           </Text>
-          <Button style={styles.button}>Friends (leads to friends page)</Button>
+          <Button
+            style={{
+              marginHorizontal: 0,
+              justifyContent: 'flex-end',
+              flexDirection: 'row-reverse',
+              marginVertical: 0,
+            }}>
+            Friends (leads to friends page){' '}
+          </Button>
         </View>
         <DuoButton
           filled={true}
@@ -72,18 +83,22 @@ const Profile = (props: ProfileProps) => {
             source={require('../assets/ChinaFlag.png')}
             style={styles.Flag}
           />
-          <Text style={styles.Progress} variant={'bodyLarge'}>
-            Chinese
-          </Text>
+          <View style={styles.progressContainerRight}>
+            <Text style={styles.Progress} variant={'bodyLarge'}>
+              Chinese
+            </Text>
+          </View>
         </View>
         <View style={styles.progressContainer}>
           <Image
             source={require('../assets/MalaysiaFlag.png')}
             style={styles.Flag}
           />
-          <Text style={styles.Progress} variant={'bodyLarge'}>
-            Malay
-          </Text>
+          <View style={styles.progressContainerRight}>
+            <Text style={styles.Progress} variant={'bodyLarge'}>
+              Malay
+            </Text>
+          </View>
         </View>
       </View>
     </View>
@@ -110,14 +125,24 @@ const styles = StyleSheet.create({
   progressContainer: {
     justifyContent: 'flex-start',
     gap: Constants.largeGap,
-    paddingBottom: 2 * Constants.edgePadding,
+    paddingVertical: Constants.edgePadding,
     paddingHorizontal: Constants.edgePadding,
     flexDirection: 'row',
-    borderColor: 'black',
+    borderColor: Theme.colors.outlineVariant,
     //display: 'flex',
     alignItems: 'center',
-    borderRadius: 10,
-    borderBlockColor: 'black',
+    borderRadius: 12,
+    borderBlockColor: Theme.colors.outlineVariant,
+    borderWidth: 1,
+  },
+  progressContainerRight: {
+    justifyContent: 'flex-start',
+    gap: 4,
+    flexDirection: 'column',
+    borderColor: Theme.colors.outlineVariant,
+    alignItems: 'flex-start',
+    borderRadius: 12,
+    borderBlockColor: Theme.colors.outlineVariant,
     borderWidth: 1,
   },
   duo: {
@@ -135,7 +160,7 @@ const styles = StyleSheet.create({
   button: {
     flexDirection: 'row-reverse',
     justifyContent: 'flex-end',
-    paddingBottom: 5,
+    //marginHorizontal: 0,
   },
   middleContainer: {
     gap: Constants.defaultGap,
@@ -145,7 +170,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   Progress: {
-    color: Theme.colors.primary,
+    color: Theme.colors.onSurface,
     paddingHorizontal: 11,
     paddingTop: 5,
     flexDirection: 'row',
