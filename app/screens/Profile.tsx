@@ -56,15 +56,19 @@ const Profile = (props: ProfileProps) => {
           <Text style={{color: Theme.colors.outline}} variant={'titleMedium'}>
             {userId}
           </Text>
-          <Button
+          <Pressable
+            onPress={() => navigation.navigate('Friends')}
             style={{
               marginHorizontal: 0,
               justifyContent: 'flex-end',
               flexDirection: 'row-reverse',
               marginVertical: 0,
             }}>
-            Friends (leads to friends page){' '}
-          </Button>
+            <Text style={{textAlign: 'left'}}>
+              {' '}
+              Friends (leads to friends page)
+            </Text>
+          </Pressable>
         </View>
         <DuoButton
           filled={true}
@@ -157,11 +161,10 @@ const styles = StyleSheet.create({
     width: 179,
     height: 44,
   },
-  button: {
+  /*button: {
     flexDirection: 'row-reverse',
-    justifyContent: 'flex-end',
-    //marginHorizontal: 0,
-  },
+    marginRight: 0,
+  }, */
   middleContainer: {
     gap: Constants.defaultGap,
     paddingHorizontal: Constants.edgePadding,
