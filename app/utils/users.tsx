@@ -300,3 +300,26 @@ export const getUsername: any = () => {
     }
   });
 };
+
+export const getDisplayname: any = () => {
+  auth().onAuthStateChanged(user => {
+    if (user) {
+      const uid = user.uid;
+      var displayname: string[] = [];
+      firestore()
+        .collection('Users')
+        .doc(uid)
+        .collection('displayName')
+        .get()
+        .then(querySnapshot => {
+          querySnapshot.forEach(documentSnapshot => {
+            displayname = [...displayname, documentSnapshot.id];
+          });
+          // remove first document added during account creation ()
+
+          console.log(displayname);
+          return displayname;
+        });
+    }
+  });
+};

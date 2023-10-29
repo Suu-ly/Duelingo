@@ -20,7 +20,7 @@ import database from '@react-native-firebase/database';
 import auth from '@react-native-firebase/auth';
 import {EventArg, NavigationAction} from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
-import {getUsername} from '../utils/users';
+import {getUsername, getDisplayname} from '../utils/users';
 
 import CustomStatusBar from '../common/CustomStatusBar';
 import Constants from '../common/constants/Constants';
@@ -56,9 +56,11 @@ const Profile = (props: ProfileProps) => {
       </View>
       <View style={styles.middleContainer}>
         <View style={styles.infoContainer}>
-          <Text variant={'headlineLarge'}>Name</Text>
+          <Text variant={'headlineLarge'}>
+            {getDisplayname.displayname}Name
+          </Text>
           <Text style={{color: Theme.colors.outline}} variant={'titleMedium'}>
-            {getUsername}
+            {getUsername.username} userid
           </Text>
           <TouchableOpacity
             onPress={() => navigation.navigate('Friends')}
