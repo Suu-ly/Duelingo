@@ -29,17 +29,19 @@ export const createUser = (
         amount: 5,
         timestamp: 0,
       },
-      modules: {
-        easy: 9,
-        intermediate: 9,
-        hard: 9,
-      },
+      chinese: 0,
+      malay: 0,
       avatar: 0,
     });
   console.log('User created.');
 
-  // Cannot create empty collection, a document must be added
-  firestore().collection('Users').doc(uid).collection('Friends').add({});
+  // Create collection with document named 'default', which will be deleted when friend is added
+  firestore()
+    .collection('Users')
+    .doc(uid)
+    .collection('Friends')
+    .doc('default')
+    .set({});
 };
 
 export const createFriend = (username: any) => {
@@ -61,29 +63,52 @@ export const createFriend = (username: any) => {
               .set({});
           });
         });
-    }
-  });
-};
 
-export const getFriendList: any = () => {
-  auth().onAuthStateChanged(user => {
-    if (user) {
-      const uid = user.uid;
-      var friendList: string[] = [];
+      // Delete 'default' if exists
       firestore()
         .collection('Users')
         .doc(uid)
         .collection('Friends')
-        .get()
-        .then(querySnapshot => {
-          querySnapshot.forEach(documentSnapshot => {
-            friendList = [...friendList, documentSnapshot.id];
-          });
-          // remove first document added during account creation ()
-          friendList.shift();
-          console.log(friendList);
-          return friendList;
-        });
+        .doc('default')
+        .delete();
     }
   });
+};
+
+export const getFriendList = async (): Promise<string[]> => {
+  var friendList: string[] = [];
+  var user = auth().currentUser;
+  if (user) {
+    const uid = user.uid;
+    await firestore()
+      .collection('Users')
+      .doc(uid)
+      .collection('Friends')
+      .get()
+      .then(querySnapshot => {
+        querySnapshot.forEach(documentSnapshot => {
+          friendList = [...friendList, documentSnapshot.id];
+        });
+        // console.log(friendList);
+      });
+  }
+  return friendList;
+};
+
+export const getFriendDetails = async () => {
+  const friendList = await getFriendList();
+  var friendDetails = [];
+
+  for (let i = 0; i < friendList.length; i++) {
+    var friend = await firestore()
+      .collection('Users')
+      .doc(friendList[i])
+      .get()
+      .then(documentSnapshot => {
+        // console.log(documentSnapshot.data());
+        return documentSnapshot.data();
+      });
+    friendDetails.push(friend);
+  }
+  return friendDetails;
 };

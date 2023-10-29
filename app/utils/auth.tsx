@@ -17,7 +17,7 @@ export const signIn = (props: AuthProps, email: any, password: any) => {
     .then(() => {
       navigation.reset({
         index: 0,
-        routes: [{name: 'Home'}],
+        routes: [{name: 'Debug'}],
       });
     })
     .catch(err => {
