@@ -20,6 +20,7 @@ import database from '@react-native-firebase/database';
 import auth from '@react-native-firebase/auth';
 import {EventArg, NavigationAction} from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
+import {getUsername} from '../utils/database';
 
 import CustomStatusBar from '../common/CustomStatusBar';
 import Constants from '../common/constants/Constants';
@@ -37,6 +38,7 @@ const Profile = (props: ProfileProps) => {
   const {route, navigation} = props;
   const usersCollection = firestore().collection('Users').get();
   const userId = auth().currentUser?.uid;
+  //const userId = (await getUsername(uid)).data();
 
   return (
     <View style={styles.mainContainer}>
@@ -56,7 +58,7 @@ const Profile = (props: ProfileProps) => {
           <Text style={{color: Theme.colors.outline}} variant={'titleMedium'}>
             {userId}
           </Text>
-          <Pressable
+          <TouchableOpacity
             onPress={() => navigation.navigate('Friends')}
             style={{
               marginHorizontal: 0,
@@ -68,7 +70,7 @@ const Profile = (props: ProfileProps) => {
               {' '}
               Friends (leads to friends page)
             </Text>
-          </Pressable>
+          </TouchableOpacity>
         </View>
         <DuoButton
           filled={true}
