@@ -277,3 +277,26 @@ export const getFriendList: any = () => {
     }
   });
 };
+
+export const getUsername: any = () => {
+  auth().onAuthStateChanged(user => {
+    if (user) {
+      const uid = user.uid;
+      var username: string[] = [];
+      firestore()
+        .collection('Users')
+        .doc(uid)
+        .collection('username')
+        .get()
+        .then(querySnapshot => {
+          querySnapshot.forEach(documentSnapshot => {
+            username = [...username, documentSnapshot.id];
+          });
+          // remove first document added during account creation ()
+
+          console.log(username);
+          return username;
+        });
+    }
+  });
+};

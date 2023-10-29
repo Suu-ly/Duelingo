@@ -20,12 +20,13 @@ import database from '@react-native-firebase/database';
 import auth from '@react-native-firebase/auth';
 import {EventArg, NavigationAction} from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
-import {getUsername} from '../utils/database';
+import {getUsername} from '../utils/users';
 
 import CustomStatusBar from '../common/CustomStatusBar';
 import Constants from '../common/constants/Constants';
 import DuoButton from '../common/DuoButton';
 import Theme from '../common/constants/theme.json';
+import Component from 'react-native-paper/lib/typescript/components/Typography/Text';
 
 interface ProfileProps {
   route: any;
@@ -37,8 +38,9 @@ const Profile = (props: ProfileProps) => {
   const [index, setIndex] = useState(0);
   const {route, navigation} = props;
   const usersCollection = firestore().collection('Users').get();
-  const userId = auth().currentUser?.uid;
+  //const userId = auth().currentUser?.uid;
   //const userId = (await getUsername(uid)).data();
+  //const userId = await firestore().collection('Users').where('username', user.uid).get();
 
   return (
     <View style={styles.mainContainer}>
@@ -56,7 +58,7 @@ const Profile = (props: ProfileProps) => {
         <View style={styles.infoContainer}>
           <Text variant={'headlineLarge'}>Name</Text>
           <Text style={{color: Theme.colors.outline}} variant={'titleMedium'}>
-            {userId}
+            {getUsername}
           </Text>
           <TouchableOpacity
             onPress={() => navigation.navigate('Friends')}
