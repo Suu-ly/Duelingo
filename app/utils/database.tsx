@@ -31,7 +31,7 @@ export const createUser = (
       },
       chinese: 0,
       malay: 0,
-      avatar: Math.floor(Math.random() * 11),
+      avatar: Math.floor(Math.random() * 15),
     });
   console.log('User created.');
 };
