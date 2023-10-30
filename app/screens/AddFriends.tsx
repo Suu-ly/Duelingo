@@ -16,12 +16,12 @@ import Constants from '../common/constants/Constants';
 import DuoButton from '../common/DuoButton';
 import theme from '../common/constants/theme.json';
 
-interface FriendsProps {
+interface AddFriendsProps {
   route: any;
   navigation: any;
 }
 
-const Friends = (props: FriendsProps) => {
+const AddFriends = (props: AddFriendsProps) => {
   const {route, navigation} = props;
   const [isPressed, setIsPressed] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -123,19 +123,12 @@ const Friends = (props: FriendsProps) => {
             </Surface>
           </TouchableOpacity>
         ))}
-        <FAB
-          icon="account-plus-outline"
-          style={styles.fab}
-          onPress={() => navigation.navigate('AddFriends')}
-          mode="flat"
-          color={theme.colors.onPrimary}
-        />
       </View>
     </View>
   );
 };
 
-export default Friends;
+export default AddFriends;
 
 const styles = StyleSheet.create({
   mainContainer: {

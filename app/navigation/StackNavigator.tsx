@@ -8,6 +8,7 @@ import Landing from '../screens/Landing';
 import SignIn from '../screens/SignIn';
 import SignUp from '../screens/SignUp';
 import Friends from '../screens/Friends';
+import AddFriends from '../screens/AddFriends';
 
 const Stack = createNativeStackNavigator();
 
@@ -22,6 +23,7 @@ const StackNavigator = () => {
       <Stack.Screen name="SignUp" component={SignUp} />
       <Stack.Screen name="Debug" component={Debug} />
       <Stack.Screen name="Friends" component={Friends} />
+      <Stack.Screen name="AddFriends" component={AddFriends} />
       <Stack.Screen name="Quiz" component={Quiz} />
       <Stack.Screen name="QuizEnd" component={QuizEnd} />
     </Stack.Navigator>

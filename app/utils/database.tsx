@@ -31,17 +31,9 @@ export const createUser = (
       },
       chinese: 0,
       malay: 0,
-      avatar: 0,
+      avatar: Math.floor(Math.random() * 11),
     });
   console.log('User created.');
-
-  // Create collection with document named 'default', which will be deleted when friend is added
-  firestore()
-    .collection('Users')
-    .doc(uid)
-    .collection('Friends')
-    .doc('default')
-    .set({});
 };
 
 export const createFriend = (username: any) => {
@@ -71,22 +63,6 @@ export const createFriend = (username: any) => {
               .collection('Friends')
               .doc(uid)
               .set({});
-
-            // Delete 'default' if exists in own list
-            firestore()
-              .collection('Users')
-              .doc(uid)
-              .collection('Friends')
-              .doc('default')
-              .delete();
-
-            // Delete 'default' if exists in friend's list
-            firestore()
-              .collection('Users')
-              .doc(documentSnapshot.id)
-              .collection('Friends')
-              .doc('default')
-              .delete();
           });
         });
     }
