@@ -7,7 +7,7 @@ import Constants from '../common/constants/Constants';
 import DuoButton from '../common/DuoButton';
 import theme from '../common/constants/theme.json';
 
-import {createFriend, getFriendList, getFriendDetails} from '../utils/database';
+import {createFriend, getFriendList, deleteFriend} from '../utils/database';
 
 interface DebugProps {
   route: any;
@@ -90,9 +90,9 @@ const Debug = (props: DebugProps) => {
         <Button
           mode="outlined"
           onPress={() => {
-            getFriendDetails();
+            deleteFriend(username);
           }}>
-          Get Friend Details
+          Delete Friend
         </Button>
       </View>
     </View>

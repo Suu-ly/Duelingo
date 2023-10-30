@@ -55,22 +55,73 @@ export const createFriend = (username: any) => {
         .then(querySnapshot => {
           querySnapshot.forEach(documentSnapshot => {
             console.log(documentSnapshot.id);
+
+            // Add friend into own list
             firestore()
               .collection('Users')
               .doc(uid)
               .collection('Friends')
               .doc(documentSnapshot.id)
               .set({});
+
+            // Add ownself into friend's list
+            firestore()
+              .collection('Users')
+              .doc(documentSnapshot.id)
+              .collection('Friends')
+              .doc(uid)
+              .set({});
+
+            // Delete 'default' if exists in own list
+            firestore()
+              .collection('Users')
+              .doc(uid)
+              .collection('Friends')
+              .doc('default')
+              .delete();
+
+            // Delete 'default' if exists in friend's list
+            firestore()
+              .collection('Users')
+              .doc(documentSnapshot.id)
+              .collection('Friends')
+              .doc('default')
+              .delete();
           });
         });
+    }
+  });
+};
 
-      // Delete 'default' if exists
+export const deleteFriend = (username: any) => {
+  auth().onAuthStateChanged(user => {
+    if (user) {
+      const uid = user.uid;
       firestore()
         .collection('Users')
-        .doc(uid)
-        .collection('Friends')
-        .doc('default')
-        .delete();
+        .where('username', '==', username)
+        .get()
+        .then(querySnapshot => {
+          querySnapshot.forEach(documentSnapshot => {
+            console.log(documentSnapshot.id);
+
+            // Delete from own list
+            firestore()
+              .collection('Users')
+              .doc(uid)
+              .collection('Friends')
+              .doc(documentSnapshot.id)
+              .delete();
+
+            // Delete from friend's list
+            firestore()
+              .collection('Users')
+              .doc(documentSnapshot.id)
+              .collection('Friends')
+              .doc(uid)
+              .delete();
+          });
+        });
     }
   });
 };
@@ -89,7 +140,7 @@ export const getFriendList = async (): Promise<string[]> => {
         querySnapshot.forEach(documentSnapshot => {
           friendList = [...friendList, documentSnapshot.id];
         });
-        // console.log(friendList);
+        console.log(friendList);
       });
   }
   return friendList;
