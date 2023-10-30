@@ -2,6 +2,7 @@ import React, {FC, useState} from 'react';
 import {View, StyleSheet, TouchableOpacity} from 'react-native';
 import {Text, Chip} from 'react-native-paper';
 import Svg, {SvgUri, Circle} from 'react-native-svg';
+import Constants from './constants/Constants';
 
 interface DropdownProps {
   item: {id: Number; value: string; icon: string} | undefined;
@@ -21,15 +22,10 @@ const Dropdown = (props: DropdownProps) => {
     <View>
       <Chip
         mode="outlined"
-        style={{borderRadius: 40}}
+        style={styles.chip}
         onPress={() => setShowOption(!showOption)}
         avatar={
-          <SvgUri
-            style={styles.svg}
-            width="24"
-            height="24"
-            uri={item ? item.icon : null}
-          />
+          <SvgUri width="24" height="24" uri={item ? item.icon : null} />
         }>
         {!!item ? item.value : data[0].value}
       </Chip>
@@ -57,11 +53,17 @@ const Dropdown = (props: DropdownProps) => {
 const styles = StyleSheet.create({
   button: {
     flexDirection: 'row',
-    paddingHorizontal: 8,
+    paddingLeft: Constants.smallGap,
     paddingVertical: 16,
+    alignItems: 'center',
   },
   svg: {
-    marginHorizontal: 8,
+    marginRight: Constants.mediumGap,
+  },
+  chip: {
+    borderRadius: 40,
+    backgroundColor: 'transparent',
+    marginVertical: Constants.smallGap,
   },
 });
 

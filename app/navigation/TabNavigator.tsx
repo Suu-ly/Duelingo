@@ -1,27 +1,93 @@
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {
+  BottomTabHeaderProps,
+  createBottomTabNavigator,
+} from '@react-navigation/bottom-tabs';
+import {BottomNavigation} from 'react-native-paper';
+import {CommonActions, EventArg} from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {Animated, Easing, StyleSheet, View} from 'react-native';
+import {useCallback, useRef, useState} from 'react';
+
 import Home from '../screens/Home';
 import Leaderboard from '../screens/Leaderboard';
 import Challenge from '../screens/Challenge';
 import Profile from '../screens/Profile';
-import {BottomNavigation} from 'react-native-paper';
-import {CommonActions} from '@react-navigation/native';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {Easing} from 'react-native/Libraries/Animated/Easing';
+import CustomStatusBar from '../common/CustomStatusBar';
+import Dropdown from '../common/DropdownButton';
+import HeartContainer from '../common/HeartContainer';
+import Theme from '../common/constants/theme.json';
+import Constants from '../common/constants/Constants';
 
 const Tab = createBottomTabNavigator();
 
 const TabNavigator = () => {
+  const translate = useRef(new Animated.Value(40)).current;
+  const languageDropDown = [
+    {
+      id: 1,
+      value: 'Chinese',
+      icon: 'https://hatscripts.github.io/circle-flags/flags/cn.svg',
+    },
+    {
+      id: 2,
+      value: 'Malay',
+      icon: 'https://hatscripts.github.io/circle-flags/flags/my.svg',
+    },
+  ];
+  //Get the selected item of the language array
+  const [selectedItem, setSelectedItem] = useState<{
+    id: number;
+    value: string;
+    icon: string;
+  }>(languageDropDown[0]);
+  const onSelect = (item: any) => {
+    setSelectedItem(item);
+  };
+
+  const fadeIn = useCallback(() => {
+    Animated.timing(translate, {
+      toValue: 0,
+      duration: 200,
+      useNativeDriver: true,
+      easing: Easing.bezier(0, 0, 0, 1.0),
+    }).start();
+  }, [translate]);
+
+  const listeners = ({navigation, route}: any) => ({
+    tabPress: (e: EventArg<'tabPress', true>) => {
+      translate.setValue(40);
+    },
+    focus: (e: any) => {
+      fadeIn();
+    },
+  });
+
+  const header = (props: BottomTabHeaderProps) => {
+    return (
+      <>
+        <CustomStatusBar backgroundColor={Theme.colors.elevation.level1} />
+
+        <View style={styles.toprowContainer}>
+          <Dropdown
+            data={languageDropDown}
+            item={selectedItem}
+            onSelect={onSelect}
+          />
+          <HeartContainer lives={5} />
+        </View>
+      </>
+    );
+  };
+
   return (
     <Tab.Navigator
-      screenOptions={{
-        headerShown: false,
-      }}
+      screenListeners={listeners}
+      screenOptions={{header: header}}
       backBehavior="order"
       tabBar={({navigation, state, descriptors, insets}) => (
         <BottomNavigation.Bar
           navigationState={state}
           safeAreaInsets={insets}
-          //   animationEasing={Easing.ease}
           onTabPress={({route, preventDefault}) => {
             const event = navigation.emit({
               type: 'tabPress',
@@ -60,8 +126,7 @@ const TabNavigator = () => {
         />
       )}>
       <Tab.Screen
-        name="Base"
-        component={Home}
+        name="Home"
         options={{
           tabBarLabel: 'Home',
           tabBarIcon: ({focused, color, size}) => {
@@ -71,11 +136,17 @@ const TabNavigator = () => {
               <Icon name="home-outline" size={size} color={color} />
             );
           },
-        }}
-      />
+        }}>
+        {props => (
+          <Home
+            {...props}
+            translate={translate}
+            selectedLanguage={selectedItem}
+          />
+        )}
+      </Tab.Screen>
       <Tab.Screen
         name="Leaderboard"
-        component={Leaderboard}
         options={{
           tabBarLabel: 'Leaderboard',
           tabBarIcon: ({focused, color, size}) => {
@@ -85,11 +156,11 @@ const TabNavigator = () => {
               <Icon name="medal-outline" size={size} color={color} />
             );
           },
-        }}
-      />
+        }}>
+        {props => <Leaderboard {...props} translate={translate} />}
+      </Tab.Screen>
       <Tab.Screen
         name="Challenge"
-        component={Challenge}
         options={{
           tabBarLabel: 'Leaderboard',
           tabBarIcon: ({focused, color, size}) => {
@@ -99,12 +170,13 @@ const TabNavigator = () => {
               <Icon name="trophy-outline" size={size} color={color} />
             );
           },
-        }}
-      />
+        }}>
+        {props => <Challenge {...props} translate={translate} />}
+      </Tab.Screen>
       <Tab.Screen
         name="Profile"
-        component={Profile}
         options={{
+          headerShown: false,
           tabBarLabel: 'Leaderboard',
           tabBarIcon: ({focused, color, size}) => {
             return focused ? (
@@ -113,10 +185,21 @@ const TabNavigator = () => {
               <Icon name="account-outline" size={size} color={color} />
             );
           },
-        }}
-      />
+        }}>
+        {props => <Profile {...props} translate={translate} />}
+      </Tab.Screen>
     </Tab.Navigator>
   );
 };
 
 export default TabNavigator;
+const styles = StyleSheet.create({
+  toprowContainer: {
+    backgroundColor: Theme.colors.elevation.level1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    paddingHorizontal: Constants.edgePadding,
+    paddingVertical: Constants.mediumGap,
+  },
+});

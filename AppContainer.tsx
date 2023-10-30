@@ -31,7 +31,10 @@ function AppContainer() {
     const subscriptionAuthState = auth().onAuthStateChanged(userState => {
       setUser(userState);
       if (userState) {
-        navigation.navigate('Debug');
+        navigation.reset({
+          index: 0,
+          routes: [{name: 'Debug'}],
+        });
         //For presence detection
         if (appStateVisible === 'active') {
           database()
@@ -49,7 +52,10 @@ function AppContainer() {
           .onDisconnect()
           .remove();
       } else {
-        navigation.navigate('Landing');
+        navigation.reset({
+          index: 0,
+          routes: [{name: 'Landing'}],
+        });
       }
 
       //TODO hide splash screen

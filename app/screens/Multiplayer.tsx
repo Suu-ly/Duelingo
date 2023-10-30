@@ -480,7 +480,9 @@ const Multiplayer = (props: MultiplayerProps) => {
             <Button mode="text" onPress={() => setDialogVisible(false)}>
               Cancel
             </Button>
-            <Button mode="text" onPress={() => navigation.navigate('Debug')}>
+            <Button
+              mode="text"
+              onPress={() => navigation.navigate('HomeScreen')}>
               Leave
             </Button>
           </Dialog.Actions>
@@ -500,7 +502,11 @@ const Multiplayer = (props: MultiplayerProps) => {
             </Text>
           </Dialog.Content>
           <Dialog.Actions>
-            <Button mode="text" onPress={() => navigation.navigate('Debug')}>
+            <Button
+              mode="text"
+              onPress={() =>
+                navigation.navigate('HomeScreen', {screen: 'Profile'})
+              }>
               Ok
             </Button>
           </Dialog.Actions>

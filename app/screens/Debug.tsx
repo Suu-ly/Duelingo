@@ -61,7 +61,9 @@ const Debug = (props: DebugProps) => {
           }>
           Go to Quiz End
         </Button>
-        <Button mode="outlined" onPress={() => navigation.navigate('Home')}>
+        <Button
+          mode="outlined"
+          onPress={() => navigation.navigate('HomeScreen')}>
           Home Page
         </Button>
         <Button

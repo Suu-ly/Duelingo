@@ -1,5 +1,5 @@
 import ErrorBoundary from 'react-native-error-boundary';
-import {NavigationContainer} from '@react-navigation/native';
+import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
 import 'react-native-gesture-handler';
 import {PaperProvider, MD3LightTheme} from 'react-native-paper';
 import Theme from './app/common/constants/theme.json';
@@ -10,9 +10,17 @@ const theme = {
   colors: Theme.colors,
 };
 
+const navTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    background: Theme.colors.surface,
+  },
+};
+
 function App() {
   return (
-    <NavigationContainer>
+    <NavigationContainer theme={navTheme}>
       <PaperProvider theme={theme}>
         <ErrorBoundary>
           <AppContainer />

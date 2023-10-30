@@ -47,7 +47,9 @@ const TopicButton = (props: ButtonProps) => {
       backgroundShadow="transparent"
       raiseLevel={disabled ? 0 : 4}
       backgroundColor={
-        disabled ? theme.colors.surfaceDisabledInvert : theme.colors.surface
+        disabled
+          ? theme.colors.surfaceDisabledInvert
+          : theme.colors.elevation.level0
       }
       backgroundDarker={backgroundDark}
       borderWidth={2}

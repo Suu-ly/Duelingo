@@ -23,10 +23,7 @@ const StackNavigator = () => {
       <Stack.Screen name="Landing" component={Landing} />
       <Stack.Screen name="SignIn" component={SignIn} />
       <Stack.Screen name="SignUp" component={SignUp} />
-      <Stack.Screen name="Home" component={BottomTabBar} />
-      <Stack.Screen name="Leaderboard" component={BottomTabBar} />
-      <Stack.Screen name="Challenge" component={BottomTabBar} />
-      <Stack.Screen name="Profile" component={BottomTabBar} />
+      <Stack.Screen name="HomeScreen" component={TabNavigator} />
       <Stack.Screen name="Debug" component={Debug} />
       <Stack.Screen name="Lobby" component={Lobby} />
       <Stack.Screen name="Multiplayer" component={Multiplayer} />

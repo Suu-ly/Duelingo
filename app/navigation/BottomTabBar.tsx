@@ -16,20 +16,20 @@ const BottomTabBar = (props: BottomTabsProps) => {
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
     {
-      key: 'home',
+      key: 'Home',
       title: 'Home',
       focusedIcon: 'home',
       unfocusedIcon: 'home-outline',
     },
     {
-      key: 'leaderboard',
+      key: 'Leaderboard',
       title: 'Leaderboard',
       focusedIcon: 'medal',
       unfocusedIcon: 'medal-outline',
     },
-    {key: 'challenge', title: 'Challenge', focusedIcon: 'trophy-outline'},
+    {key: 'Challenge', title: 'Challenge', focusedIcon: 'trophy-outline'},
     {
-      key: 'profile',
+      key: 'Profile',
       title: 'Profile',
       focusedIcon: 'account',
       unfocusedIcon: 'account-outline',
@@ -48,16 +48,17 @@ const BottomTabBar = (props: BottomTabsProps) => {
   const ProfileRoute = () => <Profile route={route} navigation={navigation} />;
 
   const renderScene = BottomNavigation.SceneMap({
-    home: HomeRoute,
-    leaderboard: LeaderboardRoute,
-    challenge: ChallengeRoute,
-    profile: ProfileRoute,
+    Home: HomeRoute,
+    Leaderboard: LeaderboardRoute,
+    Challenge: ChallengeRoute,
+    Profile: ProfileRoute,
   });
 
   return (
     <BottomNavigation
       navigationState={{index, routes}}
       onIndexChange={setIndex}
+      onTabPress={route => console.log(route)}
       renderScene={renderScene}
       sceneAnimationType="shifting"
       sceneAnimationEnabled={true}
