@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import {View, TouchableOpacity, FlatList, StyleSheet, Image} from 'react-native';
+import {View, TouchableOpacity, FlatList, StyleSheet, ScrollView, Image} from 'react-native';
 import {Button, Text, Searchbar} from 'react-native-paper';
 import database from '@react-native-firebase/database';
+import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 
 import CustomStatusBar from '../common/CustomStatusBar';
@@ -10,6 +11,7 @@ import DuoButton from '../common/DuoButton';
 import theme from '../common/constants/theme.json';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import { users } from '../data/users';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 interface ChallengeFriendProps {
     route: any;
@@ -18,11 +20,27 @@ interface ChallengeFriendProps {
 const ChallengeFriend = (props: ChallengeFriendProps) => {
   const {route, navigation} = props;
 
+  //your userId
+  const userId = auth().currentUser?.uid;
+
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredUsers, setFilteredUsers] = useState('')
   const onChangeSearch = query => setSearchQuery(query);
   
-  const getFriends = async () => {
+  const friendId = firestore()
+    .collection('Users')
+    .doc(userId)
+    .collection('Friends')
+    .get()
+    .then(querySnapshot => {
+        console.log('Total Friends: ', querySnapshot.size);
+
+        querySnapshot.forEach(documentSnapshot => {
+            console.log('User ID: ', documentSnapshot.id, documentSnapshot.data());
+        });
+    });
+
+  const getOnlineFriends = async () => {
     await database()
       .ref('users')
       .orderByChild('friends') //only return online friends
@@ -41,6 +59,7 @@ const ChallengeFriend = (props: ChallengeFriendProps) => {
                 width: '100%',
                 flexDirection: 'row',
                 alignItems: 'center',
+                paddingTop: 22,
                 paddingHorizontal: 22,
                 borderBottomColor: Colors.black,
                 borderBottomWidth: 1,
@@ -105,7 +124,7 @@ const ChallengeFriend = (props: ChallengeFriendProps) => {
         <View style={styles.subContainer}>
             <Text variant={'bodySmall'}>Battle a friend in a language duel!</Text>
         </View>
-        <View style={styles.rowContainer}>
+        <View style={styles.searchBar}>
             <Searchbar 
                 placeholder='Search Friends'
                 onChangeText={onChangeSearch}
@@ -114,14 +133,16 @@ const ChallengeFriend = (props: ChallengeFriendProps) => {
         </View>
         <Button
             mode="outlined"
-            onPress={() => getFriends()}>
+            onPress={() => getOnlineFriends()}>
             Get Friends
         </Button>
-        <FlatList
-            data={users}
-            renderItem={renderItem}
-            keyExtractor={(item) => item.id.toString()}
-        />
+        <View style={styles.cardContainer}>
+            <FlatList
+                data={users}
+                renderItem={renderItem}
+                keyExtractor={(item) => item.id.toString()}
+            />
+        </View>
     </View>
   )
 }
@@ -140,14 +161,22 @@ const styles = StyleSheet.create({
     marginTop: 66,
     marginHorizontal: 22,
   },
-  rowContainer: {
+  searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     marginTop: 22,
     marginHorizontal: 22,
+    marginBottom: 22,
   },
   subContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: 10,
+    marginHorizontal: 22,
+  },
+  cardContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
