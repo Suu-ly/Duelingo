@@ -109,6 +109,12 @@ const Home = (props: HomeProps) => {
         <Button
           icon="map-marker-outline"
           mode="outlined"
+          onPress={() => navigation.navigate('Leaderboard')}>
+          Leaderboard
+        </Button>
+        <Button
+          icon="map-marker-outline"
+          mode="outlined"
           onPress={() => navigation.navigate('Profile')}>
           Profile
         </Button>
