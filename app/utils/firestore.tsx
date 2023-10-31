@@ -110,3 +110,23 @@ export const getSectionListData = async (language: string) => {
     console.error('Error getting data to Firestore:', error);
   }
 };
+
+export const numberOfCompletedModules = async (
+  userUID: string,
+  langauge: string,
+) => {
+  try {
+    const documentSnapshot = await firestore()
+      .collection('Users')
+      .doc(userUID)
+      .get();
+
+    if (documentSnapshot.exists) {
+      return (documentSnapshot.data() as any)[langauge];
+    } else {
+      return 6;
+    }
+  } catch (error) {
+    console.error('Error getting user data to Firestore:', error);
+  }
+};

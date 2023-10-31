@@ -40,7 +40,8 @@ if (Platform.OS === 'android') {
 
 const Quiz = (props: QuizProps) => {
   const {route, navigation} = props;
-  const language: keyof typeof Questions = route.params.language;
+  // const language: keyof typeof Questions = route.params.language;
+  const language = route.params.language;
   const module = route.params.module;
   const topic = route.params.topic;
 

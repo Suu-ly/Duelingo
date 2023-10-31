@@ -9,6 +9,7 @@ interface LeaderboardProps {
 }
 
 const Leaderboard = (props: LeaderboardProps) => {
+  const {route, navigation} = props;
   return (
     <View style={styles.mainContainer}>
       <CustomStatusBar />
