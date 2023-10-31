@@ -1,15 +1,12 @@
 import {useEffect, useState} from 'react';
-import {getFriendDetails} from '../utils/database';
 import {
-  Appbar,
-  Text,
-  Searchbar,
-  Surface,
-  Avatar,
-  FAB,
-} from 'react-native-paper';
-import {View, StyleSheet, TouchableOpacity} from 'react-native';
-import {deleteFriend} from '../utils/database';
+  getFriendList,
+  getUserListExceptOwn,
+  getUserDetails,
+  createFriend,
+} from '../utils/database';
+import {Text, Searchbar, Surface, Avatar} from 'react-native-paper';
+import {View, ScrollView, StyleSheet, TouchableOpacity} from 'react-native';
 
 import CustomStatusBar from '../common/CustomStatusBar';
 import Constants from '../common/constants/Constants';
@@ -45,7 +42,7 @@ const AddFriends = (props: AddFriendsProps) => {
     require('../assets/avatar/14.png'),
   ];
 
-  const [currentFriend, setCurrentFriend] = useState([
+  const [currentUser, setCurrentUser] = useState([
     {
       displayName: '',
       username: '',
@@ -61,69 +58,83 @@ const AddFriends = (props: AddFriendsProps) => {
     },
   ]);
 
+  const [friendList, setFriendList] = useState(['']);
+  const [userList, setUserList] = useState(['']);
+
+  const getUser = async () => {
+    let userDetails: any = await getUserDetails();
+    console.log(userDetails);
+    setCurrentUser([...userDetails]);
+  };
+
   const getFriend = async () => {
-    let friendDetails: any = await getFriendDetails();
-    console.log(friendDetails);
-    setCurrentFriend([...friendDetails]);
+    let friends: any = await getFriendList();
+    setFriendList([...friends]);
+  };
+
+  const getUserList = async () => {
+    let users: any = await getUserListExceptOwn();
+    setUserList([...users]);
   };
 
   useEffect(() => {
+    getUser();
+    getUserList();
     getFriend();
   }, [isPressed]);
 
   return (
     <View style={styles.mainContainer}>
       <CustomStatusBar />
-      <Appbar.Header style={styles.appbar}>
-        <Appbar.BackAction
-          onPress={() => {
-            navigation.goBack();
-          }}
-        />
-      </Appbar.Header>
-      <View style={styles.container}>
-        <View style={styles.title}>
-          <Text variant={'headlineLarge'}>Friends</Text>
-        </View>
+      <ScrollView
+        style={styles.container}
+        stickyHeaderIndices={[0]}
+        showsVerticalScrollIndicator={false}>
         <View style={styles.searchBar}>
           <Searchbar
-            placeholder="Search your friends"
+            placeholder="Search for a user"
             onChangeText={onChangeSearch}
             value={searchQuery}
+            mode={'view'}
+            icon={'arrow-left'}
+            onIconPress={() => {
+              navigation.goBack();
+            }}
           />
         </View>
-
-        {currentFriend.map((friend, i) => (
+        {currentUser.map((user, i) => (
           <TouchableOpacity
             style={styles.surface}
             onPress={() => console.log('Pressed')}
             key={i}>
             <Surface elevation={0}>
               <View style={styles.rowContainer}>
-                <Avatar.Image size={48} source={imgSource[friend.avatar]} />
+                <Avatar.Image size={48} source={imgSource[user.avatar]} />
                 <View style={styles.textContainer}>
-                  <Text variant={'labelMedium'}>{friend.username}</Text>
-                  <Text variant={'bodyLarge'}>{friend.displayName}</Text>
+                  <Text variant={'labelMedium'}>{user.username}</Text>
+                  <Text variant={'bodyLarge'}>{user.displayName}</Text>
                 </View>
                 <View style={styles.buttonContainer}>
                   <DuoButton
                     filled={false}
+                    width={77.5}
+                    disabled={friendList.includes(userList[i]) ? true : false}
                     backgroundDark={theme.colors.secondary}
                     backgroundColor={theme.colors.elevation.level0}
                     onPress={() => {
-                      deleteFriend(friend.username);
+                      createFriend(user.username);
                       setIsPressed(isPressed ? false : true);
                     }}
                     borderColor={theme.colors.outline}
                     textColor={theme.colors.onSurface}>
-                    Remove
+                    {friendList.includes(userList[i]) ? 'Added' : 'Add'}
                   </DuoButton>
                 </View>
               </View>
             </Surface>
           </TouchableOpacity>
         ))}
-      </View>
+      </ScrollView>
     </View>
   );
 };
@@ -133,7 +144,7 @@ export default AddFriends;
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: theme.colors.elevation.level3,
   },
   container: {
     flex: 1,
@@ -153,6 +164,7 @@ const styles = StyleSheet.create({
   surface: {
     backgroundColor: theme.colors.elevation.level0,
     padding: Constants.edgePadding,
+    marginBottom: Constants.largeGap,
     height: 80,
     width: 'auto',
     justifyContent: 'center',
@@ -170,12 +182,5 @@ const styles = StyleSheet.create({
   buttonContainer: {
     marginLeft: 'auto',
     marginRight: 0,
-  },
-  fab: {
-    position: 'absolute',
-    margin: Constants.largeGap,
-    right: Constants.largeGap,
-    bottom: Constants.largeGap,
-    backgroundColor: theme.colors.primary,
   },
 });

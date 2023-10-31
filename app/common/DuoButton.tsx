@@ -15,6 +15,7 @@ interface ButtonProps {
   icon?: string;
   stretch?: boolean;
   height?: number;
+  width?: number;
   children: React.ReactNode;
   textVariant?: VariantProp<never>;
   textColor: string;
@@ -32,6 +33,7 @@ const DuoButton = (props: ButtonProps) => {
     icon,
     stretch = false,
     height = Constants.buttonSize,
+    width,
     children,
     textVariant = 'labelLarge',
     textColor,
@@ -40,7 +42,7 @@ const DuoButton = (props: ButtonProps) => {
   return (
     <AwesomeButton
       height={height}
-      width={children ? null : Constants.buttonSize}
+      width={children ? width : Constants.buttonSize}
       disabled={disabled || inactive}
       borderRadius={Constants.radiusSmall}
       paddingHorizontal={Constants.mediumGap}

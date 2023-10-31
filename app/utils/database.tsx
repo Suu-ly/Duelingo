@@ -132,10 +132,46 @@ export const getFriendDetails = async () => {
       .doc(friendList[i])
       .get()
       .then(documentSnapshot => {
-        // console.log(documentSnapshot.data());
         return documentSnapshot.data();
       });
     friendDetails.push(friend);
   }
   return friendDetails;
+};
+
+export const getUserListExceptOwn = async (): Promise<string[]> => {
+  var userList: string[] = [];
+  var user = auth().currentUser;
+  if (user) {
+    const uid = user.uid;
+    await firestore()
+      .collection('Users')
+      .get()
+      .then(querySnapshot => {
+        querySnapshot.forEach(documentSnapshot => {
+          documentSnapshot.id != uid
+            ? (userList = [...userList, documentSnapshot.id])
+            : {};
+        });
+        console.log(userList);
+      });
+  }
+  return userList;
+};
+
+export const getUserDetails = async () => {
+  const userList = await getUserListExceptOwn();
+  var userDetails = [];
+
+  for (let i = 0; i < userList.length; i++) {
+    var user = await firestore()
+      .collection('Users')
+      .doc(userList[i])
+      .get()
+      .then(documentSnapshot => {
+        return documentSnapshot.data();
+      });
+    userDetails.push(user);
+  }
+  return userDetails;
 };

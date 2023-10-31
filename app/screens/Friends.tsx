@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react';
-import {getFriendDetails} from '../utils/database';
+import {getFriendDetails, deleteFriend} from '../utils/database';
 import {
   Appbar,
   Text,
@@ -8,8 +8,7 @@ import {
   Avatar,
   FAB,
 } from 'react-native-paper';
-import {View, StyleSheet, TouchableOpacity} from 'react-native';
-import {deleteFriend} from '../utils/database';
+import {View, ScrollView, StyleSheet, TouchableOpacity} from 'react-native';
 
 import CustomStatusBar from '../common/CustomStatusBar';
 import Constants from '../common/constants/Constants';
@@ -80,8 +79,18 @@ const Friends = (props: FriendsProps) => {
             navigation.goBack();
           }}
         />
+        <Appbar.Action
+          icon="refresh"
+          onPress={() => {
+            setIsPressed(isPressed ? false : true);
+          }}
+          style={styles.iconRight}
+        />
       </Appbar.Header>
-      <View style={styles.container}>
+      <ScrollView
+        style={styles.container}
+        stickyHeaderIndices={[1]}
+        showsVerticalScrollIndicator={false}>
         <View style={styles.title}>
           <Text variant={'headlineLarge'}>Friends</Text>
         </View>
@@ -92,7 +101,6 @@ const Friends = (props: FriendsProps) => {
             value={searchQuery}
           />
         </View>
-
         {currentFriend.map((friend, i) => (
           <TouchableOpacity
             style={styles.surface}
@@ -123,14 +131,14 @@ const Friends = (props: FriendsProps) => {
             </Surface>
           </TouchableOpacity>
         ))}
-        <FAB
-          icon="account-plus-outline"
-          style={styles.fab}
-          onPress={() => navigation.navigate('AddFriends')}
-          mode="flat"
-          color={theme.colors.onPrimary}
-        />
-      </View>
+      </ScrollView>
+      <FAB
+        icon="account-plus-outline"
+        style={styles.fab}
+        onPress={() => navigation.navigate('AddFriends')}
+        mode="flat"
+        color={theme.colors.onPrimary}
+      />
     </View>
   );
 };
@@ -151,15 +159,21 @@ const styles = StyleSheet.create({
   appbar: {
     backgroundColor: theme.colors.surface,
   },
+  iconRight: {
+    marginTop: Constants.mediumGap,
+    marginLeft: 'auto',
+    marginRight: Constants.edgePadding,
+  },
   title: {
     marginBottom: 16,
   },
   searchBar: {
-    marginBottom: Constants.largeGap,
+    marginBottom: Constants.defaultGap,
   },
   surface: {
     backgroundColor: theme.colors.elevation.level0,
     padding: Constants.edgePadding,
+    marginBottom: Constants.largeGap,
     height: 80,
     width: 'auto',
     justifyContent: 'center',
