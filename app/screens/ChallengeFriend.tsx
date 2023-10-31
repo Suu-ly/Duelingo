@@ -159,11 +159,14 @@ const ChallengeFriend = (props: ChallengeFriendProps) => {
       </Appbar.Header>
       <View style={styles.container}>
         <View style={styles.title}>
-          <Text variant={'headlineLarge'}>Friends</Text>
+          <Text variant={'headlineLarge'}>Challenge</Text>
+        </View>
+        <View style={styles.subtitle}>
+          <Text variant={'bodySmall'}>Battle a friend in a language duel!</Text>
         </View>
         <View style={styles.searchBar}>
           <Searchbar
-            placeholder="Search your friends"
+            placeholder="Search Friends"
             onChangeText={onChangeSearch}
             value={searchQuery}
           />
@@ -191,7 +194,7 @@ const ChallengeFriend = (props: ChallengeFriendProps) => {
                     }}
                     borderColor={theme.colors.outline}
                     textColor={theme.colors.onSurface}>
-                    Remove
+                    Challenge
                   </DuoButton>
                 </View>
               </View>
@@ -227,8 +230,11 @@ const styles = StyleSheet.create({
       backgroundColor: theme.colors.surface,
     },
     title: {
-      marginBottom: 16,
+      marginBottom: -5,
     },
+    subtitle: {
+        marginBottom: 10,
+      },
     searchBar: {
       marginBottom: Constants.largeGap,
     },
