@@ -1,4 +1,5 @@
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import auth from '@react-native-firebase/auth';
 
 import Profile from '../screens/Profile';
 import EditProfile from '../screens/EditProfile';
@@ -15,16 +16,18 @@ interface ProfileStackProps {
 
 const ProfileStackNavigator = (props: ProfileStackProps) => {
   const {translate} = props;
+  const userId = auth().currentUser?.uid as string;
   return (
     <Stack.Navigator
       screenOptions={{
         headerShown: false,
       }}>
-      <Stack.Screen name="UserProfile">
+      <Stack.Screen name="UserProfile" initialParams={{userId: userId}}>
         {props => <Profile {...props} translate={translate} />}
       </Stack.Screen>
-      <Stack.Screen name="EditProfile" component={EditProfile} />
-      <Stack.Screen name="SelectAvatar" component={SelectAvatar} />
+      <Stack.Screen name="EditProfile">
+        {props => <EditProfile {...props} translate={translate} />}
+      </Stack.Screen>
     </Stack.Navigator>
   );
 };

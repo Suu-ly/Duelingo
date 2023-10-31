@@ -185,6 +185,7 @@ const TabNavigator = () => {
         options={{
           headerShown: false,
           tabBarLabel: 'Profile',
+          lazy: false,
           tabBarIcon: ({focused, color, size}) => {
             return focused ? (
               <Icon name="account" size={size} color={color} />

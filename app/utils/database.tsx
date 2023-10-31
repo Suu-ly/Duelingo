@@ -1,4 +1,6 @@
-import firestore from '@react-native-firebase/firestore';
+import firestore, {
+  FirebaseFirestoreTypes,
+} from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 
 // Get All Quizzes
@@ -7,20 +9,21 @@ export const getAllQuiz = () => {
 };
 
 // Get Quiz With Specific Language
-export const getQuiz = (language: any) => {
+export const getQuiz = (language: string) => {
   return firestore().collection('Quizzes').doc(language).get();
 };
 
 export const createUser = (
-  email: any,
-  username: any,
-  displayName: any,
-  uid: any,
+  email: string,
+  username: string,
+  displayName: string,
+  uid: string,
 ) => {
   firestore()
     .collection('Users')
     .doc(uid)
     .set({
+      uid: uid,
       displayName: displayName,
       username: username,
       email: email,
@@ -39,7 +42,7 @@ export const createUser = (
   firestore().collection('Users').doc(uid).collection('Friends').add({});
 };
 
-export const createFriend = async (username: any) => {
+export const createFriend = async (username: string) => {
   const user = auth().currentUser;
   if (user) {
     const uid = user.uid;
@@ -61,9 +64,43 @@ export const createFriend = async (username: any) => {
   }
 };
 
-export const getFriendList: any = async () => {
+export const getFriendList = async (userId?: string) => {
   const user = auth().currentUser;
   var friendList: string[] = [];
+  if (userId) {
+    await firestore()
+      .collection('Users')
+      .doc(userId)
+      .collection('Friends')
+      .get()
+      .then(querySnapshot => {
+        querySnapshot.forEach(documentSnapshot => {
+          friendList = [...friendList, documentSnapshot.id];
+        });
+        // remove first document added during account creation ()
+        friendList.shift();
+      });
+  } else if (user) {
+    await firestore()
+      .collection('Users')
+      .doc(user.uid)
+      .collection('Friends')
+      .get()
+      .then(querySnapshot => {
+        querySnapshot.forEach(documentSnapshot => {
+          friendList = [...friendList, documentSnapshot.id];
+        });
+        // remove first document added during account creation ()
+        friendList.shift();
+      });
+  }
+  return friendList;
+};
+
+export const getFriendData = async () => {
+  const user = auth().currentUser;
+  var friendList: string[] = [];
+  var friendData: FirebaseFirestoreTypes.DocumentData[] = [];
   if (user) {
     const uid = user.uid;
     await firestore()
@@ -78,6 +115,28 @@ export const getFriendList: any = async () => {
         // remove first document added during account creation ()
         friendList.shift();
       });
+    await firestore()
+      .collection('Users')
+      .orderBy('exp', 'desc')
+      .where('uid', 'in', friendList)
+      .get()
+      .then(querySnapshot => {
+        querySnapshot.forEach(documentSnapshot => {
+          friendData.push(documentSnapshot.data());
+        });
+      });
   }
-  return friendList;
+  return friendData;
+};
+
+export const getUserData = async (userId: string) => {
+  var data: FirebaseFirestoreTypes.DocumentData = {};
+  await firestore()
+    .collection('Users')
+    .doc(userId)
+    .get()
+    .then(documentSnapshot => {
+      data = documentSnapshot.data() as FirebaseFirestoreTypes.DocumentData;
+    });
+  return data;
 };

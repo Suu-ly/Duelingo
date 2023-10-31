@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Image,
+  Animated,
 } from 'react-native';
 import {Appbar, Button, IconButton, Text} from 'react-native-paper';
 import Theme from '../common/constants/theme.json';
@@ -15,10 +16,11 @@ import Constants from '../common/constants/Constants';
 interface EditProfileProps {
   route: any;
   navigation: any;
+  translate: Animated.Value;
 }
 
 const EditProfile = (props: EditProfileProps) => {
-  const {route, navigation} = props;
+  const {route, navigation, translate} = props;
 
   const [visible, setVisible] = useState(false);
 
@@ -41,7 +43,8 @@ const EditProfile = (props: EditProfileProps) => {
   ];
 
   return (
-    <View style={styles.mainContainer}>
+    <Animated.View
+      style={[styles.mainContainer, {transform: [{translateY: translate}]}]}>
       <CustomStatusBar />
       <Appbar.Header mode="large">
         <Appbar.BackAction onPress={() => navigation.goBack()} />
@@ -88,7 +91,7 @@ const EditProfile = (props: EditProfileProps) => {
       <Button mode="outlined" onPress={() => setVisible(true)}>
         Open
       </Button>
-    </View>
+    </Animated.View>
   );
 };
 

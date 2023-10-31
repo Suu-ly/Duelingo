@@ -260,6 +260,8 @@ const Multiplayer = (props: MultiplayerProps) => {
     }
     setRemaining(5);
     setQuestionBank([]);
+    setOldPoints([]);
+    setPoints([]);
     setEnd(false);
     setStart(false);
     setIsPlaying(false);
@@ -551,7 +553,7 @@ const Multiplayer = (props: MultiplayerProps) => {
           points={points}
           userId={userId}
           onRematchPress={handleRematch}
-          onPress={() => navigation.navigate('Debug')}
+          onPress={() => navigation.navigate('HomeScreen')}
           rematchDisabled={playerLeft}
         />
       ) : (

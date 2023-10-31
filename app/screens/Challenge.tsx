@@ -1,14 +1,15 @@
 import {View, StyleSheet, Animated, ScrollView} from 'react-native';
-import {Button, Searchbar, Text} from 'react-native-paper';
+import {ActivityIndicator, Button, Searchbar, Text} from 'react-native-paper';
 import {useEffect, useState} from 'react';
 import auth from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
+import {FirebaseFirestoreTypes} from '@react-native-firebase/firestore';
 
 import Constants from '../common/constants/Constants';
 import useCountdown from '../utils/useCountdown';
 import ChallengeDialogs from '../common/ChallengeDialogs';
 import Theme from '../common/constants/theme.json';
-import {getFriendList} from '../utils/database';
+import {getFriendData} from '../utils/database';
 import ChallengeCard from '../common/ChallengeCards';
 
 interface ChallengePlayerProps {
@@ -29,32 +30,47 @@ const ChallengePlayer = (props: ChallengePlayerProps) => {
   const [timeout, setTimeout] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const [searchQuery, setSearchQuery] = useState('');
-
-  const onChangeSearch = (query: string) => setSearchQuery(query);
-
   const userId = auth().currentUser?.uid as string;
   const [playerId, setPlayerId] = useState('');
-  const [onlineFriends, setOnlineFriends] = useState<string[]>([]);
+  const [onlineFriends, setOnlineFriends] = useState<
+    FirebaseFirestoreTypes.DocumentData[]
+  >([]);
+  const [addFriendPrompt, setAddFriendPrompt] = useState(false);
+
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const onChangeSearch = (query: string) => {
+    setSearchQuery(query);
+  };
 
   const setFriendsList = async () => {
-    var list: string[] = await getFriendList();
+    setIsLoading(true);
+    var data: FirebaseFirestoreTypes.DocumentData[] = await getFriendData();
+    if (data.length === 0) {
+      setAddFriendPrompt(true);
+    }
     database()
       .ref('/users/')
       .on('value', snapshot => {
         if (snapshot.val()) {
-          var online: string[] = [];
-          console.log(snapshot.val());
-          list.forEach(data => {
-            if (snapshot.val()[data] === true) {
-              online.push(data);
-              console.log('true');
+          var online: any = [];
+          data.forEach((entry: FirebaseFirestoreTypes.DocumentData) => {
+            if (snapshot.val()[entry.uid] === true) {
+              online.push(entry);
             }
           });
           setOnlineFriends(online);
         }
       });
     setIsLoading(false);
+  };
+
+  const filterFunction = (entry: FirebaseFirestoreTypes.DocumentData) => {
+    if (searchQuery === '') return true;
+    return (
+      entry.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      entry.displayName.toLowerCase().includes(searchQuery.toLowerCase())
+    );
   };
 
   const randomQuestion = (count: number, max: number) => {
@@ -187,6 +203,7 @@ const ChallengePlayer = (props: ChallengePlayerProps) => {
       <ScrollView
         style={styles.container}
         stickyHeaderIndices={[1]}
+        contentContainerStyle={{flexGrow: 1}}
         showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
           <Text variant="headlineSmall">Challenge</Text>
@@ -207,14 +224,33 @@ const ChallengePlayer = (props: ChallengePlayerProps) => {
           <Text variant={'labelLarge'} style={{color: Theme.colors.primary}}>
             Online Friends
           </Text>
-          <View style={styles.cards}>
-            {!isLoading && (
+          {isLoading ? (
+            <View style={styles.loading}>
+              <ActivityIndicator />
+            </View>
+          ) : !addFriendPrompt ? (
+            <View style={styles.cards}>
               <ChallengeCard
-                data={onlineFriends}
-                handleChallenge={handleChallenge}
+                data={onlineFriends.filter(filterFunction)}
+                onPress={handleChallenge}
+                challenge={true}
+                navigation={navigation}
               />
-            )}
-          </View>
+            </View>
+          ) : (
+            <View style={styles.loading}>
+              <Text
+                variant={'bodyMedium'}
+                style={{color: Theme.colors.onSurfaceVariant}}>
+                You don't have any friends yet.
+              </Text>
+              <Text
+                variant={'bodyMedium'}
+                style={{color: Theme.colors.onSurfaceVariant}}>
+                Add some friends to challenge them!
+              </Text>
+            </View>
+          )}
         </View>
       </ScrollView>
       <ChallengeDialogs
@@ -264,6 +300,7 @@ const styles = StyleSheet.create({
   cardsContainer: {
     gap: Constants.edgePadding,
     flex: 1,
+    paddingBottom: Constants.edgePadding,
   },
   cards: {
     gap: Constants.largeGap,
@@ -275,5 +312,11 @@ const styles = StyleSheet.create({
   actions: {
     flexDirection: 'column',
     gap: Constants.mediumGap,
+  },
+  loading: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: Constants.largeGap,
   },
 });
