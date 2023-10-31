@@ -1,7 +1,6 @@
 import {useEffect, useState} from 'react';
 import {
-  getFriendList,
-  getUserListExceptOwn,
+  getFriendDetails,
   getUserDetails,
   createFriend,
 } from '../utils/database';
@@ -20,10 +19,21 @@ interface AddFriendsProps {
 
 const AddFriends = (props: AddFriendsProps) => {
   const {route, navigation} = props;
-  const [isPressed, setIsPressed] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const onChangeSearch = (query: any) => setSearchQuery(query);
-
+  const initialUser = [
+    {
+      displayName: '',
+      username: '',
+      email: '',
+      exp: 0,
+      hearts: {
+        amount: 5,
+        timestamp: 0,
+      },
+      chinese: 0,
+      malay: 0,
+      avatar: 0,
+    },
+  ];
   const imgSource = [
     require('../assets/avatar/0.png'),
     require('../assets/avatar/1.png'),
@@ -42,44 +52,47 @@ const AddFriends = (props: AddFriendsProps) => {
     require('../assets/avatar/14.png'),
   ];
 
-  const [currentUser, setCurrentUser] = useState([
-    {
-      displayName: '',
-      username: '',
-      email: '',
-      exp: 0,
-      hearts: {
-        amount: 5,
-        timestamp: 0,
-      },
-      chinese: 0,
-      malay: 0,
-      avatar: 0,
-    },
-  ]);
-
-  const [friendList, setFriendList] = useState(['']);
-  const [userList, setUserList] = useState(['']);
+  const [isPressed, setIsPressed] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [friendList, setFriendList] = useState(initialUser);
+  const [currentUser, setCurrentUser] = useState(initialUser);
+  const [constUser, setConstUser] = useState(initialUser);
 
   const getUser = async () => {
     let userDetails: any = await getUserDetails();
     console.log(userDetails);
     setCurrentUser([...userDetails]);
+    setConstUser([...userDetails]);
   };
 
   const getFriend = async () => {
-    let friends: any = await getFriendList();
-    setFriendList([...friends]);
+    let friendDetails: any = await getFriendDetails();
+    setFriendList([...friendDetails]);
   };
 
-  const getUserList = async () => {
-    let users: any = await getUserListExceptOwn();
-    setUserList([...users]);
+  const searchUser = async () => {
+    if (
+      constUser.filter(
+        (e: any) =>
+          e.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          e.displayName.toLowerCase().includes(searchQuery.toLowerCase()),
+      )
+    ) {
+      let friend: any = constUser.filter(
+        (e: any) =>
+          e.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          e.displayName.toLowerCase().includes(searchQuery.toLowerCase()),
+      );
+      setCurrentUser(friend);
+    } else if (searchQuery == '') {
+      setCurrentUser([...constUser]);
+    } else {
+      setCurrentUser([]);
+    }
   };
 
   useEffect(() => {
     getUser();
-    getUserList();
     getFriend();
   }, [isPressed]);
 
@@ -93,7 +106,12 @@ const AddFriends = (props: AddFriendsProps) => {
         <View style={styles.searchBar}>
           <Searchbar
             placeholder="Search for a user"
-            onChangeText={onChangeSearch}
+            onChangeText={searchQuery => {
+              setSearchQuery(searchQuery);
+            }}
+            onSubmitEditing={() => {
+              searchUser();
+            }}
             value={searchQuery}
             mode={'view'}
             icon={'arrow-left'}
@@ -118,7 +136,13 @@ const AddFriends = (props: AddFriendsProps) => {
                   <DuoButton
                     filled={false}
                     width={77.5}
-                    disabled={friendList.includes(userList[i]) ? true : false}
+                    disabled={
+                      friendList.filter(
+                        (e: any) => e.username === user.username,
+                      ).length != 0
+                        ? true
+                        : false
+                    }
                     backgroundDark={theme.colors.secondary}
                     backgroundColor={theme.colors.elevation.level0}
                     onPress={() => {
@@ -127,7 +151,10 @@ const AddFriends = (props: AddFriendsProps) => {
                     }}
                     borderColor={theme.colors.outline}
                     textColor={theme.colors.onSurface}>
-                    {friendList.includes(userList[i]) ? 'Added' : 'Add'}
+                    {friendList.filter((e: any) => e.username === user.username)
+                      .length != 0
+                      ? 'Added'
+                      : 'Add'}
                   </DuoButton>
                 </View>
               </View>

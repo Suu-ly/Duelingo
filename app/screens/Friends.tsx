@@ -22,10 +22,21 @@ interface FriendsProps {
 
 const Friends = (props: FriendsProps) => {
   const {route, navigation} = props;
-  const [isPressed, setIsPressed] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const onChangeSearch = (query: any) => setSearchQuery(query);
-
+  const initialUser = [
+    {
+      displayName: '',
+      username: '',
+      email: '',
+      exp: 0,
+      hearts: {
+        amount: 5,
+        timestamp: 0,
+      },
+      chinese: 0,
+      malay: 0,
+      avatar: 0,
+    },
+  ];
   const imgSource = [
     require('../assets/avatar/0.png'),
     require('../assets/avatar/1.png'),
@@ -44,26 +55,37 @@ const Friends = (props: FriendsProps) => {
     require('../assets/avatar/14.png'),
   ];
 
-  const [currentFriend, setCurrentFriend] = useState([
-    {
-      displayName: '',
-      username: '',
-      email: '',
-      exp: 0,
-      hearts: {
-        amount: 5,
-        timestamp: 0,
-      },
-      chinese: 0,
-      malay: 0,
-      avatar: 0,
-    },
-  ]);
+  const [isPressed, setIsPressed] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [currentFriend, setCurrentFriend] = useState(initialUser);
+  const [constFriend, setConstFriend] = useState(initialUser);
 
   const getFriend = async () => {
     let friendDetails: any = await getFriendDetails();
     console.log(friendDetails);
     setCurrentFriend([...friendDetails]);
+    setConstFriend([...friendDetails]);
+  };
+
+  const searchFriend = async () => {
+    if (
+      constFriend.filter(
+        (e: any) =>
+          e.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          e.displayName.toLowerCase().includes(searchQuery.toLowerCase()),
+      )
+    ) {
+      let friend: any = constFriend.filter(
+        (e: any) =>
+          e.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          e.displayName.toLowerCase().includes(searchQuery.toLowerCase()),
+      );
+      setCurrentFriend(friend);
+    } else if (searchQuery == '') {
+      setCurrentFriend([...constFriend]);
+    } else {
+      setCurrentFriend([]);
+    }
   };
 
   useEffect(() => {
@@ -97,7 +119,12 @@ const Friends = (props: FriendsProps) => {
         <View style={styles.searchBar}>
           <Searchbar
             placeholder="Search your friends"
-            onChangeText={onChangeSearch}
+            onChangeText={searchQuery => {
+              setSearchQuery(searchQuery);
+            }}
+            onSubmitEditing={() => {
+              searchFriend();
+            }}
             value={searchQuery}
           />
         </View>
