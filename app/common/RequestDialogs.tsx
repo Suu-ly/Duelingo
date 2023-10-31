@@ -47,7 +47,7 @@ const RequestDialogs = (props: RequestDialogProps) => {
         <Dialog.Content>
           <Text variant="bodyMedium">{requestText}</Text>
         </Dialog.Content>
-        <Dialog.Actions style={styles.actions}>
+        <View style={styles.actions}>
           <View style={styles.buttonContainer}>
             <DuoButton
               backgroundColor={Theme.colors.primary}
@@ -62,10 +62,13 @@ const RequestDialogs = (props: RequestDialogProps) => {
               )}
             </DuoButton>
           </View>
-          <Button mode="text" onPress={requestActiveDecline}>
+          <Button
+            mode="text"
+            onPress={requestActiveDecline}
+            style={styles.decline}>
             Decline
           </Button>
-        </Dialog.Actions>
+        </View>
       </Dialog>
       <Dialog
         visible={cancelled}
@@ -96,8 +99,14 @@ const styles = StyleSheet.create({
   actions: {
     flexDirection: 'column',
     gap: Constants.mediumGap,
+    padding: Constants.defaultGap,
+    paddingTop: 0,
+    alignItems: 'center',
   },
   buttonContainer: {
     width: '100%',
+  },
+  decline: {
+    flexDirection: 'row',
   },
 });

@@ -11,7 +11,7 @@ import {useCallback, useRef, useState} from 'react';
 import Home from '../screens/Home';
 import Leaderboard from '../screens/Leaderboard';
 import Challenge from '../screens/Challenge';
-import Profile from '../screens/Profile';
+import ProfileStackNavigator from './ProfileStackNavigator';
 import CustomStatusBar from '../common/CustomStatusBar';
 import Dropdown from '../common/DropdownButton';
 import HeartContainer from '../common/HeartContainer';
@@ -54,7 +54,7 @@ const TabNavigator = () => {
   }, [translate]);
 
   const listeners = ({navigation, route}: any) => ({
-    tabPress: (e: EventArg<'tabPress', true>) => {
+    blur: (e: any) => {
       translate.setValue(40);
     },
     focus: (e: any) => {
@@ -83,11 +83,12 @@ const TabNavigator = () => {
     <Tab.Navigator
       screenListeners={listeners}
       screenOptions={{header: header}}
-      backBehavior="order"
+      backBehavior="history"
       tabBar={({navigation, state, descriptors, insets}) => (
         <BottomNavigation.Bar
           navigationState={state}
           safeAreaInsets={insets}
+          animationEasing={Easing.bezier(0, 0, 0, 1.0)}
           onTabPress={({route, preventDefault}) => {
             const event = navigation.emit({
               type: 'tabPress',
@@ -162,7 +163,7 @@ const TabNavigator = () => {
       <Tab.Screen
         name="Challenge"
         options={{
-          tabBarLabel: 'Leaderboard',
+          tabBarLabel: 'Challenge',
           tabBarIcon: ({focused, color, size}) => {
             return focused ? (
               <Icon name="trophy" size={size} color={color} />
@@ -171,13 +172,19 @@ const TabNavigator = () => {
             );
           },
         }}>
-        {props => <Challenge {...props} translate={translate} />}
+        {props => (
+          <Challenge
+            {...props}
+            translate={translate}
+            language={selectedItem.value.toLowerCase()}
+          />
+        )}
       </Tab.Screen>
       <Tab.Screen
         name="Profile"
         options={{
           headerShown: false,
-          tabBarLabel: 'Leaderboard',
+          tabBarLabel: 'Profile',
           tabBarIcon: ({focused, color, size}) => {
             return focused ? (
               <Icon name="account" size={size} color={color} />
@@ -186,7 +193,7 @@ const TabNavigator = () => {
             );
           },
         }}>
-        {props => <Profile {...props} translate={translate} />}
+        {props => <ProfileStackNavigator {...props} translate={translate} />}
       </Tab.Screen>
     </Tab.Navigator>
   );

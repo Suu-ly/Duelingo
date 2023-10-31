@@ -7,7 +7,6 @@ import QuizEnd from '../screens/QuizEnd';
 import Landing from '../screens/Landing';
 import SignIn from '../screens/SignIn';
 import SignUp from '../screens/SignUp';
-import BottomTabBar from './BottomTabBar';
 import TabNavigator from './TabNavigator';
 import Lobby from '../screens/Lobby';
 import Multiplayer from '../screens/Multiplayer';

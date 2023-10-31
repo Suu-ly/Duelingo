@@ -301,6 +301,9 @@ const Multiplayer = (props: MultiplayerProps) => {
             database()
               .ref('/games/' + gameId)
               .remove();
+            database()
+              .ref('/users/' + userId)
+              .set(true);
             return;
           }
           // Prevent default behavior of leaving the screen
@@ -448,9 +451,6 @@ const Multiplayer = (props: MultiplayerProps) => {
       database()
         .ref('/games/' + gameId + '/rematch')
         .off();
-      database()
-        .ref('/users/' + userId)
-        .set(true);
     };
   });
 
@@ -504,9 +504,7 @@ const Multiplayer = (props: MultiplayerProps) => {
           <Dialog.Actions>
             <Button
               mode="text"
-              onPress={() =>
-                navigation.navigate('HomeScreen', {screen: 'Profile'})
-              }>
+              onPress={() => navigation.navigate('HomeScreen')}>
               Ok
             </Button>
           </Dialog.Actions>

@@ -1,22 +1,34 @@
-import * as React from 'react';
-import {View, StyleSheet} from 'react-native';
-import {Text} from 'react-native-paper';
+import {View, StyleSheet, Animated} from 'react-native';
+import {Button, Text} from 'react-native-paper';
+import Theme from '../common/constants/theme.json';
 import CustomStatusBar from '../common/CustomStatusBar';
 
 interface ProfileProps {
   route: any;
   navigation: any;
+  translate: Animated.Value;
 }
 
 const Profile = (props: ProfileProps) => {
+  const {route, navigation, translate} = props;
   return (
-    <View style={styles.mainContainer}>
+    <Animated.View
+      style={[styles.mainContainer, {transform: [{translateY: translate}]}]}>
       <CustomStatusBar />
-
       <View>
         <Text>Profile</Text>
+        <Button
+          mode="outlined"
+          onPress={() => {
+            navigation.navigate('HomeScreen', {
+              screen: 'Profile',
+              params: {screen: 'EditProfile'},
+            });
+          }}>
+          Edit
+        </Button>
       </View>
-    </View>
+    </Animated.View>
   );
 };
 
@@ -25,7 +37,6 @@ export default Profile;
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    backgroundColor: 'white',
-    justifyContent: 'center',
+    backgroundColor: Theme.colors.surface,
   },
 });
