@@ -36,7 +36,7 @@ const ChallengeCard = (props: ChallengeCardProps) => {
         activeOpacity={0.8}
         key={index}
         onPress={() => {
-          navigation.push('Landing');
+          navigation.push('OtherProfile', {userId: item.uid});
         }}>
         <View style={styles.info}>
           <View style={styles.imageContainer}>

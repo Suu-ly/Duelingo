@@ -21,13 +21,13 @@ import Theme from '../common/constants/theme.json';
 import {getUserData, getFriendList} from '../utils/database';
 import Avatar from '../common/Avatar';
 
-interface ProfileProps {
+interface UserProfileProps {
   route: any;
   navigation: any;
   translate: Animated.Value;
 }
 
-const Profile = (props: ProfileProps) => {
+const UserProfile = (props: UserProfileProps) => {
   const {route, navigation, translate} = props;
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState<Record<string, any>>({});
@@ -36,7 +36,7 @@ const Profile = (props: ProfileProps) => {
   const ownUserId = auth().currentUser?.uid as string;
 
   const loadData = async () => {
-    // setIsLoading(true);
+    setIsLoading(true);
     var temp = await getUserData(ownUserId);
     var numTemp = await getFriendList(ownUserId);
     setData(temp);
@@ -60,7 +60,7 @@ const Profile = (props: ProfileProps) => {
             <IconButton
               icon={'cog-outline'}
               iconColor={Theme.colors.onSurfaceVariant}
-              onPress={() => navigation.navigate('EditProfile')}
+              onPress={() => navigation.navigate('Settings')}
             />
           </View>
           <View style={styles.middleContainer}>
@@ -99,11 +99,9 @@ const Profile = (props: ProfileProps) => {
               />
               <View style={styles.progressContainerRight}>
                 <Text variant={'titleMedium'}>Chinese</Text>
-                {data.chinese && (
-                  <View style={styles.progressBar}>
-                    <ProgressBar progress={data.chinese / 24} />
-                  </View>
-                )}
+                <View style={styles.progressBar}>
+                  <ProgressBar progress={data.chinese / 24} />
+                </View>
               </View>
             </View>
             <View style={styles.progressContainer}>
@@ -114,11 +112,9 @@ const Profile = (props: ProfileProps) => {
               />
               <View style={styles.progressContainerRight}>
                 <Text variant={'titleMedium'}>Malay</Text>
-                {data.malay && (
-                  <View style={styles.progressBar}>
-                    <ProgressBar progress={data.malay / 24} />
-                  </View>
-                )}
+                <View style={styles.progressBar}>
+                  <ProgressBar progress={data.malay / 24} />
+                </View>
               </View>
             </View>
           </View>
@@ -132,7 +128,7 @@ const Profile = (props: ProfileProps) => {
   );
 };
 
-export default Profile;
+export default UserProfile;
 
 const styles = StyleSheet.create({
   mainContainer: {

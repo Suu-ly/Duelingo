@@ -66,11 +66,6 @@ const Debug = (props: DebugProps) => {
           onPress={() => navigation.navigate('HomeScreen')}>
           Home Page
         </Button>
-        <Button
-          mode="outlined"
-          onPress={() => navigation.navigate('Challenge')}>
-          Challenge
-        </Button>
         <Button mode="outlined" onPress={() => signOut()}>
           Sign Out
         </Button>
