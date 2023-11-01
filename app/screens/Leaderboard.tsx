@@ -1,4 +1,4 @@
-import {View, StyleSheet, Image, ScrollView,Text} from 'react-native';
+import {View, StyleSheet, Image, FlatList, Text} from 'react-native';
 import {Button} from 'react-native-paper';
 import React, {useEffect,useState} from 'react';
 import database from '@react-native-firebase/database';
@@ -16,6 +16,7 @@ interface LeaderboardProps {
 
 const Leaderboard = (props: LeaderboardProps) => {
   const {route, navigation} = props;
+  const[data, setData] = useState([{}]);
   const [users, setUserID] = useState([]);//initial empty array of users
   const[avatar, setAvatar] = useState([]);//initial empty array of Avatar (Numbers)
   const[exp, setExp] = useState([]);//
@@ -25,64 +26,29 @@ const Leaderboard = (props: LeaderboardProps) => {
   //color change 1 gold 2 sliver 3 bronze, 4 onwards black
   //set array, extract data from database, compare exp, highest one will be slotted into first view
   //
-
+ const renderItem = () => {
+  return(
+    <View style={styles.friendCardscontainer}>
+            <View style={styles.cardContentcontainer}>
+              <Text style={styles.postionText}>1</Text>
+              <Image source={require('../assets/Duo.png')} style={styles.avatarpic} />
+              <View style={styles.cardItems}>
+                <Text style={styles.name}>Lance</Text>
+                <Text style={styles.exp}>438 exp</Text>
+              </View>
+            </View> 
+          </View>
+  )
+ }
   return (
     <View style={styles.mainContainer}>
         <View style={styles.leadingIcons}></View>
-        <View style={styles.headline}></View>
+        <View style={styles.headline}></View> 
         <View style={styles.cardContainer}>
-          <View style={styles.friendCardscontainer}>
-            <View style={styles.cardContentcontainer}>
-              <Text style={styles.postionText}>1</Text>
-              <Image source={require('../assets/Duo.png')} style={styles.avatarpic} />
-              <View style={styles.cardItems}>
-                <Text style={styles.name}>Lance</Text>
-                <Text style={styles.exp}>438 exp</Text>
-              </View>
-            </View> 
-          </View>
-          <View style={styles.friendCardscontainer}>
-            <View style={styles.cardContentcontainer}>
-              <Text style={styles.postionText}>1</Text>
-              <Image source={require('../assets/Duo.png')} style={styles.avatarpic} />
-              <View style={styles.cardItems}>
-                <Text style={styles.name}>Lance</Text>
-                <Text style={styles.exp}>438 exp</Text>
-              </View>
-            </View> 
-          </View>
-          <View style={styles.friendCardscontainer}>
-            <View style={styles.cardContentcontainer}>
-              <Text style={styles.postionText}>1</Text>
-              <Image source={require('../assets/Duo.png')} style={styles.avatarpic} />
-              <View style={styles.cardItems}>
-                <Text style={styles.name}>Lance</Text>
-                <Text style={styles.exp}>438 exp</Text>
-              </View>
-            </View> 
-          </View>
-          <View style={styles.friendCardscontainer}>
-            <View style={styles.cardContentcontainer}>
-              <Text style={styles.postionText}>1</Text>
-              <Image source={require('../assets/Duo.png')} style={styles.avatarpic} />
-              <View style={styles.cardItems}>
-                <Text style={styles.name}>Lance</Text>
-                <Text style={styles.exp}>438 exp</Text>
-              </View>
-            </View> 
-          </View>
-          <View style={styles.friendCardscontainer}>
-            <View style={styles.cardContentcontainer}>
-              <Text style={styles.postionText}>1</Text>
-              <Image source={require('../assets/Duo.png')} style={styles.avatarpic} />
-              <View style={styles.cardItems}>
-                <Text style={styles.name}>Lance</Text>
-                <Text style={styles.exp}>438 exp</Text>
-              </View>
-            </View> 
-          </View>
-          
-          
+          <FlatList
+          data={data}
+          renderItem={renderItem}
+          />
         </View>
     </View>
   );
