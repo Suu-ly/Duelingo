@@ -77,6 +77,18 @@ const Home = (props: HomeProps) => {
           }>
           Go to Quiz End
         </Button>
+        <Button
+          mode="outlined"
+          onPress={() =>
+            navigation.navigate('Settings', {
+              timeElapsed: 80,
+              multiplayer: false,
+              score: 3,
+              totalQuestions: 7,
+            })
+          }>
+          Go to Settings
+        </Button>
       </View>
     </View>
   );
