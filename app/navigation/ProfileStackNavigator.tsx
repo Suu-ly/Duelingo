@@ -1,9 +1,9 @@
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import auth from '@react-native-firebase/auth';
 
-import Profile from '../screens/Profile';
+import UserProfile from '../screens/UserProfile';
 import EditProfile from '../screens/EditProfile';
-import SelectAvatar from '../screens/SelectAvatar';
+import Settings from '../screens/Settings';
 import {Animated} from 'react-native';
 
 const Stack = createNativeStackNavigator();
@@ -23,7 +23,10 @@ const ProfileStackNavigator = (props: ProfileStackProps) => {
         headerShown: false,
       }}>
       <Stack.Screen name="UserProfile" initialParams={{userId: userId}}>
-        {props => <Profile {...props} translate={translate} />}
+        {props => <UserProfile {...props} translate={translate} />}
+      </Stack.Screen>
+      <Stack.Screen name="Settings">
+        {props => <Settings {...props} translate={translate} />}
       </Stack.Screen>
       <Stack.Screen name="EditProfile">
         {props => <EditProfile {...props} translate={translate} />}
