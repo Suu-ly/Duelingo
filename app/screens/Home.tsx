@@ -1,20 +1,10 @@
 import React, {useEffect, useState} from 'react';
-import {
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  SectionList,
-  Animated,
-} from 'react-native';
+import {View, StyleSheet, SectionList, Animated} from 'react-native';
 
-import {Text} from 'react-native-paper';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {ActivityIndicator, Text} from 'react-native-paper';
 import Theme from '../common/constants/theme.json';
 
-import CustomStatusBar from '../common/CustomStatusBar';
 import Constants from '../common/constants/Constants';
-import Dropdown from '../common/DropdownButton';
-import Questions from '../data/ModuleQuestion.json';
 import TopicButton from '../common/TopicButton';
 import {getSectionListData, numberOfCompletedModules} from '../utils/firestore';
 import auth from '@react-native-firebase/auth';
@@ -43,65 +33,71 @@ const Home = (props: HomeProps) => {
     return overallIndex;
   };
 
-  type resultType = {
-    id: number;
-    title: any;
-    data: string[];
-    backgroundColor: string;
-  };
-  const [mandarinResult, setMandarinResult] = useState<resultType[] | null>(
-    null,
-  );
-  const [malayResult, setMalayResult] = useState<resultType[] | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [mandarinResult, setMandarinResult] = useState<
+    | {
+        id: number;
+        title: any;
+        data: string[];
+        backgroundColor: string;
+      }[]
+    | null
+  >(null);
+  const [malayResult, setMalayResult] = useState<
+    | {
+        id: number;
+        title: any;
+        data: string[];
+        backgroundColor: string;
+      }[]
+    | null
+  >(null);
   const [numberOfCompletedChineseModules, setNumberOfCompletedChineseModules] =
-    useState<number | null>(null);
+    useState(0);
   const [numberOfCompletedMalayModules, setNumberOfCompletedMalayModules] =
-    useState<number | null>(null);
+    useState(0);
 
   useEffect(() => {
-    const unsubscribe = async () => {
+    const getResult = async () => {
       const user = auth().currentUser;
       if (user) {
         const userID = user.uid;
         console.log(userID);
-        const numberOfCompletedChineseModules = await numberOfCompletedModules(
-          userID,
-          'chinese',
-        );
-        const numberOfCompletedMalayModules = await numberOfCompletedModules(
-          userID,
-          'malay',
-        );
+
+        const [
+          mandarinResult,
+          malayResult,
+          numberOfCompletedChineseModules,
+          numberOfCompletedMalayModules,
+        ] = await Promise.all([
+          getSectionListData('Chinese'),
+          getSectionListData('Malay'),
+          numberOfCompletedModules(userID, 'chinese'),
+          numberOfCompletedModules(userID, 'malay'),
+        ]);
+        setMandarinResult(mandarinResult!);
+        setMalayResult(malayResult!);
         setNumberOfCompletedChineseModules(numberOfCompletedChineseModules);
         setNumberOfCompletedMalayModules(numberOfCompletedMalayModules);
+        setIsLoading(false);
       } else {
-        console.log('No user is signed in.');
+        console.log('User not signed in');
       }
     };
-
-    const getChineseResult = async () => {
-      const mandarinResult = await getSectionListData('Chinese');
-      setMandarinResult(mandarinResult!);
-    };
-
-    const getMalayResult = async () => {
-      const malayResult = await getSectionListData('Malay');
-      setMalayResult(malayResult!);
-    };
-
-    unsubscribe();
-    getChineseResult();
-    getMalayResult();
+    getResult();
   }, []);
 
   return (
     <Animated.View
       style={[styles.mainContainer, {transform: [{translateY: translate}]}]}>
       <View style={styles.container}>
-        {mandarinResult !== null &&
-          malayResult !== null &&
-          numberOfCompletedChineseModules !== null &&
-          numberOfCompletedMalayModules !== null && (
+        {isLoading ? (
+          <View style={styles.activityIndicatorContainer}>
+            <ActivityIndicator animating={true} size={64} />
+          </View>
+        ) : (
+          mandarinResult !== null &&
+          malayResult !== null && (
             <SectionList
               showsVerticalScrollIndicator={false}
               stickySectionHeadersEnabled={true}
@@ -115,7 +111,7 @@ const Home = (props: HomeProps) => {
                   section.id,
                   index,
                 );
-                //Find out whether the current topic being rendered should be active
+                //Find out whether the current topic being rendered should be active E.g. If completed modules is 0, 1 module should be active
                 const isActive =
                   overallIndex <
                   (selectedLanguage.id === 1
@@ -168,7 +164,8 @@ const Home = (props: HomeProps) => {
                 <View style={{paddingVertical: Constants.mediumGap}} />
               )}
             />
-          )}
+          )
+        )}
       </View>
     </Animated.View>
   );
@@ -180,6 +177,11 @@ const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
     backgroundColor: Theme.colors.surface,
+  },
+  activityIndicatorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   buttonContainer: {
     paddingHorizontal: Constants.edgePadding,
