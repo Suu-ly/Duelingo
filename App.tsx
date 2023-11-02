@@ -19,6 +19,12 @@ const navTheme = {
 };
 
 function App() {
+
+  useEffect(() => {
+    if(Platform.OS === 'android')
+    SplashScreen.hide();
+  }, []);
+
   return (
     <NavigationContainer theme={navTheme}>
       <PaperProvider theme={theme}>
@@ -29,5 +35,6 @@ function App() {
     </NavigationContainer>
   );
 }
+
 
 export default App;

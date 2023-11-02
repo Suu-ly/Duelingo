@@ -23,7 +23,6 @@ const QuizHeader = (props: QuizHeaderProps) => {
     multiplayer,
     onPress,
   } = props;
-
   return (
     <View style={[styles.barContainer, {backgroundColor: backgroundColor}]}>
       <IconButton
@@ -36,9 +35,10 @@ const QuizHeader = (props: QuizHeaderProps) => {
         <View style={styles.progressBar}>
           <ProgressBar
             progress={
-              totalQuestions - questionsRemaining === 0
+              totalQuestions - questionsRemaining === 1
                 ? 0.02
-                : (totalQuestions - questionsRemaining) / totalQuestions
+                : (totalQuestions - questionsRemaining - 1) /
+                  (totalQuestions - 1)
             }
           />
         </View>
