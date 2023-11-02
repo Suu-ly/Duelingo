@@ -2,22 +2,22 @@ import React, {useEffect, useState} from 'react';
 import {
   View,
   StyleSheet,
-  TouchableOpacity,
   SectionList,
   Animated,
+  BackHandler,
 } from 'react-native';
 
 import {Text} from 'react-native-paper';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Theme from '../common/constants/theme.json';
 
-import CustomStatusBar from '../common/CustomStatusBar';
 import Constants from '../common/constants/Constants';
-import Dropdown from '../common/DropdownButton';
-import Questions from '../data/ModuleQuestion.json';
 import TopicButton from '../common/TopicButton';
 import {getSectionListData} from '../utils/firestore';
-import HeartContainer from '../common/HeartContainer';
+import {
+  EventArg,
+  NavigationAction,
+  useFocusEffect,
+} from '@react-navigation/native';
 
 interface HomeProps {
   route: any;
@@ -70,6 +70,37 @@ const Home = (props: HomeProps) => {
     getChineseResult();
     getMalayResult();
   }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        BackHandler.exitApp();
+        return true;
+      };
+
+      const subscription = BackHandler.addEventListener(
+        'hardwareBackPress',
+        onBackPress,
+      );
+
+      return () => subscription.remove();
+    }, []),
+  );
+
+  useEffect(
+    () =>
+      navigation.addListener(
+        'beforeRemove',
+        (e: EventArg<'beforeRemove', true, {action: NavigationAction}>) => {
+          if (e.data.action.type != 'GO_BACK') {
+            return;
+          }
+          // Prevent default behavior of leaving the screen
+          e.preventDefault();
+        },
+      ),
+    [navigation],
+  );
 
   return (
     <Animated.View
