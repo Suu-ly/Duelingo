@@ -48,7 +48,7 @@ const ChallengePlayer = (props: ChallengePlayerProps) => {
     var data: FirebaseFirestoreTypes.DocumentData[] = await getFriendData();
     if (data.length === 0) {
       setAddFriendPrompt(true);
-    }
+    } else setAddFriendPrompt(false);
     database()
       .ref('/users/')
       .on('value', snapshot => {
@@ -228,7 +228,7 @@ const ChallengePlayer = (props: ChallengePlayerProps) => {
             <View style={styles.loading}>
               <ActivityIndicator />
             </View>
-          ) : !addFriendPrompt ? (
+          ) : !addFriendPrompt && onlineFriends.length !== 0 ? (
             <View style={styles.cards}>
               <ChallengeCard
                 data={onlineFriends.filter(filterFunction)}
@@ -236,6 +236,14 @@ const ChallengePlayer = (props: ChallengePlayerProps) => {
                 challenge={true}
                 navigation={navigation}
               />
+            </View>
+          ) : onlineFriends.length === 0 ? (
+            <View style={styles.loading}>
+              <Text
+                variant={'bodyMedium'}
+                style={{color: Theme.colors.onSurfaceVariant}}>
+                There are no friends online at the moment.
+              </Text>
             </View>
           ) : (
             <View style={styles.loading}>

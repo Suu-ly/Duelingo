@@ -50,7 +50,7 @@ const OtherProfile = (props: OtherProfileProps) => {
   return (
     <View style={styles.mainContainer}>
       <CustomStatusBar />
-      {!isLoading && data.avatar ? (
+      {!isLoading && Object.keys(data).length !== 0 ? (
         <>
           <View style={styles.topContainer}>
             <IconButton
