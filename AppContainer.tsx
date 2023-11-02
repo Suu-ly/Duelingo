@@ -4,6 +4,7 @@ import StackNavigator from './app/navigation/StackNavigator';
 import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
 import 'react-native-gesture-handler';
+import SplashScreen from 'react-native-splash-screen';
 import {
   NavigationProp,
   ParamListBase,
@@ -58,7 +59,7 @@ function AppContainer() {
         });
       }
 
-      //TODO hide splash screen
+      SplashScreen.hide();
     });
 
     return () => {

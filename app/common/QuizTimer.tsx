@@ -32,7 +32,7 @@ const QuizTimer = (props: TimerProps) => {
   });
 
   useEffect(() => {
-    if (secondsLeft <= 5) {
+    if (secondsLeft! <= 5) {
       pulse.start();
     }
   }, [secondsLeft]);

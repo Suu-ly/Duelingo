@@ -17,11 +17,11 @@ public class MainActivity extends ReactActivity {
    * rendering of the component.
    */
   @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        SplashScreen.show(this);  // here
-        super.onCreate(savedInstanceState);
-    }
-    
+  protected void onCreate(Bundle savedInstanceState) {
+    SplashScreen.show(this, R.style.SplashTheme, true); // here
+    super.onCreate(savedInstanceState);
+  }
+
   @Override
   protected String getMainComponentName() {
     return "Duelingo";
