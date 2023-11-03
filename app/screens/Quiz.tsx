@@ -18,6 +18,8 @@ import {EventArg, NavigationAction} from '@react-navigation/native';
 import Theme from '../common/constants/theme.json';
 import CustomStatusBar from '../common/CustomStatusBar';
 import QuizButtons from '../common/QuizButtons';
+import TeachingButtons from '../common/TeachingButton';
+import DuoButton from '../common/DuoButton';
 import Constants from '../common/constants/Constants';
 import Questions from '../data/Translation Questions.json';
 import QuizHeader from '../common/QuizHeader';
@@ -202,29 +204,55 @@ const Quiz = (props: QuizProps) => {
             onPress={() => setDialogVisible(true)}
           />
           <View style={styles.questionContainer}>
-            <Text variant={'headlineSmall'}>
-              {questions[questionNo - 1].question}
-            </Text>
-            {/* {boxQuestion && (
+            {questions[questionNo - 1].gameFormat === 1 ? (
+              <>
+                <Text variant={'headlineSmall'}>
+                  {questions[questionNo - 1].question}
+                </Text>
+                <QuizButtons
+                  question={questions[questionNo - 1]}
+                  backgroundColor={styles.mainContainer.backgroundColor}
+                  reveal={submit}
+                  selected={answer}
+                  onSelect={ans => setAnswer(ans)}
+                />
+              </>
+            ) : (
+              <TeachingButtons
+                question={questions[questionNo - 1]}
+                backgroundColor={styles.mainContainer.backgroundColor}
+                onSelect={ans => setAnswer(ans)}
+              />
+            )}
+          </View>
+
+          {questions[questionNo - 1].gameFormat === 1 ? (
+            <QuizFooter
+              correct={answer === questions[questionNo - 1].correct_answer}
+              explanation={questions[questionNo - 1].explanation}
+              selected={answer !== ''}
+              submit={submit}
+              handleSubmit={handleSubmit}
+            />
+          ) : (
+            <View style={styles.bottomContainer}>
+              <DuoButton
+                filled={true}
+                inactive={false}
+                backgroundColor={Theme.colors.primary}
+                backgroundDark={Theme.colors.primaryDark}
+                onPress={handleSubmit}
+                stretch={true}
+                textColor={Theme.colors.onPrimary}>
+                Next
+              </DuoButton>
+            </View>
+          )}
+          {/* {boxQuestion && (
           <View style={styles.innerContainer}>
             <Text variant={'headlineSmall'}>{boxQuestion}</Text>
           </View>
         )} */}
-            <QuizButtons
-              question={questions[questionNo - 1]}
-              backgroundColor={styles.mainContainer.backgroundColor}
-              reveal={submit}
-              selected={answer}
-              onSelect={ans => setAnswer(ans)}
-            />
-          </View>
-          <QuizFooter
-            correct={answer === questions[questionNo - 1].correct_answer}
-            explanation={questions[questionNo - 1].explanation}
-            selected={answer !== ''}
-            submit={submit}
-            handleSubmit={handleSubmit}
-          />
         </>
       )}
 
@@ -274,6 +302,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: Constants.edgePadding * 2,
     borderRadius: Constants.radiusLarge,
     backgroundColor: Theme.colors.elevation.level2,
+  },
+
+  bottomContainer: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    paddingHorizontal: Constants.edgePadding,
+    paddingTop: Constants.edgePadding,
+    paddingBottom: 2 * Constants.edgePadding,
   },
   title: {
     textAlign: 'center',
