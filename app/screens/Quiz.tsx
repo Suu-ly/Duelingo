@@ -181,9 +181,17 @@ const Quiz = (props: QuizProps) => {
     } else {
       //Go to submitted state
       setSubmit(true);
-      setQuestionNo(questionNo + 1);
-      if (answer !== questions[questionNo - 1].correct_answer) {
-        setLives(lives - 1);
+      //if the current question has a gameFormat of 0, questionNo = questionNo + 1
+      if (questions[questionNo - 1].gameFormat === 0) {
+        setQuestionNo(questionNo + 1);
+        //if the next question has a gameFormat of 1, set submit to false
+        if (questions[questionNo].gameFormat === 1) {
+          setSubmit(false);
+        }
+      } else {
+        if (answer !== questions[questionNo - 1].correct_answer) {
+          setLives(lives - 1);
+        }
       }
     }
   };
