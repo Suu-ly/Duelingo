@@ -68,9 +68,9 @@ const Quiz = (props: QuizProps) => {
 
   const loadQuestions = async () => {
     console.log('Heloo');
-    var tempScoreQns = 0;
-    var numQns = 0;
-    var qns: Record<string, any>[] = [];
+    let tempScoreQns = 0;
+    let numQns = 0;
+    let qns: Record<string, any>[] = [];
     const collecton = await firestore()
       .collection('Quiz')
       .doc(language)

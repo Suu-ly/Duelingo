@@ -51,12 +51,14 @@ const QuizEnd = (props: QuizEndProps) => {
                   decimalPlaces={0}
                   duration={3.5}
                   onComplete={() => {
-                    Animated.timing(animationValue, {
-                      toValue: 100,
-                      duration: 2000,
-                      easing: Easing.bezier(0.4, 0, 0.2, 1),
-                      useNativeDriver: true,
-                    }).start();
+                    Animated.loop(
+                      Animated.timing(animationValue, {
+                        toValue: 100,
+                        duration: 1000,
+                        easing: Easing.bezier(0, 0.75, 1, 0.15),
+                        useNativeDriver: false,
+                      }),
+                    ).start();
                   }}
                 />
               </Text>

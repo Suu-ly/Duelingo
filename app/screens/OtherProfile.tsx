@@ -1,4 +1,4 @@
-import {useState, useEffect} from 'react';
+import {useState, useEffect, useCallback} from 'react';
 import {
   View,
   TouchableOpacity,
@@ -20,6 +20,7 @@ import DuoButton from '../common/DuoButton';
 import Theme from '../common/constants/theme.json';
 import {getUserData, getFriendList} from '../utils/database';
 import Avatar from '../common/Avatar';
+import {useFocusEffect} from '@react-navigation/native';
 
 interface OtherProfileProps {
   route: any;
@@ -31,26 +32,31 @@ const OtherProfile = (props: OtherProfileProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState<Record<string, any>>({});
   const [numFriends, setNumFriends] = useState(0);
+  const [isFriends, setIsFriends] = useState(false);
 
   const userId = route.params.userId;
+  const ownUserId = auth().currentUser!.uid;
 
   const loadData = async () => {
     setIsLoading(true);
-    var temp = await getUserData(userId);
-    var numTemp = await getFriendList(userId);
+    let temp = await getUserData(userId);
+    let numTemp = await getFriendList(userId);
+    if (numTemp.includes(ownUserId)) setIsFriends(true);
     setData(temp);
     setNumFriends(numTemp.length);
     setIsLoading(false);
   };
 
-  useEffect(() => {
-    if (Object.values(data).length === 0) loadData();
-  });
+  useFocusEffect(
+    useCallback(() => {
+      loadData();
+    }, []),
+  );
 
   return (
     <View style={styles.mainContainer}>
       <CustomStatusBar />
-      {!isLoading && Object.keys(data).length !== 0 ? (
+      {Object.keys(data).length !== 0 ? (
         <>
           <View style={styles.topContainer}>
             <IconButton
@@ -74,16 +80,24 @@ const OtherProfile = (props: OtherProfileProps) => {
               </Text>
             </View>
             <DuoButton
-              filled={true}
+              filled={!isFriends}
               disabled={false}
               stretch={true}
-              icon={'account-plus-outline'}
-              backgroundColor={Theme.colors.primary}
-              backgroundDark={Theme.colors.primaryDark}
-              borderColor={Theme.colors.primary}
-              textColor={Theme.colors.onPrimary}
-              onPress={() => navigation.navigate('EditProfile')}>
-              Add As Friend
+              icon={
+                isFriends ? 'account-minus-outline' : 'account-plus-outline'
+              }
+              backgroundColor={
+                isFriends ? Theme.colors.surface : Theme.colors.primary
+              }
+              backgroundDark={
+                isFriends ? Theme.colors.error : Theme.colors.primaryDark
+              }
+              borderColor={isFriends ? Theme.colors.error : undefined}
+              textColor={
+                isFriends ? Theme.colors.error : Theme.colors.onPrimary
+              }
+              onPress={() => console.log('Pressed')}>
+              {isFriends ? 'Remove Friend' : 'Add As Friend'}
             </DuoButton>
             <View style={styles.progressContainer}>
               <Image

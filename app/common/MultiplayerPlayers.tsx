@@ -1,34 +1,46 @@
 import {StyleSheet, View} from 'react-native';
 import Theme from './constants/theme.json';
 import Constants from './constants/Constants';
-import {Text, Avatar} from 'react-native-paper';
+import {Text} from 'react-native-paper';
+import {FirebaseFirestoreTypes} from '@react-native-firebase/firestore';
 
-interface TimerProps {
+import Avatar from './Avatar';
+
+interface MultiplayerPlayersProps {
   points?: Record<string, unknown>[];
-  exp?: Record<string, unknown>[];
-  userUID: string;
+  data: FirebaseFirestoreTypes.DocumentData[];
+  userId: string;
   endPage: boolean;
   isFirst?: boolean;
 }
 
-//TODO pull avatar, name from database
+const MultiplayerPlayers = (props: MultiplayerPlayersProps) => {
+  const {points, data, userId, endPage, isFirst} = props;
 
-const MultiplayerPlayers = (props: TimerProps) => {
-  const {points, exp, userUID, endPage, isFirst} = props;
-
-  const getIndex = (id: string, data: Record<string, unknown>[]) => {
-    for (var index = 0; index < data.length; index++) {
-      if (data[index].id === id) return index;
+  const getIndex = (
+    id: string,
+    data: Record<string, unknown>[] | FirebaseFirestoreTypes.DocumentData[],
+  ) => {
+    for (let index = 0; index < data.length; index++) {
+      if (data[index].uid === id) return index;
     }
     return 0;
   };
 
-  const data = points ? points : exp ? exp : [];
-  const userIndex = getIndex(userUID, data);
-  const userName = data[userIndex].id as string;
-  const userData = data[userIndex].value as number;
-  const oppName = data[Math.abs(userIndex - 1)].id as string;
-  const oppData = data[Math.abs(userIndex - 1)].value as number;
+  const userIndex = getIndex(userId, data);
+  const userName = data[userIndex].displayName as string;
+  const userAvatar = data[userIndex].avatar as number;
+  const oppAvatar = data[Math.abs(userIndex - 1)].avatar as number;
+  const oppName = data[Math.abs(userIndex - 1)].displayName as string;
+
+  const userData =
+    endPage && points
+      ? (points[getIndex(userId, points)].value as number)
+      : (data[userIndex].exp as number);
+  const oppData =
+    endPage && points
+      ? (points[Math.abs(getIndex(userId, points) - 1)].value as number)
+      : (data[Math.abs(userIndex - 1)].exp as number);
 
   return (
     <View style={styles.container}>
@@ -45,14 +57,14 @@ const MultiplayerPlayers = (props: TimerProps) => {
               }
             : {backgroundColor: Theme.colors.elevation.level2},
         ]}>
-        <Avatar.Text size={96} label={userName.slice(0, 2).toUpperCase()} />
+        <Avatar style={styles.avatar} index={userAvatar} />
         <Text variant="titleMedium" numberOfLines={1}>
           {userName}
         </Text>
         <Text
           variant="bodyMedium"
           style={{color: Theme.colors.onSurfaceVariant}}>
-          {userData} {points ? 'points' : 'exp'}
+          {userData} {endPage ? 'points' : 'exp'}
         </Text>
       </View>
       <Text variant="labelLarge">vs</Text>
@@ -69,7 +81,7 @@ const MultiplayerPlayers = (props: TimerProps) => {
               }
             : {backgroundColor: Theme.colors.elevation.level2},
         ]}>
-        <Avatar.Text size={96} label={oppName.slice(0, 2).toUpperCase()} />
+        <Avatar style={styles.avatar} index={oppAvatar} />
         <Text variant="titleMedium" numberOfLines={1}>
           {oppName}
         </Text>
@@ -98,5 +110,11 @@ const styles = StyleSheet.create({
     borderRadius: Constants.radiusLarge,
     alignItems: 'center',
     maxWidth: 164,
+  },
+  avatar: {
+    width: 96,
+    height: 96,
+    borderRadius: 256,
+    overflow: 'hidden',
   },
 });

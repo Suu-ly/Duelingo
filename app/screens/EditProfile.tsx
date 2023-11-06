@@ -12,6 +12,7 @@ import {Appbar, Button, IconButton, Text} from 'react-native-paper';
 import Theme from '../common/constants/theme.json';
 import CustomStatusBar from '../common/CustomStatusBar';
 import Constants from '../common/constants/Constants';
+import Avatar from '../common/Avatar';
 
 interface EditProfileProps {
   route: any;
@@ -24,23 +25,7 @@ const EditProfile = (props: EditProfileProps) => {
 
   const [visible, setVisible] = useState(false);
 
-  const pics = [
-    require('../assets/Avatars/1.png'),
-    require('../assets/Avatars/0.png'),
-    require('../assets/Avatars/2.png'),
-    require('../assets/Avatars/3.png'),
-    require('../assets/Avatars/4.png'),
-    require('../assets/Avatars/5.png'),
-    require('../assets/Avatars/6.png'),
-    require('../assets/Avatars/7.png'),
-    require('../assets/Avatars/8.png'),
-    require('../assets/Avatars/9.png'),
-    require('../assets/Avatars/10.png'),
-    require('../assets/Avatars/11.png'),
-    require('../assets/Avatars/12.png'),
-    require('../assets/Avatars/13.png'),
-    require('../assets/Avatars/14.png'),
-  ];
+  const pics = Array(15).fill(0);
 
   return (
     <Animated.View
@@ -76,11 +61,7 @@ const EditProfile = (props: EditProfileProps) => {
                   <TouchableOpacity
                     style={styles.button}
                     onPress={() => console.log(index)}>
-                    <Image
-                      source={data}
-                      style={styles.avatar}
-                      resizeMode="cover"
-                    />
+                    <Avatar index={index} style={styles.avatar} />
                   </TouchableOpacity>
                 </View>
               );

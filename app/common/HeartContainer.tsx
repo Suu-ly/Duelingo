@@ -19,7 +19,7 @@ const HeartContainer = (props: HeartProps) => {
       toValue: 100,
       duration: 1000,
       easing: Easing.linear,
-      useNativeDriver: true,
+      useNativeDriver: false,
     }).start();
 
     const delay = setTimeout(() => {

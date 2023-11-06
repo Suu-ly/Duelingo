@@ -1,69 +1,97 @@
-import React, {FC, useState} from 'react';
-import {View, StyleSheet, TouchableOpacity} from 'react-native';
+import {useCallback, useEffect, useRef, useState} from 'react';
+import {
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  ImageSourcePropType,
+  Animated,
+  Easing,
+  View,
+} from 'react-native';
 import {Text, Chip} from 'react-native-paper';
-import Svg, {SvgUri, Circle} from 'react-native-svg';
 import Constants from './constants/Constants';
 
 interface DropdownProps {
-  item: {id: Number; value: string; icon: string} | undefined;
-  data: Array<{id: Number; value: string; icon: string}>;
+  item: {id: Number; value: string; icon: ImageSourcePropType};
+  data: Array<{id: Number; value: string; icon: ImageSourcePropType}>;
   onSelect: (item: any) => void;
 }
 
 const Dropdown = (props: DropdownProps) => {
   const {item, data, onSelect} = props;
+  const height = useRef(new Animated.Value(38)).current;
+
   const [showOption, setShowOption] = useState(false);
   const onSelectedItem = (value: any) => {
     setShowOption(false);
     onSelect(value);
   };
 
+  useEffect(() => {
+    Animated.timing(height, {
+      toValue: showOption ? 128 : 38,
+      duration: 300,
+      easing: Easing.bezier(0.05, 0.7, 0.1, 1),
+      useNativeDriver: false,
+    }).start();
+  }, [showOption]);
+
   return (
-    <View>
+    <Animated.View
+      style={{
+        paddingTop: 4,
+        height: height,
+        overflow: 'hidden',
+      }}>
       <Chip
         mode="outlined"
         style={styles.chip}
         onPress={() => setShowOption(!showOption)}
-        avatar={
-          <SvgUri width="24" height="24" uri={item ? item.icon : null} />
-        }>
+        avatar={<Image source={item.icon} resizeMode="cover" />}>
         {!!item ? item.value : data[0].value}
       </Chip>
-      {showOption &&
-        data.map((value, index) => {
+      <View style={styles.buttonContainer}>
+        {data.map((value, index) => {
           return (
             <TouchableOpacity
               key={String(index)}
+              hitSlop={{top: 8, bottom: 8, left: 8, right: 8}}
               onPress={() => onSelectedItem(value)}
               style={styles.button}>
-              <SvgUri
-                style={styles.svg}
-                width="24"
-                height="24"
-                uri={value.icon}
+              <Image
+                style={styles.dropdown}
+                resizeMode="cover"
+                source={value.icon}
               />
               <Text>{value.value}</Text>
             </TouchableOpacity>
           );
         })}
-    </View>
+      </View>
+    </Animated.View>
   );
 };
 
 const styles = StyleSheet.create({
   button: {
     flexDirection: 'row',
-    paddingLeft: Constants.smallGap,
-    paddingVertical: 16,
+    paddingHorizontal: Constants.smallGap,
     alignItems: 'center',
   },
-  svg: {
+  buttonContainer: {
+    paddingTop: 20,
+    gap: Constants.edgePadding,
+  },
+  dropdown: {
+    width: 24,
+    height: 24,
+    borderRadius: 128,
+    overflow: 'hidden',
     marginRight: Constants.mediumGap,
   },
   chip: {
     borderRadius: 40,
     backgroundColor: 'transparent',
-    marginVertical: Constants.smallGap,
   },
 });
 

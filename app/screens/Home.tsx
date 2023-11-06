@@ -1,13 +1,14 @@
-import React, {useEffect, useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import {
   View,
   StyleSheet,
   SectionList,
   Animated,
   BackHandler,
+  ImageSourcePropType,
 } from 'react-native';
 
-import {Text} from 'react-native-paper';
+import {Button, Portal, Snackbar, Text} from 'react-native-paper';
 import Theme from '../common/constants/theme.json';
 
 import Constants from '../common/constants/Constants';
@@ -23,11 +24,13 @@ interface HomeProps {
   route: any;
   navigation: any;
   translate: Animated.Value;
-  selectedLanguage: {id: number; value: string; icon: string};
+  selectedLanguage: {id: number; value: string; icon: ImageSourcePropType};
 }
 
 const Home = (props: HomeProps) => {
   const {route, navigation, translate, selectedLanguage} = props;
+
+  const [secondBackPress, setSecondBackPress] = useState<boolean>(false);
 
   const numberOfCompletedChineseModule = 15;
   const numberOfCompletedMalayModule = 9;
@@ -72,9 +75,13 @@ const Home = (props: HomeProps) => {
   }, []);
 
   useFocusEffect(
-    React.useCallback(() => {
+    useCallback(() => {
       const onBackPress = () => {
-        BackHandler.exitApp();
+        if (secondBackPress) {
+          BackHandler.exitApp();
+        } else {
+          setSecondBackPress(true);
+        }
         return true;
       };
 
@@ -84,21 +91,14 @@ const Home = (props: HomeProps) => {
       );
 
       return () => subscription.remove();
-    }, []),
+    }, [secondBackPress]),
   );
 
   useEffect(
     () =>
-      navigation.addListener(
-        'beforeRemove',
-        (e: EventArg<'beforeRemove', true, {action: NavigationAction}>) => {
-          if (e.data.action.type != 'GO_BACK') {
-            return;
-          }
-          // Prevent default behavior of leaving the screen
-          e.preventDefault();
-        },
-      ),
+      navigation.addListener('blur', (e: EventArg<'blur', true>) => {
+        setSecondBackPress(false);
+      }),
     [navigation],
   );
 
@@ -166,6 +166,14 @@ const Home = (props: HomeProps) => {
           />
         )}
       </View>
+      <Portal>
+        <Snackbar
+          visible={secondBackPress}
+          duration={3000}
+          onDismiss={() => setSecondBackPress(false)}>
+          Go back one more time to exit the app.
+        </Snackbar>
+      </Portal>
     </Animated.View>
   );
 };

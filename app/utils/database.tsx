@@ -66,7 +66,7 @@ export const createFriend = async (username: string) => {
 
 export const getFriendList = async (userId?: string) => {
   const user = auth().currentUser;
-  var friendList: string[] = [];
+  let friendList: string[] = [];
   if (userId) {
     await firestore()
       .collection('Users')
@@ -99,8 +99,8 @@ export const getFriendList = async (userId?: string) => {
 
 export const getFriendData = async () => {
   const user = auth().currentUser;
-  var friendList: string[] = [];
-  var friendData: FirebaseFirestoreTypes.DocumentData[] = [];
+  let friendList: string[] = [];
+  let friendData: FirebaseFirestoreTypes.DocumentData[] = [];
   if (user) {
     const uid = user.uid;
     await firestore()
@@ -130,13 +130,49 @@ export const getFriendData = async () => {
 };
 
 export const getUserData = async (userId: string) => {
-  var data: FirebaseFirestoreTypes.DocumentData = {};
+  let data: FirebaseFirestoreTypes.DocumentData = {};
   await firestore()
     .collection('Users')
     .doc(userId)
     .get()
     .then(documentSnapshot => {
-      data = documentSnapshot.data() as FirebaseFirestoreTypes.DocumentData;
+      data = documentSnapshot.data()!;
     });
   return data;
+};
+
+export const getUsersData = async (userIds: string[]) => {
+  let data: FirebaseFirestoreTypes.DocumentData[] = [];
+  await firestore()
+    .collection('Users')
+    .where('uid', 'in', userIds)
+    .get()
+    .then(querySnapshot => {
+      querySnapshot.forEach(documentSnapshot => {
+        data.push(documentSnapshot.data());
+      });
+    });
+  return data;
+};
+
+export const getMultiplayerQuestions = async (
+  language: string,
+  difficulty: string,
+  questions: Array<number>,
+) => {
+  let questionBank: FirebaseFirestoreTypes.DocumentData[] = [];
+  await firestore()
+    .collection('Quiz')
+    .doc(language)
+    .collection('Multiplayer')
+    .doc(difficulty)
+    .collection('questions')
+    .where('questionNo', 'in', questions)
+    .get()
+    .then(querySnapshot => {
+      querySnapshot.forEach(documentSnapshot => {
+        questionBank.push(documentSnapshot.data());
+      });
+    });
+  return questionBank;
 };

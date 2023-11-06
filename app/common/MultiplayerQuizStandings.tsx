@@ -1,24 +1,28 @@
 import {StyleSheet, View} from 'react-native';
+import {Text} from 'react-native-paper';
+import {CountUp} from 'use-count-up';
+import {FirebaseFirestoreTypes} from '@react-native-firebase/firestore';
+
 import Theme from './constants/theme.json';
 import Constants from './constants/Constants';
-import {Text, Avatar} from 'react-native-paper';
-import {CountUp} from 'use-count-up';
+import Avatar from './Avatar';
 
 interface TimerProps {
-  data: Record<string, unknown>[];
-  oldData: Record<string, unknown>[];
-  userUID: string;
+  points: Record<string, unknown>[];
+  oldPoints: Record<string, unknown>[];
+  data: FirebaseFirestoreTypes.DocumentData[];
+  userId: string;
   secondsLeft: number;
 }
 
 const MultiplayerQuizStandings = (props: TimerProps) => {
-  const {data, oldData, userUID, secondsLeft} = props;
+  const {points, oldPoints, data, userId, secondsLeft} = props;
 
-  const isFirst = data[0].id === userUID;
+  const isFirst = points[0].uid === userId;
 
-  const getOldValue = (id: string) => {
-    for (var index = 0; index < oldData.length; index++) {
-      if (oldData[index].id === id) return oldData[index].value as number;
+  const getOldValue = (uid: string) => {
+    for (let index = 0; index < oldPoints.length; index++) {
+      if (oldPoints[index].uid === uid) return oldPoints[index].value as number;
     }
     return 0;
   };
@@ -33,21 +37,21 @@ const MultiplayerQuizStandings = (props: TimerProps) => {
           {isFirst ? "You're in the lead!" : 'You can still catch up!'}
         </Text>
       </View>
-      {data.map(value => {
+      {points.map((value, index) => {
         return (
-          typeof value.id === 'string' &&
+          typeof value.uid === 'string' &&
           typeof value.value === 'number' && (
             <View
-              key={value.id}
+              key={value.uid}
               style={[
                 styles.card,
-                value.id === userUID && isFirst
+                value.uid === userId && isFirst
                   ? {
                       backgroundColor: Theme.colors.elevation.level0,
                       borderWidth: 2,
                       borderColor: Theme.colors.primaryContainer,
                     }
-                  : value.id === userUID
+                  : value.uid === userId
                   ? {
                       backgroundColor: Theme.colors.elevation.level0,
                       borderWidth: 2,
@@ -55,20 +59,17 @@ const MultiplayerQuizStandings = (props: TimerProps) => {
                     }
                   : {backgroundColor: Theme.colors.elevation.level2},
               ]}>
-              <Avatar.Text
-                size={48}
-                label={value.id.slice(0, 2).toUpperCase()}
-              />
+              <Avatar style={styles.avatar} index={data[index].avatar} />
               <View style={styles.details}>
                 <Text
                   variant="labelMedium"
                   style={{color: Theme.colors.onSurfaceVariant}}>
-                  {value.id}
+                  {data[index].displayName}
                 </Text>
                 <Text variant="bodyMedium">
                   <CountUp
                     isCounting
-                    start={getOldValue(value.id)}
+                    start={getOldValue(value.uid)}
                     end={value.value as number}
                     decimalPlaces={0}
                     duration={2}
@@ -112,5 +113,11 @@ const styles = StyleSheet.create({
   },
   details: {
     gap: Constants.smallGap,
+  },
+  avatar: {
+    height: 48,
+    width: 48,
+    borderRadius: 256,
+    overflow: 'hidden',
   },
 });

@@ -1,22 +1,13 @@
 import {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
 import {
-  Dialog,
-  Portal,
-  Button,
-  Text,
-  ActivityIndicator,
-} from 'react-native-paper';
-import {
   NavigationProp,
   ParamListBase,
   useNavigation,
 } from '@react-navigation/native';
-import {StyleSheet, View} from 'react-native';
+import {StyleSheet} from 'react-native';
 import {useEffect, useState} from 'react';
 
-import Theme from './constants/theme.json';
-import DuoButton from './DuoButton';
 import Constants from './constants/Constants';
 import RequestDialogs from './RequestDialogs';
 
@@ -135,7 +126,7 @@ const DetectChallenge = (props: detectProps) => {
       requestActive={dialogVisible}
       requestText={
         challengerName +
-        'has challenged you to a battle of ' +
+        ' has challenged you to a battle of ' +
         language.charAt(0).toUpperCase() +
         language.slice(1) +
         ': ' +

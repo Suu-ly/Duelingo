@@ -22,7 +22,7 @@ const QuizTimer = (props: TimerProps) => {
       toValue: 100,
       duration: 1000,
       easing: Easing.linear,
-      useNativeDriver: true,
+      useNativeDriver: false,
     }),
   );
 

@@ -21,6 +21,7 @@ const ProfileStackNavigator = (props: ProfileStackProps) => {
     <Stack.Navigator
       screenOptions={{
         headerShown: false,
+        freezeOnBlur: true,
       }}>
       <Stack.Screen name="UserProfile" initialParams={{userId: userId}}>
         {props => <UserProfile {...props} translate={translate} />}

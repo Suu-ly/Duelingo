@@ -1,6 +1,13 @@
 import {View, StyleSheet, Animated, ScrollView} from 'react-native';
-import {ActivityIndicator, Button, Searchbar, Text} from 'react-native-paper';
-import {useEffect, useState} from 'react';
+import {
+  ActivityIndicator,
+  Button,
+  Dialog,
+  Portal,
+  Searchbar,
+  Text,
+} from 'react-native-paper';
+import {useCallback, useState} from 'react';
 import auth from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
 import {FirebaseFirestoreTypes} from '@react-native-firebase/firestore';
@@ -9,8 +16,9 @@ import Constants from '../common/constants/Constants';
 import useCountdown from '../utils/useCountdown';
 import ChallengeDialogs from '../common/ChallengeDialogs';
 import Theme from '../common/constants/theme.json';
-import {getFriendData} from '../utils/database';
+import {getFriendData, getUserData} from '../utils/database';
 import ChallengeCard from '../common/ChallengeCards';
+import {useFocusEffect} from '@react-navigation/native';
 
 interface ChallengePlayerProps {
   route: any;
@@ -22,19 +30,21 @@ interface ChallengePlayerProps {
 const ChallengePlayer = (props: ChallengePlayerProps) => {
   const {route, navigation, translate, language} = props;
   const [lobbyId, setLobbyId] = useState('ChallengeTest');
-  const [difficulty, setDifficulty] = useState('easy');
+  const [difficulty, setDifficulty] = useState('Easy');
+  const difficulties = ['Easy', 'Intermediate', 'Hard'];
+  const [difficultySelect, setDifficultySelect] = useState(false);
   const [challengeActive, setChallengeActive] = useState(false);
   const [challengeClash, setChallengeClash] = useState(false);
   const [declined, setDeclined] = useState(false);
   const [timedOut, setTimedOut] = useState(false);
   const [timeout, setTimeout] = useState<number | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
 
-  const userId = auth().currentUser?.uid as string;
+  const userId = auth().currentUser!.uid;
+  const [name, setName] = useState('');
   const [playerId, setPlayerId] = useState('');
   const [onlineFriends, setOnlineFriends] = useState<
-    FirebaseFirestoreTypes.DocumentData[]
-  >([]);
+    FirebaseFirestoreTypes.DocumentData[] | null
+  >(null);
   const [addFriendPrompt, setAddFriendPrompt] = useState(false);
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -43,9 +53,10 @@ const ChallengePlayer = (props: ChallengePlayerProps) => {
     setSearchQuery(query);
   };
 
-  const setFriendsList = async () => {
-    setIsLoading(true);
-    var data: FirebaseFirestoreTypes.DocumentData[] = await getFriendData();
+  const loadData = async () => {
+    let nameData = await getUserData(userId);
+    setName(nameData.displayName);
+    let data: FirebaseFirestoreTypes.DocumentData[] = await getFriendData();
     if (data.length === 0) {
       setAddFriendPrompt(true);
     } else setAddFriendPrompt(false);
@@ -53,7 +64,7 @@ const ChallengePlayer = (props: ChallengePlayerProps) => {
       .ref('/users/')
       .on('value', snapshot => {
         if (snapshot.val()) {
-          var online: any = [];
+          let online: any = [];
           data.forEach((entry: FirebaseFirestoreTypes.DocumentData) => {
             if (snapshot.val()[entry.uid] === true) {
               online.push(entry);
@@ -62,7 +73,6 @@ const ChallengePlayer = (props: ChallengePlayerProps) => {
           setOnlineFriends(online);
         }
       });
-    setIsLoading(false);
   };
 
   const filterFunction = (entry: FirebaseFirestoreTypes.DocumentData) => {
@@ -125,7 +135,7 @@ const ChallengePlayer = (props: ChallengePlayerProps) => {
           setChallengeClash(true);
         } else {
           setChallengeActive(true);
-          var lobby = generateCode(6);
+          let lobby = generateCode(6);
           setLobbyId(lobby);
           //Create challenge record
           database()
@@ -134,7 +144,7 @@ const ChallengePlayer = (props: ChallengePlayerProps) => {
               language: language,
               difficulty: difficulty,
               lobbyId: lobby,
-              challenger: 'Lance', //TODO Get username from database
+              challenger: name,
               status: true,
               accepted: false,
             });
@@ -144,7 +154,7 @@ const ChallengePlayer = (props: ChallengePlayerProps) => {
             .set({
               isWaiting: {[userId]: true},
               startTimestamp: 0,
-              questions: randomQuestion(5, 9),
+              questions: randomQuestion(5, 19),
               points: {[userId]: 0},
             });
           //Sets the challenge to time out
@@ -181,29 +191,20 @@ const ChallengePlayer = (props: ChallengePlayerProps) => {
       });
   };
 
-  useEffect(() => {
-    const focus = navigation.addListener('focus', () => {
-      // Do something when the screen focuses
-      setFriendsList();
-    });
+  useFocusEffect(
+    useCallback(() => {
+      loadData();
 
-    const blur = navigation.addListener('blur', () => {
-      database().ref('/users/').off();
-    });
-
-    return () => {
-      focus;
-      blur;
-    };
-  }, [navigation]);
+      return () => database().ref('/users/').off();
+    }, []),
+  );
 
   return (
     <Animated.View
       style={[styles.mainContainer, {transform: [{translateY: translate}]}]}>
       <ScrollView
-        style={styles.container}
         stickyHeaderIndices={[1]}
-        contentContainerStyle={{flexGrow: 1}}
+        contentContainerStyle={styles.container}
         showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
           <Text variant="headlineSmall">Challenge</Text>
@@ -213,22 +214,32 @@ const ChallengePlayer = (props: ChallengePlayerProps) => {
             Battle a friend in a language duel!
           </Text>
         </View>
-        <View style={styles.search}>
+        <View style={styles.sticky}>
+          <View style={styles.difficulty}>
+            <Text
+              variant={'labelLarge'}
+              style={{color: Theme.colors.onSurfaceVariant}}>
+              Select Difficulty:
+            </Text>
+            <Button
+              mode="outlined"
+              onPress={() => setDifficultySelect(true)}
+              style={{width: 132}}>
+              {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}
+            </Button>
+          </View>
           <Searchbar
+            style={styles.search}
             placeholder="Search online friends"
             onChangeText={onChangeSearch}
             value={searchQuery}
           />
-        </View>
-        <View style={styles.cardsContainer}>
           <Text variant={'labelLarge'} style={{color: Theme.colors.primary}}>
             Online Friends
           </Text>
-          {isLoading ? (
-            <View style={styles.loading}>
-              <ActivityIndicator />
-            </View>
-          ) : !addFriendPrompt && onlineFriends.length !== 0 ? (
+        </View>
+        <View style={styles.cardsContainer}>
+          {onlineFriends && onlineFriends.length !== 0 ? (
             <View style={styles.cards}>
               <ChallengeCard
                 data={onlineFriends.filter(filterFunction)}
@@ -237,7 +248,9 @@ const ChallengePlayer = (props: ChallengePlayerProps) => {
                 navigation={navigation}
               />
             </View>
-          ) : onlineFriends.length === 0 ? (
+          ) : onlineFriends &&
+            onlineFriends.length === 0 &&
+            !addFriendPrompt ? (
             <View style={styles.loading}>
               <Text
                 variant={'bodyMedium'}
@@ -245,7 +258,7 @@ const ChallengePlayer = (props: ChallengePlayerProps) => {
                 There are no friends online at the moment.
               </Text>
             </View>
-          ) : (
+          ) : addFriendPrompt ? (
             <View style={styles.loading}>
               <Text
                 variant={'bodyMedium'}
@@ -257,6 +270,10 @@ const ChallengePlayer = (props: ChallengePlayerProps) => {
                 style={{color: Theme.colors.onSurfaceVariant}}>
                 Add some friends to challenge them!
               </Text>
+            </View>
+          ) : (
+            <View style={styles.loading}>
+              <ActivityIndicator />
             </View>
           )}
         </View>
@@ -281,6 +298,39 @@ const ChallengePlayer = (props: ChallengePlayerProps) => {
         declinedOnPress={() => setDeclined(false)}
         isRematch={false}
       />
+      <Portal>
+        <Dialog
+          visible={difficultySelect}
+          onDismiss={() => setDifficultySelect(false)}>
+          <Dialog.Title>Select Difficulty</Dialog.Title>
+          <Dialog.Content>
+            <Text variant="bodyMedium">
+              Choose the difficulty of the questions! Harder questions give more
+              exp.
+            </Text>
+          </Dialog.Content>
+          <Dialog.Content>
+            <View style={styles.difficultyContainer}>
+              {difficulties.map((level, index) => {
+                return (
+                  <Button
+                    key={level}
+                    mode="contained-tonal"
+                    onPress={() => {
+                      setDifficulty(level);
+                      setDifficultySelect(false);
+                    }}>
+                    {level.charAt(0).toUpperCase() + level.slice(1)}
+                  </Button>
+                );
+              })}
+            </View>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={() => setDifficultySelect(false)}>Cancel</Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
     </Animated.View>
   );
 };
@@ -298,12 +348,23 @@ const styles = StyleSheet.create({
     gap: Constants.mediumGap,
   },
   container: {
-    flex: 1,
+    flexGrow: 1,
     paddingHorizontal: Constants.edgePadding,
   },
-  search: {
+  difficulty: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  difficultyContainer: {
+    gap: Constants.largeGap,
+  },
+  sticky: {
     paddingVertical: Constants.edgePadding,
     backgroundColor: Theme.colors.surface,
+  },
+  search: {
+    marginVertical: Constants.edgePadding,
   },
   cardsContainer: {
     gap: Constants.edgePadding,

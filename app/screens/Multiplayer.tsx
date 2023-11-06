@@ -15,8 +15,13 @@ import {
 } from 'react-native-paper';
 import {EventArg, NavigationAction} from '@react-navigation/native';
 import database from '@react-native-firebase/database';
+import {FirebaseFirestoreTypes} from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
-import {getQuiz} from '../utils/database';
+import {
+  getQuiz,
+  getUsersData,
+  getMultiplayerQuestions,
+} from '../utils/database';
 
 import Theme from '../common/constants/theme.json';
 import CustomStatusBar from '../common/CustomStatusBar';
@@ -45,29 +50,29 @@ const Multiplayer = (props: MultiplayerProps) => {
     }
   }
   //Your own userId
-  const userId = auth().currentUser?.uid as string;
+  const userId = auth().currentUser!.uid;
+  const [playerData, setPlayerData] = useState<
+    FirebaseFirestoreTypes.DocumentData[]
+  >([]);
   //Remaining number of questions, used to select the question
   const [remaining, setRemaining] = useState(5);
   const language = route.params.language;
   const difficulty = route.params.difficulty;
 
   //Array containing all questions
-  const [questionBank, setQuestionBank] = useState<
-    {
-      question: string;
-      correct_answer: string;
-      explanation: string;
-      options: string[];
-    }[]
-  >([]);
-
-  //Updates the current question
-  const [question, setQuestion] = useState<{
+  type questionType = {
     question: string;
     correct_answer: string;
     explanation: string;
     options: string[];
-  }>(questionBank[5 - remaining]);
+  };
+
+  const [questionBank, setQuestionBank] = useState<questionType[]>([]);
+
+  //Updates the current question
+  const [question, setQuestion] = useState<questionType>(
+    questionBank[5 - remaining],
+  );
 
   //Check if player is a host for the game
   const host: boolean = route.params.host;
@@ -93,7 +98,7 @@ const Multiplayer = (props: MultiplayerProps) => {
   //Keeps track of points for both players
   const [points, setPoints] = useState<Record<string, unknown>[]>([]);
   const [oldPoints, setOldPoints] = useState<Record<string, unknown>[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   //Decides whether to show the dialogs
   const [dialogVisible, setDialogVisible] = useState(false);
   const [playerLeft, setPlayerLeft] = useState(false);
@@ -138,16 +143,30 @@ const Multiplayer = (props: MultiplayerProps) => {
     return qns;
   };
 
+  const getDisplayName = (
+    userId: string,
+    ownName: boolean,
+    data: FirebaseFirestoreTypes.DocumentData[],
+  ) => {
+    data.forEach(value => {
+      if (value.uid === userId && ownName) return value.displayName;
+      return value.displayName;
+    });
+    return '';
+  };
+
   //Gets the quiz questions from database
   const getQuestions = async () => {
     const chosenQns = await database()
       .ref('/games/' + gameId + '/questions')
       .once('value');
-    const qns = (await getQuiz(language)).data();
+    const qns = await getMultiplayerQuestions(
+      language,
+      difficulty,
+      chosenQns.val(),
+    );
     if (qns) {
-      chosenQns.val().forEach((item: number) => {
-        setQuestionBank(old => [...old, qns[difficulty][item]]);
-      });
+      setQuestionBank(qns as questionType[]);
       await database()
         .ref('/games/' + gameId + '/isWaiting')
         .update({[userId]: false});
@@ -159,14 +178,14 @@ const Multiplayer = (props: MultiplayerProps) => {
   //Gets the points from the database
   const getPoints = async () => {
     setIsLoading(true);
-    var tempPoints: Record<string, unknown>[] = [];
+    let tempPoints: Record<string, unknown>[] = [];
     await database()
       .ref('/games/' + gameId + '/points')
       .orderByValue()
       .once('value')
       .then(snapshot => {
         snapshot.forEach(element => {
-          tempPoints.push({id: element.key as string, value: element.val()});
+          tempPoints.push({uid: element.key as string, value: element.val()});
           return undefined;
         });
       });
@@ -251,7 +270,7 @@ const Multiplayer = (props: MultiplayerProps) => {
     if (challengeActive) {
       await database()
         .ref('/games/' + gameId)
-        .update({questions: randomQuestion(5, 9)})
+        .update({questions: randomQuestion(5, 19)})
         .then(() => {
           database()
             .ref('/games/' + gameId)
@@ -272,7 +291,7 @@ const Multiplayer = (props: MultiplayerProps) => {
   //Countdown between rounds
   const startCountdown = () => {
     const interval = setInterval(() => {
-      var timeLeft = Math.ceil((5000 - (Date.now() - timeStamp)) / 1000);
+      let timeLeft = Math.ceil((5000 - (Date.now() - timeStamp)) / 1000);
       timeLeft = timeLeft <= 0 ? 0 : timeLeft;
       setSecondsLeft(timeLeft);
       if (timeLeft === 0) {
@@ -345,12 +364,25 @@ const Multiplayer = (props: MultiplayerProps) => {
       .set(false);
     //Listens to the database for any updates
     if (questionBank.length === 0) getQuestions();
+    //Get user data
+    if (playerData.length === 0) {
+      let tempData: FirebaseFirestoreTypes.DocumentData[] = [];
+      database()
+        .ref('/games/' + gameId + '/isWaiting')
+        .once('value', async snapshot => {
+          if (snapshot.val()) {
+            tempData = await getUsersData(Object.keys(snapshot.val()));
+            setPlayerData(tempData);
+          }
+        });
+    }
     database()
       .ref('/games/' + gameId + '/isWaiting')
       .on('value', snapshot => {
         if (snapshot.val()) {
           if (
             isPlaying &&
+            Object.keys(snapshot.val()).length === 2 &&
             Object.values(snapshot.val())[0] === true &&
             Object.values(snapshot.val())[1] === true
           ) {
@@ -361,6 +393,7 @@ const Multiplayer = (props: MultiplayerProps) => {
             !isPlaying &&
             start &&
             !end &&
+            Object.keys(snapshot.val()).length === 2 &&
             Object.values(snapshot.val())[0] === false &&
             Object.values(snapshot.val())[1] === false &&
             host &&
@@ -381,6 +414,7 @@ const Multiplayer = (props: MultiplayerProps) => {
             setTimeUploaded(true);
           }
         } else {
+          //One player has left
           setPlayerLeft(true);
           if (challengeActive) {
             setChallengeActive(false);
@@ -514,7 +548,10 @@ const Multiplayer = (props: MultiplayerProps) => {
       </Portal>
       <RequestDialogs
         requestActive={rematchRequest}
-        requestText={'wants a rematch! Go again?'}
+        requestText={
+          getDisplayName(userId, false, playerData) +
+          ' wants a rematch! Go again?'
+        }
         requestActiveAccept={() => {
           database()
             .ref('/games/' + gameId)
@@ -551,6 +588,7 @@ const Multiplayer = (props: MultiplayerProps) => {
       {end && !isLoading ? (
         <MultiplayerEnd
           points={points}
+          data={playerData}
           userId={userId}
           onRematchPress={handleRematch}
           onPress={() => navigation.navigate('HomeScreen')}
@@ -566,7 +604,7 @@ const Multiplayer = (props: MultiplayerProps) => {
             }}
             onPress={() => setDialogVisible(true)}
           />
-          {!start && isLoading ? (
+          {!start && isLoading && playerData.length === 0 ? (
             <View style={styles.loadingScreen}>
               <ActivityIndicator />
               <Text
@@ -582,14 +620,10 @@ const Multiplayer = (props: MultiplayerProps) => {
                 {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}
               </Text>
               <MultiplayerPlayers
-                userUID={userId}
-                exp={[
-                  {id: userId, value: 403},
-                  {id: 'Player2', value: 302},
-                ]}
+                data={playerData}
+                userId={userId}
                 endPage={false}
               />
-
               <Text
                 variant="bodyMedium"
                 style={{color: Theme.colors.onSurfaceVariant}}>
@@ -642,9 +676,10 @@ const Multiplayer = (props: MultiplayerProps) => {
               <>
                 {points.length !== 0 && (
                   <MultiplayerQuizStandings
-                    data={points}
-                    oldData={oldPoints}
-                    userUID={userId}
+                    points={points}
+                    oldPoints={oldPoints}
+                    data={playerData}
+                    userId={userId}
                     secondsLeft={secondsLeft}
                   />
                 )}

@@ -1,4 +1,4 @@
-import {useState, useEffect} from 'react';
+import {useState, useEffect, useCallback} from 'react';
 import {
   View,
   TouchableOpacity,
@@ -20,6 +20,7 @@ import DuoButton from '../common/DuoButton';
 import Theme from '../common/constants/theme.json';
 import {getUserData, getFriendList} from '../utils/database';
 import Avatar from '../common/Avatar';
+import {useFocusEffect} from '@react-navigation/native';
 
 interface UserProfileProps {
   route: any;
@@ -37,22 +38,24 @@ const UserProfile = (props: UserProfileProps) => {
 
   const loadData = async () => {
     setIsLoading(true);
-    var temp = await getUserData(ownUserId);
-    var numTemp = await getFriendList(ownUserId);
+    let temp = await getUserData(ownUserId);
+    let numTemp = await getFriendList(ownUserId);
     setData(temp);
     setNumFriends(numTemp.length);
     setIsLoading(false);
   };
 
-  useEffect(() => {
-    if (Object.values(data).length === 0) loadData();
-  });
+  useFocusEffect(
+    useCallback(() => {
+      loadData();
+    }, []),
+  );
 
   return (
     <Animated.View
       style={[styles.mainContainer, {transform: [{translateY: translate}]}]}>
       <CustomStatusBar />
-      {!isLoading && Object.keys(data).length !== 0 ? (
+      {Object.keys(data).length !== 0 ? (
         <>
           <View style={styles.topContainer}>
             <View style={styles.filler} />
@@ -185,8 +188,6 @@ const styles = StyleSheet.create({
   },
   Flag: {
     width: 48,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   progressBar: {
     flex: 1,

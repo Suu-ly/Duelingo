@@ -1,25 +1,29 @@
 import {View, StyleSheet, Animated, Easing} from 'react-native';
 import {Text} from 'react-native-paper';
+import {CountUp} from 'use-count-up';
+import {useRef} from 'react';
+import {FirebaseFirestoreTypes} from '@react-native-firebase/firestore';
+
 import Theme from '../common/constants/theme.json';
 import CustomStatusBar from '../common/CustomStatusBar';
 import Constants from '../common/constants/Constants';
 import DuoButton from '../common/DuoButton';
-import {CountUp} from 'use-count-up';
-import {useRef} from 'react';
 import MultiplayerPlayers from '../common/MultiplayerPlayers';
 
 interface MultiplayerEndProps {
   points: Record<string, unknown>[];
   userId: string;
+  data: FirebaseFirestoreTypes.DocumentData[];
   onRematchPress: () => void;
   onPress: () => void;
   rematchDisabled: boolean;
 }
 
 const MultiplayerEnd = (props: MultiplayerEndProps) => {
-  const {points, userId, onRematchPress, onPress, rematchDisabled} = props;
+  const {points, userId, data, onRematchPress, onPress, rematchDisabled} =
+    props;
 
-  const isFirst = points[0].id === userId;
+  const isFirst = points[0].uid === userId;
 
   const animationValue = useRef(new Animated.Value(0)).current;
 
@@ -28,6 +32,15 @@ const MultiplayerEnd = (props: MultiplayerEndProps) => {
     outputRange: [1, 1.2, 1],
     extrapolate: 'clamp',
   });
+
+  const getExp = (uid: string) => {
+    for (let index = 0; index < data.length; index++) {
+      if (data[index].uid === userId) {
+        return data[index].exp;
+      }
+    }
+    return 0;
+  };
 
   return (
     <View style={styles.mainContainer}>
@@ -39,7 +52,8 @@ const MultiplayerEnd = (props: MultiplayerEndProps) => {
           {isFirst ? 'You win!' : 'Better luck next time!'}
         </Text>
         <MultiplayerPlayers
-          userUID={userId}
+          userId={userId}
+          data={data}
           points={points}
           endPage={true}
           isFirst={isFirst}
@@ -73,7 +87,7 @@ const MultiplayerEnd = (props: MultiplayerEndProps) => {
               </Text>
             </Animated.View>
           </View>
-          <Text variant="titleMedium">Total exp: 460</Text>
+          <Text variant="titleMedium">Total exp: {getExp(userId) + 45}</Text>
         </View>
       </View>
       <View style={styles.bottomContainer}>

@@ -3,9 +3,15 @@ import {
   createBottomTabNavigator,
 } from '@react-navigation/bottom-tabs';
 import {BottomNavigation} from 'react-native-paper';
-import {CommonActions, EventArg} from '@react-navigation/native';
+import {CommonActions} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {Animated, Easing, StyleSheet, View} from 'react-native';
+import {
+  Animated,
+  Easing,
+  ImageSourcePropType,
+  StyleSheet,
+  View,
+} from 'react-native';
 import {useCallback, useRef, useState} from 'react';
 
 import Home from '../screens/Home';
@@ -21,24 +27,24 @@ import Constants from '../common/constants/Constants';
 const Tab = createBottomTabNavigator();
 
 const TabNavigator = () => {
-  const translate = useRef(new Animated.Value(40)).current;
+  const translate = useRef(new Animated.Value(30)).current;
   const languageDropDown = [
     {
       id: 1,
       value: 'Chinese',
-      icon: 'https://hatscripts.github.io/circle-flags/flags/cn.svg',
+      icon: require('../assets/ChinaFlagRound.png'),
     },
     {
       id: 2,
       value: 'Malay',
-      icon: 'https://hatscripts.github.io/circle-flags/flags/my.svg',
+      icon: require('../assets/MalaysiaFlagRound.png'),
     },
   ];
   //Get the selected item of the language array
   const [selectedItem, setSelectedItem] = useState<{
     id: number;
     value: string;
-    icon: string;
+    icon: ImageSourcePropType;
   }>(languageDropDown[0]);
   const onSelect = (item: any) => {
     setSelectedItem(item);
@@ -47,15 +53,15 @@ const TabNavigator = () => {
   const fadeIn = useCallback(() => {
     Animated.timing(translate, {
       toValue: 0,
-      duration: 200,
+      duration: 250,
       useNativeDriver: true,
-      easing: Easing.bezier(0, 0, 0, 1.0),
+      easing: Easing.bezier(0, 0, 0.4, 1.0),
     }).start();
   }, [translate]);
 
   const listeners = ({navigation, route}: any) => ({
     blur: (e: any) => {
-      translate.setValue(40);
+      translate.setValue(30);
     },
     focus: (e: any) => {
       fadeIn();
@@ -82,13 +88,12 @@ const TabNavigator = () => {
   return (
     <Tab.Navigator
       screenListeners={listeners}
-      screenOptions={{header: header}}
+      screenOptions={{header: header, freezeOnBlur: true}}
       backBehavior="history"
       tabBar={({navigation, state, descriptors, insets}) => (
         <BottomNavigation.Bar
           navigationState={state}
           safeAreaInsets={insets}
-          animationEasing={Easing.bezier(0, 0, 0, 1.0)}
           onTabPress={({route, preventDefault}) => {
             const event = navigation.emit({
               type: 'tabPress',
@@ -176,7 +181,7 @@ const TabNavigator = () => {
           <Challenge
             {...props}
             translate={translate}
-            language={selectedItem.value.toLowerCase()}
+            language={selectedItem.value}
           />
         )}
       </Tab.Screen>
@@ -185,7 +190,6 @@ const TabNavigator = () => {
         options={{
           headerShown: false,
           tabBarLabel: 'Profile',
-          lazy: false,
           tabBarIcon: ({focused, color, size}) => {
             return focused ? (
               <Icon name="account" size={size} color={color} />
