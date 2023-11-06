@@ -7,7 +7,6 @@ import {View, ScrollView, StyleSheet, TouchableOpacity} from 'react-native';
 
 import CustomStatusBar from '../common/CustomStatusBar';
 import Constants from '../common/constants/Constants';
-// import ChallengeCard from '../common/ChallengeCard';
 import DuoButton from '../common/DuoButton';
 import theme from '../common/constants/theme.json';
 import Avatar from '../common/Avatar';
