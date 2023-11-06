@@ -17,7 +17,7 @@ interface ButtonProps {
   children?: React.ReactNode;
   textVariant?: VariantProp<never>;
   textColor: string;
-  onPress: (callback?: () => void) => void;
+  onPress: () => void;
 }
 
 const TopicButton = (props: ButtonProps) => {
@@ -42,7 +42,9 @@ const TopicButton = (props: ButtonProps) => {
       borderRadius={Constants.radiusSmall}
       paddingHorizontal={0}
       stretch={stretch}
-      onPress={onPress}
+      dangerouslySetPressableProps={{
+        onPress: disabled ? null : onPress,
+      }}
       springRelease={false}
       backgroundShadow="transparent"
       raiseLevel={disabled ? 0 : 4}

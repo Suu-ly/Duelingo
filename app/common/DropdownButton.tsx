@@ -29,7 +29,7 @@ const Dropdown = (props: DropdownProps) => {
 
   useEffect(() => {
     Animated.timing(height, {
-      toValue: showOption ? 128 : 38,
+      toValue: showOption ? 136 : 38,
       duration: 300,
       easing: Easing.bezier(0.05, 0.7, 0.1, 1),
       useNativeDriver: false,
@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     paddingTop: 20,
-    gap: Constants.edgePadding,
+    gap: Constants.defaultGap,
   },
   dropdown: {
     width: 24,

@@ -28,7 +28,7 @@ const MultiplayerEnd = (props: MultiplayerEndProps) => {
   const animationValue = useRef(new Animated.Value(0)).current;
 
   const scale = animationValue.interpolate({
-    inputRange: [15, 50, 85],
+    inputRange: [20, 50, 80],
     outputRange: [1, 1.2, 1],
     extrapolate: 'clamp',
   });
@@ -78,7 +78,7 @@ const MultiplayerEnd = (props: MultiplayerEndProps) => {
                       Animated.timing(animationValue, {
                         toValue: 100,
                         duration: 1000,
-                        easing: Easing.bezier(0, 0.75, 1, 0.15),
+                        easing: Easing.bezier(0, 0.9, 1, 0.1),
                         useNativeDriver: false,
                       }),
                     ).start();
@@ -127,10 +127,11 @@ const styles = StyleSheet.create({
     backgroundColor: Theme.colors.surface,
   },
   innerContainer: {
-    paddingHorizontal: Constants.edgePadding,
-    paddingTop: 154,
-    gap: Constants.defaultGap,
     alignItems: 'center',
+    gap: Constants.defaultGap,
+    paddingHorizontal: Constants.edgePadding,
+    paddingTop: Constants.defaultGap * 2,
+    flex: 1,
   },
   statsContainer: {
     gap: Constants.largeGap,

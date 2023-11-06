@@ -18,7 +18,7 @@ interface ButtonProps {
   children: React.ReactNode;
   textVariant?: VariantProp<never>;
   textColor: string;
-  onPress: (callback?: () => void) => void;
+  onPress: () => void;
 }
 
 const DuoButton = (props: ButtonProps) => {
@@ -45,16 +45,24 @@ const DuoButton = (props: ButtonProps) => {
       borderRadius={Constants.radiusSmall}
       paddingHorizontal={Constants.mediumGap}
       stretch={stretch}
-      onPress={onPress}
+      dangerouslySetPressableProps={{
+        onPress: disabled || inactive ? null : onPress,
+      }}
       springRelease={false}
       backgroundShadow="transparent"
-      raiseLevel={disabled ? 0 : filled ? 4 : 2}
+      raiseLevel={filled ? 4 : 2}
       backgroundColor={
         disabled && filled
           ? theme.colors.surfaceDisabledInvert
           : backgroundColor
       }
-      backgroundDarker={filled ? backgroundDark : borderColor}
+      backgroundDarker={
+        disabled
+          ? theme.colors.onSurfaceDisabled
+          : filled
+          ? backgroundDark
+          : borderColor
+      }
       borderWidth={filled ? 0 : 2}
       borderColor={
         disabled ? theme.colors.onSurfaceDisabledInvert : borderColor

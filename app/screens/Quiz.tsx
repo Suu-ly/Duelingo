@@ -18,13 +18,12 @@ import {EventArg, NavigationAction} from '@react-navigation/native';
 import Theme from '../common/constants/theme.json';
 import CustomStatusBar from '../common/CustomStatusBar';
 import QuizButtons from '../common/QuizButtons';
+import TeachingButtons from '../common/TeachingButton';
+import DuoButton from '../common/DuoButton';
 import Constants from '../common/constants/Constants';
-import Questions from '../data/Translation Questions.json';
 import QuizHeader from '../common/QuizHeader';
 import QuizFooter from '../common/QuizFooter';
 import useTimeElapsed from '../utils/useTimeElapsed';
-import {getQuiz} from '../utils/database';
-import {getQuestions} from '../utils/firestore';
 import firestore from '@react-native-firebase/firestore';
 
 interface QuizProps {
@@ -40,7 +39,8 @@ if (Platform.OS === 'android') {
 
 const Quiz = (props: QuizProps) => {
   const {route, navigation} = props;
-  const language: keyof typeof Questions = route.params.language;
+  // const language: keyof typeof Questions = route.params.language;
+  const language = route.params.language;
   const module = route.params.module;
   const topic = route.params.topic;
 
@@ -133,6 +133,7 @@ const Quiz = (props: QuizProps) => {
     if (questions.length === 0) loadQuestions();
   });
 
+  //Navigates to end screen after remaining questions reach 0, else go to next question
   const handleSubmit = () => {
     //Animates the diff
     LayoutAnimation.configureNext({
@@ -141,7 +142,6 @@ const Quiz = (props: QuizProps) => {
       update: {type: 'spring', springDamping: 100},
       delete: {type: 'easeOut', property: 'opacity'},
     });
-    //Navigates to end screen after remaining questions reach 0, else go to next question
     if (submit) {
       //Quiz end
       if (questionNo === questionTotal) {
@@ -163,24 +163,19 @@ const Quiz = (props: QuizProps) => {
           setScore(score + 1);
         }
         setSubmit(false);
-        setQuestionNo(questionNo + 1);
         setAnswer('');
-        // navigation.push('Quiz', {
-        //   language: language,
-        //   difficulty: difficulty,
-        //   questionNo: questionNo + 1,
-        //   remaining: remaining,
-        //   totalQuestions: totalQuestions,
-        //   timeElapsed: timePassed,
-        //   score: answer === question.correct_answer ? score + 1 : score,
-        // });
+        setQuestionNo(questionNo + 1);
       }
     } else {
-      //Go to submitted state
-      setSubmit(true);
-      setQuestionNo(questionNo + 1);
-      if (answer !== questions[questionNo - 1].correct_answer) {
-        setLives(lives - 1);
+      //if the current question has a gameFormat of 0, questionNo = questionNo + 1
+      if (questions[questionNo - 1].gameFormat === 0) {
+        setQuestionNo(questionNo + 1);
+      } else {
+        //Go to submitted state
+        setSubmit(true);
+        if (answer !== questions[questionNo - 1].correct_answer) {
+          setLives(lives - 1);
+        }
       }
     }
   };
@@ -189,7 +184,7 @@ const Quiz = (props: QuizProps) => {
     <View style={styles.mainContainer}>
       <CustomStatusBar backgroundColor={Theme.colors.elevation.level1} />
       {isLoading ? (
-        <View>
+        <View style={styles.loading}>
           <ActivityIndicator />
         </View>
       ) : (
@@ -201,29 +196,55 @@ const Quiz = (props: QuizProps) => {
             onPress={() => setDialogVisible(true)}
           />
           <View style={styles.questionContainer}>
-            <Text variant={'headlineSmall'}>
-              {questions[questionNo - 1].question}
-            </Text>
-            {/* {boxQuestion && (
+            {questions[questionNo - 1].gameFormat === 1 ? (
+              <>
+                <Text variant={'headlineSmall'}>
+                  {questions[questionNo - 1].question}
+                </Text>
+                <QuizButtons
+                  question={questions[questionNo - 1]}
+                  backgroundColor={styles.mainContainer.backgroundColor}
+                  reveal={submit}
+                  selected={answer}
+                  onSelect={ans => setAnswer(ans)}
+                />
+              </>
+            ) : (
+              <TeachingButtons
+                question={questions[questionNo - 1]}
+                backgroundColor={styles.mainContainer.backgroundColor}
+                onSelect={ans => setAnswer(ans)}
+              />
+            )}
+          </View>
+
+          {questions[questionNo - 1].gameFormat === 1 ? (
+            <QuizFooter
+              correct={answer === questions[questionNo - 1].correct_answer}
+              explanation={questions[questionNo - 1].explanation}
+              selected={answer !== ''}
+              submit={submit}
+              handleSubmit={handleSubmit}
+            />
+          ) : (
+            <View style={styles.bottomContainer}>
+              <DuoButton
+                filled={true}
+                inactive={false}
+                backgroundColor={Theme.colors.primary}
+                backgroundDark={Theme.colors.primaryDark}
+                onPress={handleSubmit}
+                stretch={true}
+                textColor={Theme.colors.onPrimary}>
+                Next
+              </DuoButton>
+            </View>
+          )}
+          {/* {boxQuestion && (
           <View style={styles.innerContainer}>
             <Text variant={'headlineSmall'}>{boxQuestion}</Text>
           </View>
         )} */}
-            <QuizButtons
-              question={questions[questionNo - 1]}
-              backgroundColor={styles.mainContainer.backgroundColor}
-              reveal={submit}
-              selected={answer}
-              onSelect={ans => setAnswer(ans)}
-            />
-          </View>
-          <QuizFooter
-            correct={answer === questions[questionNo - 1].correct_answer}
-            explanation={questions[questionNo - 1].explanation}
-            selected={answer !== ''}
-            submit={submit}
-            handleSubmit={handleSubmit}
-          />
         </>
       )}
 
@@ -246,7 +267,9 @@ const Quiz = (props: QuizProps) => {
             <Button mode="text" onPress={() => setDialogVisible(false)}>
               Cancel
             </Button>
-            <Button mode="text" onPress={() => navigation.navigate('Debug')}>
+            <Button
+              mode="text"
+              onPress={() => navigation.navigate('HomeScreen')}>
               Leave
             </Button>
           </Dialog.Actions>
@@ -274,7 +297,20 @@ const styles = StyleSheet.create({
     borderRadius: Constants.radiusLarge,
     backgroundColor: Theme.colors.elevation.level2,
   },
+
+  bottomContainer: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    paddingHorizontal: Constants.edgePadding,
+    paddingTop: Constants.edgePadding,
+    paddingBottom: 2 * Constants.edgePadding,
+  },
   title: {
     textAlign: 'center',
+  },
+  loading: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

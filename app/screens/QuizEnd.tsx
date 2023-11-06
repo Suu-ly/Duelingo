@@ -1,12 +1,13 @@
-import {View, StyleSheet, Animated, Easing} from 'react-native';
+import {View, StyleSheet, Animated, Easing, BackHandler} from 'react-native';
 import {Text} from 'react-native-paper';
 import {CountUp} from 'use-count-up';
-import {useRef} from 'react';
+import {useCallback, useRef} from 'react';
 
 import Theme from '../common/constants/theme.json';
 import CustomStatusBar from '../common/CustomStatusBar';
 import Constants from '../common/constants/Constants';
 import DuoButton from '../common/DuoButton';
+import {useFocusEffect} from '@react-navigation/native';
 
 interface QuizEndProps {
   route: any;
@@ -23,10 +24,26 @@ const QuizEnd = (props: QuizEndProps) => {
   const animationValue = useRef(new Animated.Value(0)).current;
 
   const scale = animationValue.interpolate({
-    inputRange: [0, 40, 100],
-    outputRange: [1, 1.3, 1],
+    inputRange: [20, 50, 80],
+    outputRange: [1, 1.2, 1],
     extrapolate: 'clamp',
   });
+
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => {
+        navigation.navigate('HomeScreen');
+        return true;
+      };
+
+      const subscription = BackHandler.addEventListener(
+        'hardwareBackPress',
+        onBackPress,
+      );
+
+      return () => subscription.remove();
+    }, []),
+  );
 
   return (
     <View style={styles.mainContainer}>
@@ -55,7 +72,7 @@ const QuizEnd = (props: QuizEndProps) => {
                       Animated.timing(animationValue, {
                         toValue: 100,
                         duration: 1000,
-                        easing: Easing.bezier(0, 0.75, 1, 0.15),
+                        easing: Easing.bezier(0, 0.9, 1, 0.1),
                         useNativeDriver: false,
                       }),
                     ).start();
@@ -97,7 +114,7 @@ const QuizEnd = (props: QuizEndProps) => {
             backgroundColor={Theme.colors.primary}
             backgroundDark={Theme.colors.primaryDark}
             stretch={true}
-            onPress={() => navigation.navigate('Debug')}
+            onPress={() => navigation.navigate('HomeScreen')}
             textColor={Theme.colors.onPrimary}>
             Back to Home
           </DuoButton>

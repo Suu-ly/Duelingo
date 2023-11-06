@@ -41,6 +41,15 @@ const QuizButtons = (props: QuizButtonProps) => {
     readText(option);
   };
 
+  const long = () => {
+    for (let i = 0; i < question.options.length; i++) {
+      if (question.options[i].length > 20) {
+        return true;
+      }
+    }
+    return false;
+  };
+
   return (
     <View style={styles.quizContainer}>
       {question.options.map((option: string, index: number) => {
@@ -53,7 +62,7 @@ const QuizButtons = (props: QuizButtonProps) => {
             onPress={() => selectHandler(option)}
             height={60}
             stretch={true}
-            textVariant="headlineSmall"
+            textVariant={long() ? 'titleMedium' : 'headlineSmall'}
             textColor={Theme.colors.onSurface}
             borderColor={
               reveal &&

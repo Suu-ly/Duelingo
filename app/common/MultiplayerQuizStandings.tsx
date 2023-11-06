@@ -18,11 +18,25 @@ interface TimerProps {
 const MultiplayerQuizStandings = (props: TimerProps) => {
   const {points, oldPoints, data, userId, secondsLeft} = props;
 
+  const isTie = points[0].value === points[1].value;
   const isFirst = points[0].uid === userId;
+  console.log(points);
+  console.log(userId);
+  console.log(isFirst);
 
   const getOldValue = (uid: string) => {
     for (let index = 0; index < oldPoints.length; index++) {
       if (oldPoints[index].uid === uid) return oldPoints[index].value as number;
+    }
+    return 0;
+  };
+
+  const getDataIndex = (
+    uid: string,
+    data: FirebaseFirestoreTypes.DocumentData[],
+  ) => {
+    for (let i = 0; i < data.length; i++) {
+      if (data[i].uid === uid) return i;
     }
     return 0;
   };
@@ -34,7 +48,11 @@ const MultiplayerQuizStandings = (props: TimerProps) => {
         <Text
           variant="bodyLarge"
           style={{color: Theme.colors.onSurfaceVariant}}>
-          {isFirst ? "You're in the lead!" : 'You can still catch up!'}
+          {isTie
+            ? "It's a tie!"
+            : isFirst
+            ? "You're in the lead!"
+            : 'You can still catch up!'}
         </Text>
       </View>
       {points.map((value, index) => {
@@ -45,26 +63,31 @@ const MultiplayerQuizStandings = (props: TimerProps) => {
               key={value.uid}
               style={[
                 styles.card,
-                value.uid === userId && isFirst
+                !isTie && value.uid === userId && isFirst
                   ? {
                       backgroundColor: Theme.colors.elevation.level0,
                       borderWidth: 2,
                       borderColor: Theme.colors.primaryContainer,
                     }
-                  : value.uid === userId
+                  : !isTie && value.uid === userId
                   ? {
                       backgroundColor: Theme.colors.elevation.level0,
                       borderWidth: 2,
                       borderColor: Theme.colors.tertiary,
                     }
+                  : isTie
+                  ? {backgroundColor: Theme.colors.elevation.level0}
                   : {backgroundColor: Theme.colors.elevation.level2},
               ]}>
-              <Avatar style={styles.avatar} index={data[index].avatar} />
+              <Avatar
+                style={styles.avatar}
+                index={data[getDataIndex(value.uid, data)].avatar}
+              />
               <View style={styles.details}>
                 <Text
                   variant="labelMedium"
                   style={{color: Theme.colors.onSurfaceVariant}}>
-                  {data[index].displayName}
+                  {data[getDataIndex(value.uid, data)].displayName}
                 </Text>
                 <Text variant="bodyMedium">
                   <CountUp

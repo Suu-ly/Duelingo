@@ -128,7 +128,7 @@ const Multiplayer = (props: MultiplayerProps) => {
     if (timeTaken < 1500) return 1000;
     else if (2000 <= timeTaken && timeTaken < 15000)
       return Math.floor(-8 * Math.sqrt(timeTaken - 1500) + 1000);
-    else return 0;
+    else return 100;
   };
 
   const randomQuestion = (count: number, max: number) => {
@@ -148,10 +148,10 @@ const Multiplayer = (props: MultiplayerProps) => {
     ownName: boolean,
     data: FirebaseFirestoreTypes.DocumentData[],
   ) => {
-    data.forEach(value => {
-      if (value.uid === userId && ownName) return value.displayName;
-      return value.displayName;
-    });
+    for (let i = 0; i < data.length; i++) {
+      if (data[i].uid === userId && ownName) return data[i].displayName;
+      return data[i].displayName;
+    }
     return '';
   };
 
@@ -428,6 +428,7 @@ const Multiplayer = (props: MultiplayerProps) => {
         }
       });
 
+    // If two people request at the same time it doesn't work
     database()
       .ref('/games/' + gameId + '/rematch')
       .on('value', snapshot => {
@@ -518,7 +519,10 @@ const Multiplayer = (props: MultiplayerProps) => {
             </Button>
             <Button
               mode="text"
-              onPress={() => navigation.navigate('HomeScreen')}>
+              onPress={() => {
+                setDialogVisible(false);
+                navigation.navigate('HomeScreen');
+              }}>
               Leave
             </Button>
           </Dialog.Actions>
@@ -711,7 +715,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: Constants.defaultGap,
     paddingHorizontal: Constants.edgePadding,
-    paddingTop: 90,
+    paddingTop: Constants.defaultGap * 2,
+    flex: 1,
   },
   loadingScreen: {
     alignItems: 'center',
