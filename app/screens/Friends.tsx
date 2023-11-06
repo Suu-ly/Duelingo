@@ -1,18 +1,13 @@
-import {useEffect, useState} from 'react';
-import {getFriendDetails, deleteFriend} from '../utils/database';
-import {
-  Appbar,
-  Text,
-  Searchbar,
-  Surface,
-  Avatar,
-  FAB,
-} from 'react-native-paper';
-import {View, ScrollView, StyleSheet, TouchableOpacity} from 'react-native';
+import {useCallback, useState} from 'react';
+import {useFocusEffect} from '@react-navigation/native';
+import {getFriendData, deleteFriend} from '../utils/database';
+import {FirebaseFirestoreTypes} from '@react-native-firebase/firestore';
+import {Appbar, Text, Searchbar, FAB} from 'react-native-paper';
+import {View, ScrollView, StyleSheet} from 'react-native';
 
 import CustomStatusBar from '../common/CustomStatusBar';
 import Constants from '../common/constants/Constants';
-import DuoButton from '../common/DuoButton';
+import ChallengeCard from '../common/ChallengeCard';
 import theme from '../common/constants/theme.json';
 
 interface FriendsProps {
@@ -35,84 +30,50 @@ const Friends = (props: FriendsProps) => {
       chinese: 0,
       malay: 0,
       avatar: 0,
+      uid: '',
     },
   ];
-  const imgSource = [
-    require('../assets/avatar/0.png'),
-    require('../assets/avatar/1.png'),
-    require('../assets/avatar/2.png'),
-    require('../assets/avatar/3.png'),
-    require('../assets/avatar/4.png'),
-    require('../assets/avatar/5.png'),
-    require('../assets/avatar/6.png'),
-    require('../assets/avatar/7.png'),
-    require('../assets/avatar/8.png'),
-    require('../assets/avatar/9.png'),
-    require('../assets/avatar/10.png'),
-    require('../assets/avatar/11.png'),
-    require('../assets/avatar/12.png'),
-    require('../assets/avatar/13.png'),
-    require('../assets/avatar/14.png'),
-  ];
-
-  const [isPressed, setIsPressed] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [currentFriend, setCurrentFriend] = useState(initialUser);
-  const [constFriend, setConstFriend] = useState(initialUser);
 
   const getFriend = async () => {
-    let friendDetails: any = await getFriendDetails();
-    console.log(friendDetails);
+    let friendDetails: any = await getFriendData();
     setCurrentFriend([...friendDetails]);
-    setConstFriend([...friendDetails]);
   };
 
-  const searchFriend = async () => {
-    if (
-      constFriend.filter(
-        (e: any) =>
-          e.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          e.displayName.toLowerCase().includes(searchQuery.toLowerCase()),
-      )
-    ) {
-      let friend: any = constFriend.filter(
-        (e: any) =>
-          e.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          e.displayName.toLowerCase().includes(searchQuery.toLowerCase()),
-      );
-      setCurrentFriend(friend);
-    } else if (searchQuery == '') {
-      setCurrentFriend([...constFriend]);
-    } else {
-      setCurrentFriend([]);
-    }
+  const filterFunction = (entry: FirebaseFirestoreTypes.DocumentData) => {
+    if (searchQuery === '') return true;
+    return (
+      entry.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      entry.displayName.toLowerCase().includes(searchQuery.toLowerCase())
+    );
   };
 
-  useEffect(() => {
+  const handleDelete = (friendId: string) => {
+    deleteFriend(friendId);
     getFriend();
-  }, [isPressed]);
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      getFriend();
+    }, []),
+  );
 
   return (
     <View style={styles.mainContainer}>
       <CustomStatusBar />
-      <Appbar.Header style={styles.appbar}>
-        <Appbar.BackAction
-          onPress={() => {
-            navigation.goBack();
-          }}
-        />
-        <Appbar.Action
-          icon="refresh"
-          onPress={() => {
-            setIsPressed(isPressed ? false : true);
-          }}
-          style={styles.iconRight}
-        />
-      </Appbar.Header>
       <ScrollView
         style={styles.container}
-        stickyHeaderIndices={[1]}
+        stickyHeaderIndices={[2]}
         showsVerticalScrollIndicator={false}>
+        <Appbar.Header style={styles.appbar}>
+          <Appbar.BackAction
+            onPress={() => {
+              navigation.goBack();
+            }}
+          />
+        </Appbar.Header>
         <View style={styles.title}>
           <Text variant={'headlineLarge'}>Friends</Text>
         </View>
@@ -122,42 +83,29 @@ const Friends = (props: FriendsProps) => {
             onChangeText={searchQuery => {
               setSearchQuery(searchQuery);
             }}
-            onSubmitEditing={() => {
-              searchFriend();
-            }}
             value={searchQuery}
           />
         </View>
-        {currentFriend.map((friend, i) => (
-          <TouchableOpacity
-            style={styles.surface}
-            onPress={() => console.log('Pressed')}
-            key={i}>
-            <Surface elevation={0}>
-              <View style={styles.rowContainer}>
-                <Avatar.Image size={48} source={imgSource[friend.avatar]} />
-                <View style={styles.textContainer}>
-                  <Text variant={'labelMedium'}>{friend.username}</Text>
-                  <Text variant={'bodyLarge'}>{friend.displayName}</Text>
-                </View>
-                <View style={styles.buttonContainer}>
-                  <DuoButton
-                    filled={false}
-                    backgroundDark={theme.colors.secondary}
-                    backgroundColor={theme.colors.elevation.level0}
-                    onPress={() => {
-                      deleteFriend(friend.username);
-                      setIsPressed(isPressed ? false : true);
-                    }}
-                    borderColor={theme.colors.outline}
-                    textColor={theme.colors.onSurface}>
-                    Remove
-                  </DuoButton>
-                </View>
-              </View>
-            </Surface>
-          </TouchableOpacity>
-        ))}
+        <View style={styles.cardsContainer}>
+          {currentFriend[0].uid !== '' ? (
+            <View style={styles.cards}>
+              <ChallengeCard
+                data={currentFriend.filter(filterFunction)}
+                onPress={handleDelete}
+                friendList={true}
+                navigation={navigation}
+              />
+            </View>
+          ) : (
+            <View style={styles.loading}>
+              <Text
+                variant={'bodyMedium'}
+                style={{color: theme.colors.onSurfaceVariant}}>
+                You don't have any friends yet.
+              </Text>
+            </View>
+          )}
+        </View>
       </ScrollView>
       <FAB
         icon="account-plus-outline"
@@ -179,51 +127,42 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    marginTop: Constants.mediumGap,
     gap: Constants.largeGap,
     paddingHorizontal: Constants.edgePadding,
   },
   appbar: {
     backgroundColor: theme.colors.surface,
-  },
-  iconRight: {
-    marginTop: Constants.mediumGap,
-    marginLeft: 'auto',
-    marginRight: Constants.edgePadding,
+    marginTop: -Constants.mediumGap,
+    marginHorizontal: -Constants.edgePadding,
   },
   title: {
     marginBottom: 16,
   },
   searchBar: {
-    marginBottom: Constants.defaultGap,
-  },
-  surface: {
-    backgroundColor: theme.colors.elevation.level0,
-    padding: Constants.edgePadding,
     marginBottom: Constants.largeGap,
-    height: 80,
-    width: 'auto',
+    backgroundColor: theme.colors.surface,
+    paddingBottom: Constants.largeGap,
+  },
+  cardsContainer: {
+    gap: Constants.edgePadding,
+    flex: 1,
+    paddingBottom: Constants.edgePadding,
+  },
+  cards: {
+    gap: Constants.largeGap,
+    flex: 1,
+  },
+  loading: {
+    flex: 1,
+    alignItems: 'center',
     justifyContent: 'center',
-    flex: 0,
-    borderRadius: Constants.radiusLarge,
-  },
-  rowContainer: {
-    flexDirection: 'row',
-  },
-  textContainer: {
-    justifyContent: 'center',
-    marginLeft: 12,
-    flexDirection: 'column',
-  },
-  buttonContainer: {
-    marginLeft: 'auto',
-    marginRight: 0,
+    gap: Constants.largeGap,
   },
   fab: {
     position: 'absolute',
     margin: Constants.largeGap,
-    right: Constants.largeGap,
-    bottom: Constants.largeGap,
+    right: Constants.smallGap,
+    bottom: Constants.smallGap,
     backgroundColor: theme.colors.primary,
   },
 });

@@ -1,16 +1,16 @@
-import {useEffect, useState} from 'react';
-import {
-  getFriendDetails,
-  getUserDetails,
-  createFriend,
-} from '../utils/database';
-import {Text, Searchbar, Surface, Avatar} from 'react-native-paper';
+import {useCallback, useState} from 'react';
+import {useFocusEffect} from '@react-navigation/native';
+import {getFriendData, getUsersData, createFriend} from '../utils/database';
+import {FirebaseFirestoreTypes} from '@react-native-firebase/firestore';
+import {Text, Searchbar, Surface} from 'react-native-paper';
 import {View, ScrollView, StyleSheet, TouchableOpacity} from 'react-native';
 
 import CustomStatusBar from '../common/CustomStatusBar';
 import Constants from '../common/constants/Constants';
+// import ChallengeCard from '../common/ChallengeCard';
 import DuoButton from '../common/DuoButton';
 import theme from '../common/constants/theme.json';
+import Avatar from '../common/Avatar';
 
 interface AddFriendsProps {
   route: any;
@@ -32,69 +32,42 @@ const AddFriends = (props: AddFriendsProps) => {
       chinese: 0,
       malay: 0,
       avatar: 0,
+      uid: '',
     },
   ];
-  const imgSource = [
-    require('../assets/avatar/0.png'),
-    require('../assets/avatar/1.png'),
-    require('../assets/avatar/2.png'),
-    require('../assets/avatar/3.png'),
-    require('../assets/avatar/4.png'),
-    require('../assets/avatar/5.png'),
-    require('../assets/avatar/6.png'),
-    require('../assets/avatar/7.png'),
-    require('../assets/avatar/8.png'),
-    require('../assets/avatar/9.png'),
-    require('../assets/avatar/10.png'),
-    require('../assets/avatar/11.png'),
-    require('../assets/avatar/12.png'),
-    require('../assets/avatar/13.png'),
-    require('../assets/avatar/14.png'),
-  ];
-
-  const [isPressed, setIsPressed] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [friendList, setFriendList] = useState(initialUser);
+  const [currentFriend, setCurrentFriend] = useState(initialUser);
   const [currentUser, setCurrentUser] = useState(initialUser);
-  const [constUser, setConstUser] = useState(initialUser);
 
   const getUser = async () => {
-    let userDetails: any = await getUserDetails();
-    console.log(userDetails);
+    let userDetails: any = await getUsersData();
     setCurrentUser([...userDetails]);
-    setConstUser([...userDetails]);
   };
 
   const getFriend = async () => {
-    let friendDetails: any = await getFriendDetails();
-    setFriendList([...friendDetails]);
+    let friendDetails: any = await getFriendData();
+    setCurrentFriend([...friendDetails]);
   };
 
-  const searchUser = async () => {
-    if (
-      constUser.filter(
-        (e: any) =>
-          e.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          e.displayName.toLowerCase().includes(searchQuery.toLowerCase()),
-      )
-    ) {
-      let friend: any = constUser.filter(
-        (e: any) =>
-          e.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          e.displayName.toLowerCase().includes(searchQuery.toLowerCase()),
-      );
-      setCurrentUser(friend);
-    } else if (searchQuery == '') {
-      setCurrentUser([...constUser]);
-    } else {
-      setCurrentUser([]);
-    }
+  const filterFunction = (entry: FirebaseFirestoreTypes.DocumentData) => {
+    if (searchQuery === '') return false;
+    return (
+      entry.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      entry.displayName.toLowerCase().includes(searchQuery.toLowerCase())
+    );
   };
 
-  useEffect(() => {
-    getUser();
+  const handleCreate = (friendId: string) => {
+    createFriend(friendId);
     getFriend();
-  }, [isPressed]);
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      getUser();
+      getFriend();
+    }, []),
+  );
 
   return (
     <View style={styles.mainContainer}>
@@ -109,9 +82,6 @@ const AddFriends = (props: AddFriendsProps) => {
             onChangeText={searchQuery => {
               setSearchQuery(searchQuery);
             }}
-            onSubmitEditing={() => {
-              searchUser();
-            }}
             value={searchQuery}
             mode={'view'}
             icon={'arrow-left'}
@@ -120,14 +90,14 @@ const AddFriends = (props: AddFriendsProps) => {
             }}
           />
         </View>
-        {currentUser.map((user, i) => (
+        {currentUser.filter(filterFunction).map((user, i) => (
           <TouchableOpacity
             style={styles.surface}
             onPress={() => console.log('Pressed')}
             key={i}>
             <Surface elevation={0}>
               <View style={styles.rowContainer}>
-                <Avatar.Image size={48} source={imgSource[user.avatar]} />
+                <Avatar index={user.avatar} style={styles.image} />
                 <View style={styles.textContainer}>
                   <Text variant={'labelMedium'}>{user.username}</Text>
                   <Text variant={'bodyLarge'}>{user.displayName}</Text>
@@ -137,21 +107,19 @@ const AddFriends = (props: AddFriendsProps) => {
                     filled={false}
                     width={77.5}
                     disabled={
-                      friendList.filter(
-                        (e: any) => e.username === user.username,
-                      ).length != 0
+                      currentFriend.filter((e: any) => e.uid === user.uid)
+                        .length != 0
                         ? true
                         : false
                     }
                     backgroundDark={theme.colors.secondary}
                     backgroundColor={theme.colors.elevation.level0}
                     onPress={() => {
-                      createFriend(user.username);
-                      setIsPressed(isPressed ? false : true);
+                      handleCreate(user.uid);
                     }}
                     borderColor={theme.colors.outline}
                     textColor={theme.colors.onSurface}>
-                    {friendList.filter((e: any) => e.username === user.username)
+                    {currentFriend.filter((e: any) => e.uid === user.uid)
                       .length != 0
                       ? 'Added'
                       : 'Add'}
@@ -209,5 +177,10 @@ const styles = StyleSheet.create({
   buttonContainer: {
     marginLeft: 'auto',
     marginRight: 0,
+  },
+  image: {
+    width: 48,
+    height: 48,
+    borderRadius: 256,
   },
 });

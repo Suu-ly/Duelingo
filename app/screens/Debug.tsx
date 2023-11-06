@@ -7,11 +7,7 @@ import Constants from '../common/constants/Constants';
 import DuoButton from '../common/DuoButton';
 import theme from '../common/constants/theme.json';
 
-import {
-  createFriend,
-  getFriendList,
-  getUserListExceptOwn,
-} from '../utils/database';
+import {createFriend, getFriendList} from '../utils/database';
 
 interface DebugProps {
   route: any;
@@ -90,13 +86,6 @@ const Debug = (props: DebugProps) => {
             getFriendList();
           }}>
           Get Friend List
-        </Button>
-        <Button
-          mode="outlined"
-          onPress={() => {
-            getUserListExceptOwn();
-          }}>
-          Get User List
         </Button>
       </View>
     </View>

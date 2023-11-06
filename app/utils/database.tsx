@@ -1,4 +1,6 @@
-import firestore from '@react-native-firebase/firestore';
+import firestore, {
+  FirebaseFirestoreTypes,
+} from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 
 // Get All Quizzes
@@ -21,6 +23,7 @@ export const createUser = (
     .collection('Users')
     .doc(uid)
     .set({
+      uid: uid,
       displayName: displayName,
       username: username,
       email: email,
@@ -36,142 +39,120 @@ export const createUser = (
   console.log('User created.');
 };
 
-export const createFriend = (username: any) => {
-  auth().onAuthStateChanged(user => {
-    if (user) {
-      const uid = user.uid;
-      firestore()
-        .collection('Users')
-        .where('username', '==', username)
-        .get()
-        .then(querySnapshot => {
-          querySnapshot.forEach(documentSnapshot => {
-            console.log(documentSnapshot.id);
-
-            // Add friend into own list
-            firestore()
-              .collection('Users')
-              .doc(uid)
-              .collection('Friends')
-              .doc(documentSnapshot.id)
-              .set({});
-
-            // Add ownself into friend's list
-            firestore()
-              .collection('Users')
-              .doc(documentSnapshot.id)
-              .collection('Friends')
-              .doc(uid)
-              .set({});
-          });
-        });
-    }
-  });
-};
-
-export const deleteFriend = (username: any) => {
-  auth().onAuthStateChanged(user => {
-    if (user) {
-      const uid = user.uid;
-      firestore()
-        .collection('Users')
-        .where('username', '==', username)
-        .get()
-        .then(querySnapshot => {
-          querySnapshot.forEach(documentSnapshot => {
-            console.log(documentSnapshot.id);
-
-            // Delete from own list
-            firestore()
-              .collection('Users')
-              .doc(uid)
-              .collection('Friends')
-              .doc(documentSnapshot.id)
-              .delete();
-
-            // Delete from friend's list
-            firestore()
-              .collection('Users')
-              .doc(documentSnapshot.id)
-              .collection('Friends')
-              .doc(uid)
-              .delete();
-          });
-        });
-    }
-  });
-};
-
-export const getFriendList = async (): Promise<string[]> => {
-  var friendList: string[] = [];
-  var user = auth().currentUser;
+export const createFriend = (friendId: string) => {
+  const user = auth().currentUser;
   if (user) {
     const uid = user.uid;
-    await firestore()
+    // Add friend into own list
+    firestore()
       .collection('Users')
       .doc(uid)
+      .collection('Friends')
+      .doc(friendId)
+      .set({});
+    // Add ownself into friend's list
+    firestore()
+      .collection('Users')
+      .doc(friendId)
+      .collection('Friends')
+      .doc(uid)
+      .set({});
+  }
+};
+
+export const deleteFriend = (friendId: string) => {
+  const user = auth().currentUser;
+  if (user) {
+    const uid = user.uid;
+    // Delete from own list
+    firestore()
+      .collection('Users')
+      .doc(uid)
+      .collection('Friends')
+      .doc(friendId)
+      .delete();
+    // Delete from friend's list
+    firestore()
+      .collection('Users')
+      .doc(friendId)
+      .collection('Friends')
+      .doc(uid)
+      .delete();
+  }
+};
+
+export const getFriendList = async (userId?: string) => {
+  const user = auth().currentUser;
+  let friendList: string[] = [];
+  // Other users' friend list, if userId is passed in as a parameter
+  if (typeof userId !== 'undefined') {
+    await firestore()
+      .collection('Users')
+      .doc(userId)
       .collection('Friends')
       .get()
       .then(querySnapshot => {
         querySnapshot.forEach(documentSnapshot => {
           friendList = [...friendList, documentSnapshot.id];
         });
-        console.log(friendList);
+      });
+    // Own friend list, if no parameter is passed in
+  } else if (user) {
+    await firestore()
+      .collection('Users')
+      .doc(user.uid)
+      .collection('Friends')
+      .get()
+      .then(querySnapshot => {
+        querySnapshot.forEach(documentSnapshot => {
+          friendList = [...friendList, documentSnapshot.id];
+        });
       });
   }
   return friendList;
 };
 
-export const getFriendDetails = async () => {
+export const getFriendData = async () => {
   const friendList = await getFriendList();
-  var friendDetails = [];
-
-  for (let i = 0; i < friendList.length; i++) {
-    var friend = await firestore()
-      .collection('Users')
-      .doc(friendList[i])
-      .get()
-      .then(documentSnapshot => {
-        return documentSnapshot.data();
+  let friendData: FirebaseFirestoreTypes.DocumentData[] = [];
+  await firestore()
+    .collection('Users')
+    .orderBy('exp', 'desc')
+    .where('uid', 'in', friendList)
+    .get()
+    .then(querySnapshot => {
+      querySnapshot.forEach(documentSnapshot => {
+        friendData.push(documentSnapshot.data());
       });
-    friendDetails.push(friend);
-  }
-  return friendDetails;
+    });
+  return friendData;
 };
 
-export const getUserListExceptOwn = async (): Promise<string[]> => {
-  var userList: string[] = [];
-  var user = auth().currentUser;
-  if (user) {
+export const getUsersData = async (userIds?: string[]) => {
+  const user = auth().currentUser;
+  let data: FirebaseFirestoreTypes.DocumentData[] = [];
+  // Users data corresponding to userIds passed in as a parameter
+  if (typeof userIds !== 'undefined') {
+    await firestore()
+      .collection('Users')
+      .where('uid', 'in', userIds)
+      .get()
+      .then(querySnapshot => {
+        querySnapshot.forEach(documentSnapshot => {
+          data.push(documentSnapshot.data());
+        });
+      });
+    // All users data except own
+  } else if (user) {
     const uid = user.uid;
     await firestore()
       .collection('Users')
       .get()
       .then(querySnapshot => {
         querySnapshot.forEach(documentSnapshot => {
-          documentSnapshot.id != uid
-            ? (userList = [...userList, documentSnapshot.id])
-            : {};
+          documentSnapshot.id != uid ? data.push(documentSnapshot.data()) : {};
         });
-        console.log(userList);
       });
   }
-  return userList;
-};
-
-export const getUserDetails = async () => {
-  const userList = await getUserListExceptOwn();
-  var userDetails = [];
-
-  for (let i = 0; i < userList.length; i++) {
-    var user = await firestore()
-      .collection('Users')
-      .doc(userList[i])
-      .get()
-      .then(documentSnapshot => {
-        return documentSnapshot.data();
-      });
-    userDetails.push(user);
-  }
-  return userDetails;
+  return data;
 };
