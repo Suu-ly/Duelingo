@@ -8,17 +8,13 @@ import {
   ImageSourcePropType,
 } from 'react-native';
 
-import {Button, Portal, Snackbar, Text} from 'react-native-paper';
+import {Text} from 'react-native-paper';
 import Theme from '../common/constants/theme.json';
 
 import Constants from '../common/constants/Constants';
 import TopicButton from '../common/TopicButton';
 import {getSectionListData} from '../utils/firestore';
-import {
-  EventArg,
-  NavigationAction,
-  useFocusEffect,
-} from '@react-navigation/native';
+import {useFocusEffect} from '@react-navigation/native';
 
 interface HomeProps {
   route: any;
@@ -29,8 +25,6 @@ interface HomeProps {
 
 const Home = (props: HomeProps) => {
   const {route, navigation, translate, selectedLanguage} = props;
-
-  const [secondBackPress, setSecondBackPress] = useState<boolean>(false);
 
   const numberOfCompletedChineseModule = 15;
   const numberOfCompletedMalayModule = 9;
@@ -77,11 +71,7 @@ const Home = (props: HomeProps) => {
   useFocusEffect(
     useCallback(() => {
       const onBackPress = () => {
-        if (secondBackPress) {
-          BackHandler.exitApp();
-        } else {
-          setSecondBackPress(true);
-        }
+        BackHandler.exitApp();
         return true;
       };
 
@@ -91,15 +81,7 @@ const Home = (props: HomeProps) => {
       );
 
       return () => subscription.remove();
-    }, [secondBackPress]),
-  );
-
-  useEffect(
-    () =>
-      navigation.addListener('blur', (e: EventArg<'blur', true>) => {
-        setSecondBackPress(false);
-      }),
-    [navigation],
+    }, []),
   );
 
   return (
@@ -166,14 +148,6 @@ const Home = (props: HomeProps) => {
           />
         )}
       </View>
-      <Portal>
-        <Snackbar
-          visible={secondBackPress}
-          duration={3000}
-          onDismiss={() => setSecondBackPress(false)}>
-          Go back one more time to exit the app.
-        </Snackbar>
-      </Portal>
     </Animated.View>
   );
 };
