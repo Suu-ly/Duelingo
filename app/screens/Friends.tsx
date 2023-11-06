@@ -7,7 +7,7 @@ import {View, ScrollView, StyleSheet} from 'react-native';
 
 import CustomStatusBar from '../common/CustomStatusBar';
 import Constants from '../common/constants/Constants';
-import ChallengeCard from '../common/ChallengeCard';
+import ChallengeCard from '../common/ChallengeCards';
 import theme from '../common/constants/theme.json';
 
 interface FriendsProps {
