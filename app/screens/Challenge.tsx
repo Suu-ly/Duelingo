@@ -19,6 +19,7 @@ import Theme from '../common/constants/theme.json';
 import {getFriendData, getUserData} from '../utils/database';
 import ChallengeCard from '../common/ChallengeCards';
 import {useFocusEffect} from '@react-navigation/native';
+import DuoFAB from '../common/DuoFAB';
 
 interface ChallengePlayerProps {
   route: any;
@@ -41,7 +42,8 @@ const ChallengePlayer = (props: ChallengePlayerProps) => {
   const [timeout, setTimeout] = useState<number | null>(null);
 
   const userId = auth().currentUser!.uid;
-  const [name, setName] = useState('');
+  const [playerData, setPlayerData] =
+    useState<FirebaseFirestoreTypes.DocumentData | null>(null);
   const [playerId, setPlayerId] = useState('');
   const [onlineFriends, setOnlineFriends] = useState<
     FirebaseFirestoreTypes.DocumentData[] | null
@@ -55,8 +57,8 @@ const ChallengePlayer = (props: ChallengePlayerProps) => {
   };
 
   const loadData = async () => {
-    let nameData = await getUserData(userId);
-    setName(nameData.displayName);
+    let ownData = await getUserData(userId);
+    setPlayerData(ownData);
     let data: FirebaseFirestoreTypes.DocumentData[] = await getFriendData();
     if (data.length === 0) {
       setAddFriendPrompt(true);
@@ -145,7 +147,7 @@ const ChallengePlayer = (props: ChallengePlayerProps) => {
               language: language,
               difficulty: difficulty,
               lobbyId: lobby,
-              challenger: name,
+              challenger: playerData!.displayName,
               status: true,
               accepted: false,
             });
@@ -293,6 +295,15 @@ const ChallengePlayer = (props: ChallengePlayerProps) => {
           )}
         </View>
       </ScrollView>
+      <DuoFAB
+        icon="account-plus-outline"
+        onPress={() =>
+          navigation.navigate('Profile', {
+            screen: 'AddFriends',
+            params: {data: playerData},
+          })
+        }
+      />
       <ChallengeDialogs
         challengeActive={challengeActive}
         challengeActiveOnPress={() => {

@@ -8,6 +8,7 @@ import DuoButton from '../common/DuoButton';
 import Theme from '../common/constants/theme.json';
 import {signOut} from '../utils/auth';
 import {EventArg, NavigationAction} from '@react-navigation/native';
+import DuoFAB from '../common/DuoFAB';
 
 interface DebugProps {
   route: any;
@@ -79,6 +80,10 @@ const Debug = (props: DebugProps) => {
           Add Friends
         </DuoButton>
       </View>
+      <DuoFAB
+        onPress={() => console.log('FAB')}
+        icon={'account-plus-outline'}
+      />
     </View>
   );
 };

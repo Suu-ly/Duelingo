@@ -2,19 +2,14 @@ import {useCallback, useState} from 'react';
 import {useFocusEffect} from '@react-navigation/native';
 import {getFriendData, deleteFriend} from '../utils/database';
 import {FirebaseFirestoreTypes} from '@react-native-firebase/firestore';
-import {
-  Appbar,
-  Text,
-  Searchbar,
-  FAB,
-  ActivityIndicator,
-} from 'react-native-paper';
+import {Appbar, Text, Searchbar, ActivityIndicator} from 'react-native-paper';
 import {View, ScrollView, StyleSheet, Animated} from 'react-native';
 
 import CustomStatusBar from '../common/CustomStatusBar';
 import Constants from '../common/constants/Constants';
 import ChallengeCard from '../common/ChallengeCards';
 import Theme from '../common/constants/theme.json';
+import DuoFAB from '../common/DuoFAB';
 
 interface FriendsProps {
   route: any;
@@ -120,12 +115,9 @@ const Friends = (props: FriendsProps) => {
           )}
         </View>
       </ScrollView>
-      <FAB
+      <DuoFAB
         icon="account-plus-outline"
-        style={styles.fab}
         onPress={() => navigation.navigate('AddFriends')}
-        mode="flat"
-        color={Theme.colors.onPrimary}
       />
     </Animated.View>
   );

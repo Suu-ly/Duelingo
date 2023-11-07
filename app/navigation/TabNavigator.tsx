@@ -200,6 +200,7 @@ const TabNavigator = () => {
       <Tab.Screen
         name="Profile"
         options={{
+          lazy: false,
           headerShown: false,
           tabBarLabel: 'Profile',
           tabBarIcon: ({focused, color, size}) => {
