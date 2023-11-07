@@ -5,12 +5,10 @@ import {
   Modal,
   ScrollView,
   TouchableOpacity,
-  Image,
   Animated,
 } from 'react-native';
 import {Appbar, Button, IconButton, Text} from 'react-native-paper';
 import Theme from '../common/constants/theme.json';
-import CustomStatusBar from '../common/CustomStatusBar';
 import Constants from '../common/constants/Constants';
 import Avatar from '../common/Avatar';
 
@@ -18,10 +16,12 @@ interface EditProfileProps {
   route: any;
   navigation: any;
   translate: Animated.Value;
+  opacity: Animated.Value;
 }
 
 const EditProfile = (props: EditProfileProps) => {
-  const {route, navigation, translate} = props;
+  const {route, navigation, translate, opacity} = props;
+  const data = route.params.userData;
 
   const [visible, setVisible] = useState(false);
 
@@ -29,8 +29,10 @@ const EditProfile = (props: EditProfileProps) => {
 
   return (
     <Animated.View
-      style={[styles.mainContainer, {transform: [{translateY: translate}]}]}>
-      <CustomStatusBar />
+      style={[
+        styles.mainContainer,
+        {transform: [{translateY: translate}], opacity: opacity},
+      ]}>
       <Appbar.Header mode="large">
         <Appbar.BackAction onPress={() => navigation.goBack()} />
         <Appbar.Content title="Edit Profile" />

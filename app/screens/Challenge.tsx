@@ -24,11 +24,12 @@ interface ChallengePlayerProps {
   route: any;
   navigation: any;
   translate: Animated.Value;
+  opacity: Animated.Value;
   language: string;
 }
 
 const ChallengePlayer = (props: ChallengePlayerProps) => {
-  const {route, navigation, translate, language} = props;
+  const {route, navigation, translate, opacity, language} = props;
   const [lobbyId, setLobbyId] = useState('ChallengeTest');
   const [difficulty, setDifficulty] = useState('Easy');
   const difficulties = ['Easy', 'Intermediate', 'Hard'];
@@ -201,7 +202,10 @@ const ChallengePlayer = (props: ChallengePlayerProps) => {
 
   return (
     <Animated.View
-      style={[styles.mainContainer, {transform: [{translateY: translate}]}]}>
+      style={[
+        styles.mainContainer,
+        {transform: [{translateY: translate}], opacity: opacity},
+      ]}>
       <ScrollView
         stickyHeaderIndices={[1]}
         contentContainerStyle={styles.container}
@@ -241,12 +245,23 @@ const ChallengePlayer = (props: ChallengePlayerProps) => {
         <View style={styles.cardsContainer}>
           {onlineFriends && onlineFriends.length !== 0 ? (
             <View style={styles.cards}>
-              <ChallengeCard
-                data={onlineFriends.filter(filterFunction)}
-                onPress={handleChallenge}
-                challenge={true}
-                navigation={navigation}
-              />
+              {onlineFriends.filter(filterFunction).map((user, index) => {
+                return (
+                  <ChallengeCard
+                    key={user.uid}
+                    onPress={() => handleChallenge(user.uid)}
+                    cardOnPress={() =>
+                      navigation.navigate('OtherProfile', {userId: user.uid})
+                    }
+                    avatarIndex={user.avatar}
+                    topText={user.displayName}
+                    bottomText={user.exp + ' exp'}
+                    buttonText="Challenge"
+                    buttonTextColor={Theme.colors.secondary}
+                    buttonBorderColor={Theme.colors.secondary}
+                  />
+                );
+              })}
             </View>
           ) : onlineFriends &&
             onlineFriends.length === 0 &&

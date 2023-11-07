@@ -1,7 +1,6 @@
 import * as React from 'react';
 import {View, StyleSheet, Animated} from 'react-native';
 import {Text} from 'react-native-paper';
-import CustomStatusBar from '../common/CustomStatusBar';
 import Theme from '../common/constants/theme.json';
 import Constants from '../common/constants/Constants';
 
@@ -9,13 +8,17 @@ interface LeaderboardProps {
   route: any;
   navigation: any;
   translate: Animated.Value;
+  opacity: Animated.Value;
 }
 
 const Leaderboard = (props: LeaderboardProps) => {
-  const {route, navigation, translate} = props;
+  const {route, navigation, translate, opacity} = props;
   return (
     <Animated.View
-      style={[styles.mainContainer, {transform: [{translateY: translate}]}]}>
+      style={[
+        styles.mainContainer,
+        {transform: [{translateY: translate}], opacity: opacity},
+      ]}>
       <View style={styles.header}>
         <Text variant="headlineMedium">Leaderboard</Text>
         <Text

@@ -34,39 +34,57 @@ export const createUser = (
       },
       chinese: 0,
       malay: 0,
-      avatar: 0,
+      avatar: Math.floor(Math.random() * 15),
     });
   console.log('User created.');
-
-  // Cannot create empty collection, a document must be added
-  firestore().collection('Users').doc(uid).collection('Friends').add({});
 };
 
-export const createFriend = async (username: string) => {
+export const createFriend = (friendId: string) => {
   const user = auth().currentUser;
   if (user) {
     const uid = user.uid;
-    await firestore()
+    // Add friend into own list
+    firestore()
       .collection('Users')
-      .where('username', '==', username)
-      .get()
-      .then(querySnapshot => {
-        querySnapshot.forEach(documentSnapshot => {
-          console.log(documentSnapshot.id);
-          firestore()
-            .collection('Users')
-            .doc(uid)
-            .collection('Friends')
-            .doc(documentSnapshot.id)
-            .set({});
-        });
-      });
+      .doc(uid)
+      .collection('Friends')
+      .doc(friendId)
+      .set({});
+    // Add ownself into friend's list
+    firestore()
+      .collection('Users')
+      .doc(friendId)
+      .collection('Friends')
+      .doc(uid)
+      .set({});
+  }
+};
+
+export const deleteFriend = (friendId: string) => {
+  const user = auth().currentUser;
+  if (user) {
+    const uid = user.uid;
+    // Delete from own list
+    firestore()
+      .collection('Users')
+      .doc(uid)
+      .collection('Friends')
+      .doc(friendId)
+      .delete();
+    // Delete from friend's list
+    firestore()
+      .collection('Users')
+      .doc(friendId)
+      .collection('Friends')
+      .doc(uid)
+      .delete();
   }
 };
 
 export const getFriendList = async (userId?: string) => {
   const user = auth().currentUser;
   let friendList: string[] = [];
+  // Other users' friend list, if userId is passed in as a parameter
   if (userId) {
     await firestore()
       .collection('Users')
@@ -77,9 +95,8 @@ export const getFriendList = async (userId?: string) => {
         querySnapshot.forEach(documentSnapshot => {
           friendList = [...friendList, documentSnapshot.id];
         });
-        // remove first document added during account creation ()
-        friendList.shift();
       });
+    // Own friend list, if no parameter is passed in
   } else if (user) {
     await firestore()
       .collection('Users')
@@ -90,31 +107,15 @@ export const getFriendList = async (userId?: string) => {
         querySnapshot.forEach(documentSnapshot => {
           friendList = [...friendList, documentSnapshot.id];
         });
-        // remove first document added during account creation ()
-        friendList.shift();
       });
   }
   return friendList;
 };
 
 export const getFriendData = async () => {
-  const user = auth().currentUser;
-  let friendList: string[] = [];
-  let friendData: FirebaseFirestoreTypes.DocumentData[] = [];
-  if (user) {
-    const uid = user.uid;
-    await firestore()
-      .collection('Users')
-      .doc(uid)
-      .collection('Friends')
-      .get()
-      .then(querySnapshot => {
-        querySnapshot.forEach(documentSnapshot => {
-          friendList = [...friendList, documentSnapshot.id];
-        });
-        // remove first document added during account creation ()
-        friendList.shift();
-      });
+  const friendList = await getFriendList();
+  if (friendList.length > 0) {
+    let friendData: FirebaseFirestoreTypes.DocumentData[] = [];
     await firestore()
       .collection('Users')
       .orderBy('exp', 'desc')
@@ -125,8 +126,38 @@ export const getFriendData = async () => {
           friendData.push(documentSnapshot.data());
         });
       });
+    return friendData;
   }
-  return friendData;
+  return [];
+};
+
+export const getUsersData = async (userIds?: string[]) => {
+  const user = auth().currentUser;
+  let data: FirebaseFirestoreTypes.DocumentData[] = [];
+  // Users data corresponding to userIds passed in as a parameter
+  if (userIds) {
+    await firestore()
+      .collection('Users')
+      .where('uid', 'in', userIds)
+      .get()
+      .then(querySnapshot => {
+        querySnapshot.forEach(documentSnapshot => {
+          data.push(documentSnapshot.data());
+        });
+      });
+    // All users data except own
+  } else if (user) {
+    const uid = user.uid;
+    await firestore()
+      .collection('Users')
+      .get()
+      .then(querySnapshot => {
+        querySnapshot.forEach(documentSnapshot => {
+          documentSnapshot.id != uid ? data.push(documentSnapshot.data()) : {};
+        });
+      });
+  }
+  return data;
 };
 
 export const getUserData = async (userId: string) => {
@@ -137,20 +168,6 @@ export const getUserData = async (userId: string) => {
     .get()
     .then(documentSnapshot => {
       data = documentSnapshot.data()!;
-    });
-  return data;
-};
-
-export const getUsersData = async (userIds: string[]) => {
-  let data: FirebaseFirestoreTypes.DocumentData[] = [];
-  await firestore()
-    .collection('Users')
-    .where('uid', 'in', userIds)
-    .get()
-    .then(querySnapshot => {
-      querySnapshot.forEach(documentSnapshot => {
-        data.push(documentSnapshot.data());
-      });
     });
   return data;
 };

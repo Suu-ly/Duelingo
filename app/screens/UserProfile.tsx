@@ -26,10 +26,11 @@ interface UserProfileProps {
   route: any;
   navigation: any;
   translate: Animated.Value;
+  opacity: Animated.Value;
 }
 
 const UserProfile = (props: UserProfileProps) => {
-  const {route, navigation, translate} = props;
+  const {route, navigation, translate, opacity} = props;
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState<Record<string, any>>({});
   const [numFriends, setNumFriends] = useState(0);
@@ -53,7 +54,10 @@ const UserProfile = (props: UserProfileProps) => {
 
   return (
     <Animated.View
-      style={[styles.mainContainer, {transform: [{translateY: translate}]}]}>
+      style={[
+        styles.mainContainer,
+        {transform: [{translateY: translate}], opacity: opacity},
+      ]}>
       <CustomStatusBar />
       {Object.keys(data).length !== 0 ? (
         <>
@@ -63,7 +67,7 @@ const UserProfile = (props: UserProfileProps) => {
             <IconButton
               icon={'cog-outline'}
               iconColor={Theme.colors.onSurfaceVariant}
-              onPress={() => navigation.navigate('Settings')}
+              onPress={() => navigation.navigate('Settings', {userData: data})}
             />
           </View>
           <View style={styles.middleContainer}>
@@ -74,7 +78,11 @@ const UserProfile = (props: UserProfileProps) => {
                 variant={'titleMedium'}>
                 {data.username}
               </Text>
-              <TouchableOpacity onPress={() => navigation.navigate('Friends')}>
+              <TouchableOpacity
+                hitSlop={{top: 12, bottom: 12, left: 12, right: 12}}
+                onPress={() =>
+                  navigation.navigate('Friends', {userData: data})
+                }>
                 <Text
                   variant="titleMedium"
                   style={{color: Theme.colors.primary}}>
@@ -91,7 +99,7 @@ const UserProfile = (props: UserProfileProps) => {
               backgroundDark={Theme.colors.primaryDark}
               borderColor={Theme.colors.primary}
               textColor={Theme.colors.onPrimary}
-              onPress={() => navigation.navigate('EditProfile')}>
+              onPress={() => navigation.navigate('AddFriends')}>
               Add Friends
             </DuoButton>
             <View style={styles.progressContainer}>

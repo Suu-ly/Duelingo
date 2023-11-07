@@ -20,11 +20,12 @@ interface HomeProps {
   route: any;
   navigation: any;
   translate: Animated.Value;
+  opacity: Animated.Value;
   selectedLanguage: {id: number; value: string; icon: ImageSourcePropType};
 }
 
 const Home = (props: HomeProps) => {
-  const {route, navigation, translate, selectedLanguage} = props;
+  const {route, navigation, translate, opacity, selectedLanguage} = props;
 
   //calculate the index of the topic in the entire language
   const calculateOverallIndex = (
@@ -112,7 +113,10 @@ const Home = (props: HomeProps) => {
 
   return (
     <Animated.View
-      style={[styles.mainContainer, {transform: [{translateY: translate}]}]}>
+      style={[
+        styles.mainContainer,
+        {transform: [{translateY: translate}], opacity: opacity},
+      ]}>
       <View style={styles.container}>
         {isLoading ? (
           <View style={styles.activityIndicatorContainer}>

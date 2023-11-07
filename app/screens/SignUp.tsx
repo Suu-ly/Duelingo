@@ -1,7 +1,13 @@
 import React, {useState} from 'react';
 import {signUp} from '../utils/auth';
 import {Appbar, Text, TextInput, HelperText} from 'react-native-paper';
-import {View, StyleSheet} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  LayoutAnimation,
+  Platform,
+  UIManager,
+} from 'react-native';
 
 import CustomStatusBar from '../common/CustomStatusBar';
 import Constants from '../common/constants/Constants';
@@ -24,6 +30,15 @@ const SignUp = (props: SignUpProps) => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(true);
   const [passwordIcon, setPasswordIcon] = useState('eye-off');
   const [confirmPasswordIcon, setConfirmPasswordIcon] = useState('eye-off');
+  const [emailError, setEmailError] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
+  const [passwordConfirmError, setPasswordConfirmError] = useState(false);
+
+  if (Platform.OS === 'android') {
+    if (UIManager.setLayoutAnimationEnabledExperimental) {
+      UIManager.setLayoutAnimationEnabledExperimental(true);
+    }
+  }
 
   const handleOnSubmit = () => {
     signUp(props, email, password, username, displayName);
@@ -43,21 +58,45 @@ const SignUp = (props: SignUpProps) => {
     setShowConfirmPassword(!showConfirmPassword);
   };
 
+  const validateEmail = () => {
+    animate();
+    setEmailError(email !== '' && !email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/));
+  };
+
+  const validatePassword = () => {
+    animate();
+    setPasswordError(password !== '' && password.length < 6);
+  };
+
+  const validateConfirmPassword = () => {
+    animate();
+    setPasswordConfirmError(
+      confirmPassword !== '' && password !== confirmPassword,
+    );
+  };
+
+  const animate = () => {
+    LayoutAnimation.configureNext({
+      duration: 300,
+      create: {type: 'easeOut', property: 'opacity'},
+      update: {type: 'spring', springDamping: 100},
+      delete: {type: 'easeOut', property: 'opacity'},
+    });
+  };
+
   return (
     <View style={styles.mainContainer}>
-      <CustomStatusBar />
-      <Appbar.Header style={styles.appbar}>
+      <Appbar.Header mode="large">
         <Appbar.BackAction
           onPress={() => {
             navigation.goBack();
           }}
         />
+        <Appbar.Content title="Create your account" />
       </Appbar.Header>
       <View style={styles.container}>
-        <View style={styles.title}>
-          <Text variant={'headlineLarge'}>Create your account</Text>
-        </View>
         <TextInput
+          style={{backgroundColor: theme.colors.surface}}
           mode="outlined"
           label="Username"
           placeholder="Username"
@@ -67,6 +106,7 @@ const SignUp = (props: SignUpProps) => {
           onChangeText={username => setUsername(username)}
         />
         <TextInput
+          style={{backgroundColor: theme.colors.surface}}
           mode="outlined"
           label="Display Name"
           placeholder="Display Name"
@@ -75,73 +115,99 @@ const SignUp = (props: SignUpProps) => {
           autoCapitalize="none"
           onChangeText={displayName => setDisplayName(displayName)}
         />
-        <TextInput
-          mode="outlined"
-          label="Email"
-          placeholder="Email"
-          value={email}
-          activeOutlineColor={theme.colors.primary}
-          autoCapitalize="none"
-          error={email != '' && !email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)}
-          onChangeText={email => setEmail(email)}
-        />
-        {email != '' && !email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/) ? (
-          <HelperText type="error" visible={true}>
-            Invalid email address format.
-          </HelperText>
-        ) : null}
-        <TextInput
-          mode="outlined"
-          label="Password"
-          placeholder="Password"
-          value={password}
-          activeOutlineColor={theme.colors.primary}
-          autoCapitalize="none"
-          error={password != '' && password.length < 6}
-          secureTextEntry={showPassword}
-          right={
-            <TextInput.Icon
-              icon={passwordIcon}
-              onPress={handlePasswordVisibility}
-            />
-          }
-          onChangeText={password => setPassword(password)}
-        />
-        {password != '' && password.length < 6 ? (
-          <HelperText type="error" visible={true}>
-            Password must be at least 6 characters.
-          </HelperText>
-        ) : null}
-        <TextInput
-          mode="outlined"
-          label="Confirm Password"
-          placeholder="Confirm Password"
-          value={confirmPassword}
-          activeOutlineColor={theme.colors.primary}
-          autoCapitalize="none"
-          error={confirmPassword != '' && password != confirmPassword}
-          secureTextEntry={showConfirmPassword}
-          right={
-            <TextInput.Icon
-              icon={confirmPasswordIcon}
-              onPress={handleConfirmPasswordVisibility}
-            />
-          }
-          onChangeText={confirmPassword => setConfirmPassword(confirmPassword)}
-        />
-        {confirmPassword != '' && password != confirmPassword ? (
-          <HelperText type="error" visible={true}>
-            Password does not match.
-          </HelperText>
-        ) : null}
+        <View>
+          <TextInput
+            style={{backgroundColor: theme.colors.surface}}
+            mode="outlined"
+            label="Email"
+            placeholder="Email"
+            value={email}
+            activeOutlineColor={theme.colors.primary}
+            autoCapitalize="none"
+            error={emailError}
+            onFocus={() => {
+              animate();
+              setEmailError(false);
+            }}
+            onBlur={validateEmail}
+            onChangeText={email => setEmail(email)}
+          />
+          {emailError && (
+            <HelperText type="error" visible={true}>
+              Invalid email address format.
+            </HelperText>
+          )}
+        </View>
+        <View>
+          <TextInput
+            style={{backgroundColor: theme.colors.surface}}
+            mode="outlined"
+            label="Password"
+            placeholder="Password"
+            value={password}
+            activeOutlineColor={theme.colors.primary}
+            autoCapitalize="none"
+            error={passwordError}
+            onFocus={() => {
+              animate();
+              setPasswordError(false);
+            }}
+            onBlur={validatePassword}
+            secureTextEntry={showPassword}
+            right={
+              <TextInput.Icon
+                icon={passwordIcon}
+                onPress={handlePasswordVisibility}
+              />
+            }
+            onChangeText={password => setPassword(password)}
+          />
+          {passwordError && (
+            <HelperText type="error" visible={true}>
+              Password must be at least 6 characters.
+            </HelperText>
+          )}
+        </View>
+        <View>
+          <TextInput
+            style={{backgroundColor: theme.colors.surface}}
+            mode="outlined"
+            label="Confirm Password"
+            placeholder="Confirm Password"
+            value={confirmPassword}
+            activeOutlineColor={theme.colors.primary}
+            autoCapitalize="none"
+            error={passwordConfirmError}
+            onFocus={() => {
+              animate();
+              setPasswordConfirmError(false);
+            }}
+            onBlur={validateConfirmPassword}
+            secureTextEntry={showConfirmPassword}
+            right={
+              <TextInput.Icon
+                icon={confirmPasswordIcon}
+                onPress={handleConfirmPasswordVisibility}
+              />
+            }
+            onChangeText={confirmPassword =>
+              setConfirmPassword(confirmPassword)
+            }
+          />
+          {passwordConfirmError && (
+            <HelperText type="error" visible={true}>
+              Password does not match.
+            </HelperText>
+          )}
+        </View>
         <DuoButton
           filled={true}
           disabled={
-            username != '' &&
-            displayName != '' &&
+            username !== '' &&
+            displayName !== '' &&
             email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/) &&
             password.length >= 6 &&
-            password == confirmPassword
+            password === confirmPassword
               ? false
               : true
           }
@@ -163,18 +229,11 @@ export default SignUp;
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: theme.colors.surface,
   },
   container: {
     flex: 1,
-    marginTop: Constants.mediumGap,
-    gap: Constants.largeGap,
+    gap: Constants.edgePadding,
     paddingHorizontal: Constants.edgePadding,
-  },
-  appbar: {
-    backgroundColor: 'white',
-  },
-  title: {
-    marginBottom: 16,
   },
 });

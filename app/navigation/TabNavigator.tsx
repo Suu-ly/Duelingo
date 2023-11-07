@@ -28,6 +28,7 @@ const Tab = createBottomTabNavigator();
 
 const TabNavigator = () => {
   const translate = useRef(new Animated.Value(30)).current;
+  const opacity = useRef(new Animated.Value(0)).current;
   const languageDropDown = [
     {
       id: 1,
@@ -51,19 +52,26 @@ const TabNavigator = () => {
   };
 
   const fadeIn = useCallback(() => {
-    Animated.timing(translate, {
-      toValue: 0,
-      duration: 250,
-      useNativeDriver: true,
-      easing: Easing.bezier(0, 0, 0.4, 1.0),
-    }).start();
+    Animated.parallel([
+      Animated.timing(translate, {
+        toValue: 0,
+        duration: 250,
+        useNativeDriver: true,
+        easing: Easing.bezier(0, 0, 0.4, 1.0),
+      }),
+      Animated.timing(opacity, {
+        toValue: 1,
+        duration: 250,
+        useNativeDriver: true,
+        easing: Easing.bezier(0, 0, 0.4, 1.0),
+      }),
+    ]).start();
   }, [translate]);
 
   const listeners = ({navigation, route}: any) => ({
-    blur: (e: any) => {
-      translate.setValue(30);
-    },
     focus: (e: any) => {
+      translate.setValue(30);
+      opacity.setValue(0);
       fadeIn();
     },
   });
@@ -147,6 +155,7 @@ const TabNavigator = () => {
           <Home
             {...props}
             translate={translate}
+            opacity={opacity}
             selectedLanguage={selectedItem}
           />
         )}
@@ -163,7 +172,9 @@ const TabNavigator = () => {
             );
           },
         }}>
-        {props => <Leaderboard {...props} translate={translate} />}
+        {props => (
+          <Leaderboard {...props} translate={translate} opacity={opacity} />
+        )}
       </Tab.Screen>
       <Tab.Screen
         name="Challenge"
@@ -181,6 +192,7 @@ const TabNavigator = () => {
           <Challenge
             {...props}
             translate={translate}
+            opacity={opacity}
             language={selectedItem.value}
           />
         )}
@@ -198,7 +210,13 @@ const TabNavigator = () => {
             );
           },
         }}>
-        {props => <ProfileStackNavigator {...props} translate={translate} />}
+        {props => (
+          <ProfileStackNavigator
+            {...props}
+            translate={translate}
+            opacity={opacity}
+          />
+        )}
       </Tab.Screen>
     </Tab.Navigator>
   );

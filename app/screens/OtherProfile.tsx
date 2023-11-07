@@ -18,7 +18,12 @@ import CustomStatusBar from '../common/CustomStatusBar';
 import Constants from '../common/constants/Constants';
 import DuoButton from '../common/DuoButton';
 import Theme from '../common/constants/theme.json';
-import {getUserData, getFriendList} from '../utils/database';
+import {
+  getUserData,
+  getFriendList,
+  deleteFriend,
+  createFriend,
+} from '../utils/database';
 import Avatar from '../common/Avatar';
 import {useFocusEffect} from '@react-navigation/native';
 
@@ -41,10 +46,22 @@ const OtherProfile = (props: OtherProfileProps) => {
     setIsLoading(true);
     let temp = await getUserData(userId);
     let numTemp = await getFriendList(userId);
-    if (numTemp.includes(ownUserId)) setIsFriends(true);
+    if (numTemp.includes(ownUserId)) {
+      setIsFriends(true);
+    } else setIsFriends(false);
     setData(temp);
     setNumFriends(numTemp.length);
     setIsLoading(false);
+  };
+
+  const handleDelete = (friendId: string) => {
+    deleteFriend(friendId);
+    loadData();
+  };
+
+  const handleCreate = (friendId: string) => {
+    createFriend(friendId);
+    loadData();
   };
 
   useFocusEffect(
@@ -96,7 +113,9 @@ const OtherProfile = (props: OtherProfileProps) => {
               textColor={
                 isFriends ? Theme.colors.error : Theme.colors.onPrimary
               }
-              onPress={() => console.log('Pressed')}>
+              onPress={() => {
+                isFriends ? handleDelete(userId) : handleCreate(userId);
+              }}>
               {isFriends ? 'Remove Friend' : 'Add As Friend'}
             </DuoButton>
             <View style={styles.progressContainer}>

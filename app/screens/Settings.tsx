@@ -11,15 +11,19 @@ interface SettingsProps {
   route: any;
   navigation: any;
   translate: Animated.Value;
+  opacity: Animated.Value;
 }
 
 const Settings = (props: SettingsProps) => {
-  const {route, navigation, translate} = props;
+  const {route, navigation, translate, opacity} = props;
+  const data = route.params.userData;
 
   return (
     <Animated.View
-      style={[styles.mainContainer, {transform: [{translateY: translate}]}]}>
-      <CustomStatusBar />
+      style={[
+        styles.mainContainer,
+        {transform: [{translateY: translate}], opacity: opacity},
+      ]}>
       <Appbar.Header mode={'large'}>
         <Appbar.BackAction onPress={() => navigation.goBack()} />
         <Appbar.Content title="Settings" />
@@ -28,7 +32,7 @@ const Settings = (props: SettingsProps) => {
       <List.Item
         title="Profile"
         style={styles.listItem}
-        onPress={() => navigation.navigate('EditProfile')}
+        onPress={() => navigation.navigate('EditProfile', {userData: data})}
         description="Edit profile details"
         left={props => (
           <List.Icon
@@ -40,7 +44,7 @@ const Settings = (props: SettingsProps) => {
       <List.Item
         title="Friends"
         style={styles.listItem}
-        onPress={() => console.log('Pressed')}
+        onPress={() => navigation.navigate('Friends', {userData: data})}
         description="Add or remove friends"
         left={props => (
           <List.Icon
