@@ -5,6 +5,8 @@ import {Text, List} from 'react-native-paper';
 import CustomStatusBar from '../common/CustomStatusBar';
 import Theme from '../common/constants/theme.json';
 import Constants from '../common/constants/Constants';
+import {getLeaderboardData} from '../utils/database';
+import {FirebaseFirestoreTypes} from '@react-native-firebase/firestore';
 
 interface LeaderboardProps {
   route: any;
@@ -14,53 +16,17 @@ interface LeaderboardProps {
 
 const Leaderboard = (props: LeaderboardProps) => {
   const {route, navigation, translate} = props;
-  const [data, setData] = useState({
-    items: [
-      {
-        id: '1',
-        title: 'first item',
-        description: 'test 1',
-      },
-      {
-        id: '2',
-        title: 'second item',
-        description: 'test 2',
-      },
-      {
-        id: '3',
-        title: 'third item',
-        description: 'test 3',
-      },
-    ],
-  });
-  const [users, setUserID] = useState([]); //initial empty array of users
-  const [avatar, setAvatar] = useState([]); //initial empty array of Avatar (Numbers)
-  const [exp, setExp] = useState([]); //
-  //avatar change
-  //userid change
-  //exp change
+  const [leaderboardList, setLeaderboardList] = useState<
+    FirebaseFirestoreTypes.DocumentData[] | null
+  >(null);
   //color change 1 gold 2 sliver 3 bronze, 4 onwards black
-  //set array, extract data from database, compare exp, highest one will be slotted into first view
-  //
 
-  const item = ({title}) => (
-    <React.Fragment>
-      <View style={styles.friendCardscontainer}>
-        <View style={styles.cardContentcontainer}>
-          {' '}
-          <Text style={styles.postion1Text}>1</Text>
-          <Image
-            source={require('../assets/Avatars/1.png')}
-            style={styles.avatarpic}
-          />
-          <View style={styles.cardItems}>
-            <Text style={styles.name}>Lance</Text>
-            <Text style={styles.exp}>438 exp</Text>
-          </View>
-        </View>
-      </View>
-    </React.Fragment>
-  );
+  const getLeaderboard = async () => {
+    let userDetails: FirebaseFirestoreTypes.DocumentData[] =
+      await getLeaderboardData();
+    setLeaderboardList(userDetails);
+  };
+
   return (
     <Animated.View
       style={[styles.mainContainer, {transform: [{translateY: translate}]}]}>
@@ -74,32 +40,25 @@ const Leaderboard = (props: LeaderboardProps) => {
       </View>
       <View style={styles.cardContainer}>
         <FlatList
-          data={data.items}
+          data={leaderboardList}
           renderItem={({item}) => (
-            <List.Item
-              title={item.title}
-              description={item.description}
-              left={props => <List.Icon {...props} icon="folder" />}
-            />
+            <View style={styles.friendCardscontainer}>
+              <View style={styles.cardContentcontainer}>
+                <Text style={styles.postion1Text}></Text>
+                <Image
+                  source={require('../assets/Avatars/1.png')}
+                  style={styles.avatarpic}
+                />
+                <View style={styles.cardItems}>
+                  <Text style={styles.name}>{item.username}</Text>
+                  <Text style={styles.exp}>{item.exp}</Text>
+                </View>
+              </View>
+            </View>
           )}
           keyExtractor={item => item.id}
         />
       </View>
-      <React.Fragment>
-        <View style={styles.friendCardscontainer}>
-          <View style={styles.cardContentcontainer}>
-            <Text style={styles.postion1Text}>1</Text>
-            <Image
-              source={require('../assets/Avatars/1.png')}
-              style={styles.avatarpic}
-            />
-            <View style={styles.cardItems}>
-              <Text style={styles.name}>Lance</Text>
-              <Text style={styles.exp}>438 exp</Text>
-            </View>
-          </View>
-        </View>
-      </React.Fragment>
     </Animated.View>
   );
 };

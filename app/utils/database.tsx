@@ -140,3 +140,18 @@ export const getUserData = async (userId: string) => {
     });
   return data;
 };
+export const getLeaderboardData = async () => {
+  let leaderboardData: FirebaseFirestoreTypes.DocumentData[] = [];
+  await firestore()
+    .collection('Users')
+    .orderBy('exp', 'desc')
+    .where('uid', 'in', 'Users')
+    .get()
+    .then(querySnapshot =>
+      querySnapshot.forEach(documentSnapshot => {
+        leaderboardData.push(documentSnapshot.data());
+      }),
+    );
+  return leaderboardData;
+  return [];
+};
