@@ -20,9 +20,6 @@ const MultiplayerQuizStandings = (props: TimerProps) => {
 
   const isTie = points[0].value === points[1].value;
   const isFirst = points[0].uid === userId;
-  console.log(points);
-  console.log(userId);
-  console.log(isFirst);
 
   const getOldValue = (uid: string) => {
     for (let index = 0; index < oldPoints.length; index++) {

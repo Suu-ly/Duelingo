@@ -4,6 +4,7 @@ import {VariantProp} from 'react-native-paper/lib/typescript/components/Typograp
 import theme from './constants/theme.json';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Constants from './constants/Constants';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 
 interface ButtonProps {
   backgroundColor: string;
@@ -39,10 +40,25 @@ const DuoButton = (props: ButtonProps) => {
     textColor,
     onPress,
   } = props;
+
+  const handlePressIn = () => {
+    ReactNativeHapticFeedback.trigger('effectHeavyClick', {
+      enableVibrateFallback: true,
+      ignoreAndroidSystemSettings: false,
+    });
+  };
+
+  const handlePressOut = () => {
+    ReactNativeHapticFeedback.trigger('effectTick', {
+      enableVibrateFallback: true,
+      ignoreAndroidSystemSettings: false,
+    });
+  };
+
   return (
     <AwesomeButton
       height={height}
-      width={children ? width : Constants.buttonSize}
+      width={children ? (width ? width : null) : Constants.buttonSize}
       disabled={disabled || inactive}
       borderRadius={Constants.radiusSmall}
       paddingHorizontal={Constants.mediumGap}
@@ -50,6 +66,8 @@ const DuoButton = (props: ButtonProps) => {
       dangerouslySetPressableProps={{
         onPress: disabled || inactive ? null : onPress,
       }}
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}
       springRelease={false}
       backgroundShadow="transparent"
       raiseLevel={filled ? 4 : 2}

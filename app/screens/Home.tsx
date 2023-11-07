@@ -70,7 +70,6 @@ const Home = (props: HomeProps) => {
       const user = auth().currentUser;
       if (user) {
         const userID = user.uid;
-        console.log(userID);
 
         const [
           mandarinResult,
