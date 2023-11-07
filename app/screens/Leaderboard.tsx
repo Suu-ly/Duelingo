@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {useEffect, useState} from 'react';
 import {View, StyleSheet, Animated, FlatList, Image} from 'react-native';
-import {Text} from 'react-native-paper';
+import {Text, List} from 'react-native-paper';
 import CustomStatusBar from '../common/CustomStatusBar';
 import Theme from '../common/constants/theme.json';
 import Constants from '../common/constants/Constants';
@@ -14,7 +14,25 @@ interface LeaderboardProps {
 
 const Leaderboard = (props: LeaderboardProps) => {
   const {route, navigation, translate} = props;
-  const [data, setData] = useState([{}]);
+  const [data, setData] = useState({
+    items: [
+      {
+        id: '1',
+        title: 'first item',
+        description: 'test 1',
+      },
+      {
+        id: '2',
+        title: 'second item',
+        description: 'test 2',
+      },
+      {
+        id: '3',
+        title: 'third item',
+        description: 'test 3',
+      },
+    ],
+  });
   const [users, setUserID] = useState([]); //initial empty array of users
   const [avatar, setAvatar] = useState([]); //initial empty array of Avatar (Numbers)
   const [exp, setExp] = useState([]); //
@@ -25,8 +43,48 @@ const Leaderboard = (props: LeaderboardProps) => {
   //set array, extract data from database, compare exp, highest one will be slotted into first view
   //
 
-  const renderItem = () => {
-    return (
+  const item = ({title}) => (
+    <React.Fragment>
+      <View style={styles.friendCardscontainer}>
+        <View style={styles.cardContentcontainer}>
+          {' '}
+          <Text style={styles.postion1Text}>1</Text>
+          <Image
+            source={require('../assets/Avatars/1.png')}
+            style={styles.avatarpic}
+          />
+          <View style={styles.cardItems}>
+            <Text style={styles.name}>Lance</Text>
+            <Text style={styles.exp}>438 exp</Text>
+          </View>
+        </View>
+      </View>
+    </React.Fragment>
+  );
+  return (
+    <Animated.View
+      style={[styles.mainContainer, {transform: [{translateY: translate}]}]}>
+      <View style={styles.header}>
+        <Text variant="headlineMedium">Leaderboard</Text>
+        <Text
+          variant="bodyMedium"
+          style={{color: Theme.colors.onSurfaceVariant}}>
+          See how you compare against other players!
+        </Text>
+      </View>
+      <View style={styles.cardContainer}>
+        <FlatList
+          data={data.items}
+          renderItem={({item}) => (
+            <List.Item
+              title={item.title}
+              description={item.description}
+              left={props => <List.Icon {...props} icon="folder" />}
+            />
+          )}
+          keyExtractor={item => item.id}
+        />
+      </View>
       <React.Fragment>
         <View style={styles.friendCardscontainer}>
           <View style={styles.cardContentcontainer}>
@@ -41,62 +99,7 @@ const Leaderboard = (props: LeaderboardProps) => {
             </View>
           </View>
         </View>
-        <View style={styles.friendCardscontainer}>
-          <View style={styles.cardContentcontainer}>
-            <Text style={styles.postion2Text}>2</Text>
-            <Image
-              source={require('../assets/Avatars/1.png')}
-              style={styles.avatarpic}
-            />
-            <View style={styles.cardItems}>
-              <Text style={styles.name}>Lance</Text>
-              <Text style={styles.exp}>438 exp</Text>
-            </View>
-          </View>
-        </View>
-        <View style={styles.friendCardscontainer}>
-          <View style={styles.cardContentcontainer}>
-            <Text style={styles.postion3Text}>3</Text>
-            <Image
-              source={require('../assets/Avatars/1.png')}
-              style={styles.avatarpic}
-            />
-            <View style={styles.cardItems}>
-              <Text style={styles.name}>Lance</Text>
-              <Text style={styles.exp}>438 exp</Text>
-            </View>
-          </View>
-        </View>
-        <View style={styles.friendCardscontainer}>
-          <View style={styles.cardContentcontainer}>
-            <Text style={styles.postionText}>4</Text>
-            <Image
-              source={require('../assets/Avatars/1.png')}
-              style={styles.avatarpic}
-            />
-            <View style={styles.cardItems}>
-              <Text style={styles.name}>Lance</Text>
-              <Text style={styles.exp}>438 exp</Text>
-            </View>
-          </View>
-        </View>
       </React.Fragment>
-    );
-  };
-  return (
-    <Animated.View
-      style={[styles.mainContainer, {transform: [{translateY: translate}]}]}>
-      <View style={styles.header}>
-        <Text variant="headlineMedium">Leaderboard</Text>
-        <Text
-          variant="bodyMedium"
-          style={{color: Theme.colors.onSurfaceVariant}}>
-          See how you compare against other players!
-        </Text>
-      </View>
-      <View style={styles.cardContainer}>
-        <FlatList data={data} renderItem={renderItem} />
-      </View>
     </Animated.View>
   );
 };
@@ -216,3 +219,19 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
 });
+//<React.Fragment>
+//    <View style={styles.friendCardscontainer}>
+//       <View style={styles.cardContentcontainer}>
+//        <Text style={styles.postion1Text}>1</Text>
+//        <Image
+//          source={require('../assets/Avatars/1.png')}
+//          style={styles.avatarpic}
+//      />
+//    <View style={styles.cardItems}>
+//         <Text style={styles.name}>Lance</Text>
+//        <Text style={styles.exp}>438 exp</Text>
+//     </View>
+//  </View>
+// </View>
+//</React.Fragment>
+//);
