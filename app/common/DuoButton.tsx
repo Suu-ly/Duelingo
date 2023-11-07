@@ -4,6 +4,7 @@ import {VariantProp} from 'react-native-paper/lib/typescript/components/Typograp
 import theme from './constants/theme.json';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Constants from './constants/Constants';
+import ReactNativeHapticFeedback from "react-native-haptic-feedback";
 
 interface ButtonProps {
   backgroundColor: string;
@@ -18,6 +19,8 @@ interface ButtonProps {
   children: React.ReactNode;
   textVariant?: VariantProp<never>;
   textColor: string;
+  enableVibrateFallback?: boolean,
+  ignoreAndroidSystemSettings?: boolean,
   onPress: (callback?: () => void) => void;
 }
 
@@ -37,6 +40,17 @@ const DuoButton = (props: ButtonProps) => {
     textColor,
     onPress,
   } = props;
+  const handlePressIn = () => {
+    ReactNativeHapticFeedback.trigger("impactHeavy", {
+      enableVibrateFallback: true,
+      ignoreAndroidSystemSettings: false,
+    });
+
+    if(onPress) {
+      onPress();
+    }
+  };
+  
   return (
     <AwesomeButton
       height={height}
@@ -45,7 +59,8 @@ const DuoButton = (props: ButtonProps) => {
       borderRadius={Constants.radiusSmall}
       paddingHorizontal={Constants.mediumGap}
       stretch={stretch}
-      onPress={onPress}
+      onPress={handlePressIn}
+      onPressIn={handlePressIn}
       springRelease={false}
       backgroundShadow="transparent"
       raiseLevel={disabled ? 0 : filled ? 4 : 2}
