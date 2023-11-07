@@ -1,13 +1,11 @@
 import {View, StyleSheet} from 'react-native';
 import {Button, Text} from 'react-native-paper';
 import React, {useEffect} from 'react';
-import auth from '@react-native-firebase/auth';
-import database from '@react-native-firebase/database';
 
 import CustomStatusBar from '../common/CustomStatusBar';
 import Constants from '../common/constants/Constants';
 import DuoButton from '../common/DuoButton';
-import theme from '../common/constants/theme.json';
+import Theme from '../common/constants/theme.json';
 import {signOut} from '../utils/auth';
 import {EventArg, NavigationAction} from '@react-navigation/native';
 
@@ -69,6 +67,17 @@ const Debug = (props: DebugProps) => {
         <Button mode="outlined" onPress={() => signOut()}>
           Sign Out
         </Button>
+        <DuoButton
+          filled={true}
+          disabled={false}
+          icon={'account-plus-outline'}
+          backgroundColor={Theme.colors.primary}
+          backgroundDark={Theme.colors.primaryDark}
+          borderColor={Theme.colors.primary}
+          textColor={Theme.colors.onPrimary}
+          onPress={() => console.log('Click')}>
+          Add Friends
+        </DuoButton>
       </View>
     </View>
   );

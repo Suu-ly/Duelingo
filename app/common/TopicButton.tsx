@@ -5,6 +5,7 @@ import theme from './constants/theme.json';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Constants from './constants/Constants';
 import {StyleSheet, View} from 'react-native';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 
 interface ButtonProps {
   backgroundColor: string;
@@ -34,6 +35,21 @@ const TopicButton = (props: ButtonProps) => {
     textColor,
     onPress,
   } = props;
+
+  const handlePressIn = () => {
+    ReactNativeHapticFeedback.trigger('effectHeavyClick', {
+      enableVibrateFallback: true,
+      ignoreAndroidSystemSettings: false,
+    });
+  };
+
+  const handlePressOut = () => {
+    ReactNativeHapticFeedback.trigger('effectTick', {
+      enableVibrateFallback: true,
+      ignoreAndroidSystemSettings: false,
+    });
+  };
+
   return (
     <AwesomeButton
       height={height}
@@ -45,6 +61,8 @@ const TopicButton = (props: ButtonProps) => {
       dangerouslySetPressableProps={{
         onPress: disabled ? null : onPress,
       }}
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}
       springRelease={false}
       backgroundShadow="transparent"
       raiseLevel={disabled ? 0 : 4}

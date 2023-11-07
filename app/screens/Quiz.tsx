@@ -67,7 +67,6 @@ const Quiz = (props: QuizProps) => {
   const [dialogVisible, setDialogVisible] = useState(false);
 
   const loadQuestions = async () => {
-    console.log('Heloo');
     let tempScoreQns = 0;
     let numQns = 0;
     let qns: Record<string, any>[] = [];
@@ -87,7 +86,6 @@ const Quiz = (props: QuizProps) => {
         tempScoreQns = tempScoreQns + 1;
       }
     });
-    console.log(qns);
     setQuestions(qns);
     setScoreableQns(tempScoreQns);
     setQuestionTotal(numQns);
