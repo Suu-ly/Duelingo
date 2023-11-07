@@ -14,10 +14,10 @@ interface LeaderboardProps {
 
 const Leaderboard = (props: LeaderboardProps) => {
   const {route, navigation, translate} = props;
-  const[data, setData] = useState([{}]);
-  const [users, setUserID] = useState([]);//initial empty array of users
-  const[avatar, setAvatar] = useState([]);//initial empty array of Avatar (Numbers)
-  const[exp, setExp] = useState([]);//
+  const [data, setData] = useState([{}]);
+  const [users, setUserID] = useState([]); //initial empty array of users
+  const [avatar, setAvatar] = useState([]); //initial empty array of Avatar (Numbers)
+  const [exp, setExp] = useState([]); //
   //avatar change
   //userid change
   //exp change
@@ -26,19 +26,63 @@ const Leaderboard = (props: LeaderboardProps) => {
   //
 
   const renderItem = () => {
-    return(
-      <View style={styles.friendCardscontainer}>
-        <View style={styles.cardContentcontainer}>
-          <Text style={styles.postionText}>1</Text>
-          <Image source={require('../assets/Avatars/1.png')} style={styles.avatarpic} />
-          <View style={styles.cardItems}>
-            <Text style={styles.name}>Lance</Text>
-            <Text style={styles.exp}>438 exp</Text>
+    return (
+      <React.Fragment>
+        <View style={styles.friendCardscontainer}>
+          <View style={styles.cardContentcontainer}>
+            <Text style={styles.postion1Text}>1</Text>
+            <Image
+              source={require('../assets/Avatars/1.png')}
+              style={styles.avatarpic}
+            />
+            <View style={styles.cardItems}>
+              <Text style={styles.name}>Lance</Text>
+              <Text style={styles.exp}>438 exp</Text>
+            </View>
           </View>
-        </View> 
-      </View>
-    )
-   }
+        </View>
+        <View style={styles.friendCardscontainer}>
+          <View style={styles.cardContentcontainer}>
+            <Text style={styles.postion2Text}>2</Text>
+            <Image
+              source={require('../assets/Avatars/1.png')}
+              style={styles.avatarpic}
+            />
+            <View style={styles.cardItems}>
+              <Text style={styles.name}>Lance</Text>
+              <Text style={styles.exp}>438 exp</Text>
+            </View>
+          </View>
+        </View>
+        <View style={styles.friendCardscontainer}>
+          <View style={styles.cardContentcontainer}>
+            <Text style={styles.postion3Text}>3</Text>
+            <Image
+              source={require('../assets/Avatars/1.png')}
+              style={styles.avatarpic}
+            />
+            <View style={styles.cardItems}>
+              <Text style={styles.name}>Lance</Text>
+              <Text style={styles.exp}>438 exp</Text>
+            </View>
+          </View>
+        </View>
+        <View style={styles.friendCardscontainer}>
+          <View style={styles.cardContentcontainer}>
+            <Text style={styles.postionText}>4</Text>
+            <Image
+              source={require('../assets/Avatars/1.png')}
+              style={styles.avatarpic}
+            />
+            <View style={styles.cardItems}>
+              <Text style={styles.name}>Lance</Text>
+              <Text style={styles.exp}>438 exp</Text>
+            </View>
+          </View>
+        </View>
+      </React.Fragment>
+    );
+  };
   return (
     <Animated.View
       style={[styles.mainContainer, {transform: [{translateY: translate}]}]}>
@@ -51,11 +95,8 @@ const Leaderboard = (props: LeaderboardProps) => {
         </Text>
       </View>
       <View style={styles.cardContainer}>
-          <FlatList
-          data={data}
-          renderItem={renderItem}
-          />
-        </View>
+        <FlatList data={data} renderItem={renderItem} />
+      </View>
     </Animated.View>
   );
 };
@@ -74,34 +115,61 @@ const styles = StyleSheet.create({
     gap: Constants.mediumGap,
   },
   cardContainer: {
-    display: 'flex',
-    width: 412,
-    paddingTop: 0, // Replaces padding-top: 0px
-    paddingBottom: 96, // Replaces padding-bottom: 96px
-    paddingHorizontal: 16, // Replaces var(--Edge-Padding, 16px)
-    flexDirection: 'column',
-    alignItems: 'flex-start',
-    justifyContent: 'flex-start',
-    marginVertical: 16, // Replaces gap: var(--Edge-Padding, 16px)
-  }, 
+    gap: Constants.largeGap,
+    paddingHorizontal: Constants.edgePadding,
+  },
   friendCardscontainer: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     //paddingVertical: 12, // Simulates the gap between elements
   },
   cardContentcontainer: {
-    width: 380,
     padding: 16, // Replaces var(--Edge-Padding, 16px)
     flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: 12, // Replaces gap: 12px
+    alignItems: 'center', // Replaces gap: 12px
     borderRadius: 16,
     backgroundColor: '#FFF', // Replaces background: var(--light-surface-container-elevation-0, #FFF)
+  },
+  postion1Text: {
+    width: 14,
+    flexShrink: 0,
+    color: '#E58C06',
+    textAlign: 'center',
+    fontFamily: 'Roboto',
+    fontSize: 16,
+    fontStyle: 'normal',
+    fontWeight: '500',
+    lineHeight: 24, // 150% line-height
+    letterSpacing: 0.15,
+  },
+  postion2Text: {
+    width: 14,
+    flexShrink: 0,
+    color: '#C0C0C0',
+    textAlign: 'center',
+    fontFamily: 'Roboto',
+    fontSize: 16,
+    fontStyle: 'normal',
+    fontWeight: '500',
+    lineHeight: 24, // 150% line-height
+    letterSpacing: 0.15,
+  },
+  postion3Text: {
+    width: 14,
+    flexShrink: 0,
+    color: '#CD7F32',
+    textAlign: 'center',
+    fontFamily: 'Roboto',
+    fontSize: 16,
+    fontStyle: 'normal',
+    fontWeight: '500',
+    lineHeight: 24, // 150% line-height
+    letterSpacing: 0.15,
   },
   postionText: {
     width: 14,
     flexShrink: 0,
-    color: '#E58C06',
+    color: '#000000',
     textAlign: 'center',
     fontFamily: 'Roboto',
     fontSize: 16,
@@ -148,6 +216,3 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
 });
-
-
-

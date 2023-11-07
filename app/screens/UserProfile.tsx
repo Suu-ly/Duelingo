@@ -52,7 +52,7 @@ const UserProfile = (props: UserProfileProps) => {
     <Animated.View
       style={[styles.mainContainer, {transform: [{translateY: translate}]}]}>
       <CustomStatusBar />
-      {!isLoading && data.avatar ? (
+      {!isLoading && Object.keys(data).length !== 0 ? (
         <>
           <View style={styles.topContainer}>
             <View style={styles.filler} />
