@@ -22,6 +22,8 @@ import {
   ResetModules,
   ResetHearts,
   ResetExp,
+  UpdateTimestamp,
+  AddHearts,
 } from '../utils/users';
 
 import {deleteAccount} from '../utils/auth';
@@ -35,6 +37,11 @@ const Settings = (props: SettingsProps) => {
   // const [malayMod, setmalayMod] = useState<number>(0);
 
   const username = 'new username';
+
+  var score = 1000;
+  var difficulty = 'medium';
+  var module = 1;
+  var topic = 2;
   // var Hearts = 0;
   // var chinese = 0;
   // var malay = 0;
@@ -72,7 +79,7 @@ const Settings = (props: SettingsProps) => {
         <Button
           mode="outlined"
           onPress={() => {
-            UpdateExp();
+            UpdateExp(difficulty, module, topic, score);
           }}>
           Update EXP
         </Button>
@@ -131,7 +138,7 @@ const Settings = (props: SettingsProps) => {
         <Button
           mode="outlined"
           onPress={() => {
-            UpdateMalayMod();
+            UpdateTimestamp();
           }}>
           Test
         </Button>

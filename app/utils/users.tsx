@@ -1,5 +1,6 @@
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
+import serverTimestamp from '@react-native-firebase/firestore';
 
 export const createUser = (
   email: any,
@@ -55,7 +56,7 @@ export const ResetHearts = () => {
         .collection('Users')
         .doc(uid)
         .update({
-          hearts: {amount: 5, timestamp: 0},
+          'hearts.amount': 5,
         })
         .then(() => {
           console.log('User updated!');
@@ -91,6 +92,51 @@ export const UpdateHearts = () => {
   });
 };
 
+export const AddHearts = () => {
+  auth().onAuthStateChanged(user => {
+    if (user) {
+      const uid = user.uid;
+      firestore()
+        .collection('Users')
+        .doc(uid)
+        .get()
+        .then(documentSnapshot => getHearts(documentSnapshot))
+        .then(current => {
+          if (current > 0) {
+            firestore()
+              .collection('Users')
+              .doc(uid)
+              .update({
+                'hearts.amount': current + 1,
+              });
+          }
+        });
+    }
+  });
+};
+
+function getTimestamp(documentSnapshot: any) {
+  return documentSnapshot.get('hearts.timestamp');
+}
+
+export const UpdateTimestamp = () => {
+  auth().onAuthStateChanged(user => {
+    if (user) {
+      const uid = user.uid;
+      firestore()
+        .collection('Users')
+        .doc(uid)
+        .get()
+        .then(documentSnapshot => getTimestamp(documentSnapshot))
+        .then(current => {
+          firestore().collection('Users').doc(uid).update({
+            'hearts.timestamp': serverTimestamp(),
+          });
+        });
+    }
+  });
+};
+
 export const ResetExp = () => {
   auth().onAuthStateChanged(user => {
     if (user) {
@@ -112,7 +158,18 @@ function getExp(documentSnapshot: any) {
   return documentSnapshot.get('exp');
 }
 
-export const UpdateExp = () => {
+//mulitplier will depend on
+//module(int),topic(int), score(max:1, fraction of 1) (single)
+// topics under modules
+// difficulty(easy,medium,hard),map different mulipliers for each difficulty
+// score(max:5000)(mulitiplayer)
+
+export const UpdateExp = (
+  difficulty: any,
+  module: any,
+  topic: any,
+  score: any,
+) => {
   auth().onAuthStateChanged(user => {
     if (user) {
       const uid = user.uid;
@@ -122,32 +179,46 @@ export const UpdateExp = () => {
         .get()
         .then(documentSnapshot => getExp(documentSnapshot))
         .then(current => {
-          firestore()
-            .collection('Users')
-            .doc(uid)
-            .update({
-              exp: current + 100,
-            });
+          if (difficulty == 'easy') {
+            var multiplier = 1;
+            firestore()
+              .collection('Users')
+              .doc(uid)
+              .update({
+                exp:
+                  current +
+                  multiplier * score +
+                  multiplier * module * topic * 10,
+              });
+          }
+          if (difficulty == 'medium') {
+            var multiplier = 1.5;
+            firestore()
+              .collection('Users')
+              .doc(uid)
+              .update({
+                exp:
+                  current +
+                  multiplier * score +
+                  multiplier * module * topic * 20,
+              });
+          }
+          if (difficulty == 'hard') {
+            var multiplier = 2;
+            firestore()
+              .collection('Users')
+              .doc(uid)
+              .update({
+                exp:
+                  current +
+                  multiplier * score +
+                  multiplier * module * topic * 30,
+              });
+          }
         });
     }
   });
 };
-// export const UpdateModules = (chinese: any, malay: any) => {
-//   auth().onAuthStateChanged(user => {
-//     if (user) {
-//       const uid = user.uid;
-//       firestore()
-//         .collection('Users')
-//         .doc(uid)
-//         .update({
-//           modules: {chinese: chinese, malay: malay},
-//         })
-//         .then(() => {
-//           console.log('User updated!');
-//         });
-//     }
-//   });
-// };
 
 function getChineseMod(documentSnapshot: any) {
   return documentSnapshot.get('chinese');
