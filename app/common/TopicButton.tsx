@@ -37,7 +37,7 @@ const TopicButton = (props: ButtonProps) => {
   } = props;
 
   const handlePress =() => {
-    ReactNativeHapticFeedback.trigger('impactLight', {
+    ReactNativeHapticFeedback.trigger('impactHeavy', {
       enableVibrateFallback: true,
       ignoreAndroidSystemSettings: false,
     });
