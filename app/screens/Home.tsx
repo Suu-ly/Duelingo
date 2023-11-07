@@ -3,6 +3,7 @@ import {Button, Text} from 'react-native-paper';
 import React, {useEffect} from 'react';
 import auth from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
+import Rive, {RiveRef} from 'rive-react-native';
 
 import CustomStatusBar from '../common/CustomStatusBar';
 import Constants from '../common/constants/Constants';
@@ -13,9 +14,15 @@ interface HomeProps {
   route: any;
   navigation: any;
 }
-
+const resourceName = 'confetti';
 const Home = (props: HomeProps) => {
   const {route, navigation} = props;
+
+  const riveRef = React.useRef<RiveRef>(null);
+
+  const handlePlay = () => {
+    riveRef.current?.play();
+  };
 
   useEffect(() => {
     // Assuming user is logged in
@@ -40,6 +47,9 @@ const Home = (props: HomeProps) => {
 
   return (
     <View style={styles.mainContainer}>
+      <Rive ref={riveRef} resourceName={resourceName} autoplay={false} />
+      <Button onPress={handlePlay}>press</Button>
+
       <CustomStatusBar />
       <View style={styles.container}>
         <Text variant={'headlineLarge'}>Home Screen</Text>
@@ -112,7 +122,7 @@ const Home = (props: HomeProps) => {
           onPress={() => navigation.navigate('Profile')}>
           Profile
         </Button>
-        <Button mode="outlined" onPress={() => handleSignOut()}>
+        <Button mode="outlined" onPress={handlePlay}>
           Sign Out
         </Button>
       </View>

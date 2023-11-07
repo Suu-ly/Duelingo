@@ -46,7 +46,12 @@ const Profile = (props: ProfileProps) => {
     <View style={styles.mainContainer}>
       <CustomStatusBar />
       <View style={styles.topContainer}>
-        <View style={styles.filler} />
+        <View />
+        <IconButton
+          icon={'arrow-left'}
+          iconColor={Theme.colors.onSurfaceVariant}
+          onPress={() => navigation.navigate('Home')}
+        />
         <Image source={require('../assets/Duo.png')} style={styles.duo} />
         <IconButton
           icon={'cog-outline'}

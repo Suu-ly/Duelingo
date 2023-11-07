@@ -278,7 +278,7 @@ export const getFriendList: any = () => {
   });
 };
 
-export const getUsername: any = () => {
+export const getUsername: any = async () => {
   auth().onAuthStateChanged(user => {
     if (user) {
       const uid = user.uid;
@@ -301,7 +301,7 @@ export const getUsername: any = () => {
   });
 };
 
-export const getDisplayname: any = () => {
+export const getDisplayname: any = async () => {
   auth().onAuthStateChanged(user => {
     if (user) {
       const uid = user.uid;
