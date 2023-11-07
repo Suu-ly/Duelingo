@@ -395,7 +395,7 @@ const styles = StyleSheet.create({
   cardsContainer: {
     gap: Constants.edgePadding,
     flex: 1,
-    paddingBottom: Constants.edgePadding,
+    paddingBottom: 88,
   },
   cards: {
     gap: Constants.largeGap,
