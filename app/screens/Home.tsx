@@ -60,39 +60,37 @@ const Home = (props: HomeProps) => {
       }[]
     | null
   >(null);
+
   const [numberOfCompletedChineseModules, setNumberOfCompletedChineseModules] =
     useState(0);
   const [numberOfCompletedMalayModules, setNumberOfCompletedMalayModules] =
     useState(0);
 
-  useEffect(() => {
-    const getResult = async () => {
-      const user = auth().currentUser;
-      if (user) {
-        const userID = user.uid;
+  const getResult = async () => {
+    const user = auth().currentUser;
+    if (user) {
+      const userID = user.uid;
 
-        const [
-          mandarinResult,
-          malayResult,
-          numberOfCompletedChineseModules,
-          numberOfCompletedMalayModules,
-        ] = await Promise.all([
-          getSectionListData('Chinese'),
-          getSectionListData('Malay'),
-          numberOfCompletedModules(userID, 'chinese'),
-          numberOfCompletedModules(userID, 'malay'),
-        ]);
-        setMandarinResult(mandarinResult!);
-        setMalayResult(malayResult!);
-        setNumberOfCompletedChineseModules(numberOfCompletedChineseModules);
-        setNumberOfCompletedMalayModules(numberOfCompletedMalayModules);
-        setIsLoading(false);
-      } else {
-        console.log('User not signed in');
-      }
-    };
-    getResult();
-  }, []);
+      const [
+        mandarinResult,
+        malayResult,
+        numberOfCompletedChineseModules,
+        numberOfCompletedMalayModules,
+      ] = await Promise.all([
+        getSectionListData('Chinese'),
+        getSectionListData('Malay'),
+        numberOfCompletedModules(userID, 'chinese'),
+        numberOfCompletedModules(userID, 'malay'),
+      ]);
+      setMandarinResult(mandarinResult!);
+      setMalayResult(malayResult!);
+      setNumberOfCompletedChineseModules(numberOfCompletedChineseModules);
+      setNumberOfCompletedMalayModules(numberOfCompletedMalayModules);
+      setIsLoading(false);
+    } else {
+      console.log('User not signed in');
+    }
+  };
 
   useFocusEffect(
     useCallback(() => {
@@ -106,6 +104,7 @@ const Home = (props: HomeProps) => {
         onBackPress,
       );
 
+      getResult();
       return () => subscription.remove();
     }, []),
   );

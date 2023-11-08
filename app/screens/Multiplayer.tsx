@@ -148,11 +148,8 @@ const Multiplayer = (props: MultiplayerProps) => {
     ownName: boolean,
     data: FirebaseFirestoreTypes.DocumentData[],
   ) => {
-    for (let i = 0; i < data.length; i++) {
-      if (data[i].uid === userId && ownName) return data[i].displayName;
-      return data[i].displayName;
-    }
-    return '';
+    if (data[0].uid === userId && ownName) return data[0].displayName;
+    return data[1].displayName;
   };
 
   //Gets the quiz questions from database
