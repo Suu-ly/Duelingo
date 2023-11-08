@@ -52,7 +52,7 @@ const EditProfile = (props: EditProfileProps) => {
         handleBack,
       );
       return () => subscription.remove();
-    }, []),
+    }, [username, displayName, avatar]),
   );
 
   const handleBack = () => {
@@ -62,8 +62,10 @@ const EditProfile = (props: EditProfileProps) => {
       avatar !== data.avatar
     ) {
       setDialogVisible(true);
-      return true;
-    } else return false;
+    } else {
+      navigation.goBack();
+    }
+    return true;
   };
 
   return (
@@ -73,7 +75,7 @@ const EditProfile = (props: EditProfileProps) => {
         {transform: [{translateY: translate}], opacity: opacity},
       ]}>
       <Appbar.Header mode="large">
-        <Appbar.BackAction onPress={() => navigation.goBack()} />
+        <Appbar.BackAction onPress={handleBack} />
         <Appbar.Content title="Edit Profile" />
       </Appbar.Header>
       <View style={styles.contentContainer}>
@@ -200,7 +202,7 @@ const EditProfile = (props: EditProfileProps) => {
               mode="text"
               onPress={() => {
                 setDialogVisible(false);
-                navigation.pop();
+                navigation.goBack();
               }}>
               Leave
             </Button>
