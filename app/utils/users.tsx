@@ -30,7 +30,7 @@ export const createUser = (
   firestore().collection('Users').doc(uid).collection('Friends').add({});
 };
 
-export const UpdateUsername = (username: any) => {
+export const UpdateDisplayname = (username: any) => {
   auth().onAuthStateChanged(user => {
     if (user) {
       const uid = user.uid;
@@ -43,6 +43,45 @@ export const UpdateUsername = (username: any) => {
 
         .then(() => {
           console.log('User updated!');
+        });
+    }
+  });
+};
+
+export const UpdateAvatar = (avatar: number) => {
+  auth().onAuthStateChanged(user => {
+    if (user) {
+      const uid = user.uid;
+      firestore()
+        .collection('Users')
+        .doc(uid)
+        .update({
+          avatar: avatar,
+        })
+
+        .then(() => {
+          console.log('User updated!');
+        });
+    }
+  });
+};
+
+export const UpdateUsername = (username: any) => {
+  auth().onAuthStateChanged(user => {
+    if (user) {
+      const uid = user.uid;
+      firestore()
+        .collection('Users')
+        .where('username', '==', username)
+        .get()
+        .then(doc => {
+          if (!doc.empty) {
+            console.log('Username taken.');
+          } else {
+            firestore().collection('Users').doc(uid).update({
+              username: username,
+            });
+          }
         });
     }
   });
@@ -164,12 +203,7 @@ function getExp(documentSnapshot: any) {
 // difficulty(easy,medium,hard),map different mulipliers for each difficulty
 // score(max:5000)(mulitiplayer)
 
-export const UpdateExp = (
-  difficulty: any,
-  module: any,
-  topic: any,
-  score: any,
-) => {
+export const UpdateExp = (difficulty: string, score: number) => {
   auth().onAuthStateChanged(user => {
     if (user) {
       const uid = user.uid;
@@ -180,41 +214,58 @@ export const UpdateExp = (
         .then(documentSnapshot => getExp(documentSnapshot))
         .then(current => {
           if (difficulty == 'easy') {
-            var multiplier = 1;
+            var multiplier = 0.05;
             firestore()
               .collection('Users')
               .doc(uid)
               .update({
-                exp:
-                  current +
-                  multiplier * score +
-                  multiplier * module * topic * 10,
+                exp: current + Math.floor(multiplier * score),
               });
           }
-          if (difficulty == 'medium') {
-            var multiplier = 1.5;
+          if (difficulty == 'intermediate') {
+            var multiplier = 0.1;
             firestore()
               .collection('Users')
               .doc(uid)
               .update({
-                exp:
-                  current +
-                  multiplier * score +
-                  multiplier * module * topic * 20,
+                exp: current + Math.floor(multiplier * score),
               });
           }
           if (difficulty == 'hard') {
-            var multiplier = 2;
+            var multiplier = 0.15;
             firestore()
               .collection('Users')
               .doc(uid)
               .update({
-                exp:
-                  current +
-                  multiplier * score +
-                  multiplier * module * topic * 30,
+                exp: current + Math.floor(multiplier * score),
               });
           }
+        });
+    }
+  });
+};
+
+export const SingleUpdateExp = (
+  module: number,
+  topic: number,
+  score: number,
+) => {
+  auth().onAuthStateChanged(user => {
+    if (user) {
+      const uid = user.uid;
+      firestore()
+        .collection('Users')
+        .doc(uid)
+        .get()
+        .then(documentSnapshot => getExp(documentSnapshot))
+        .then(current => {
+          var multiplier = 100;
+          firestore()
+            .collection('Users')
+            .doc(uid)
+            .update({
+              exp: current + multiplier * score + module * topic * 10,
+            });
         });
     }
   });

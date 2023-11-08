@@ -15,7 +15,7 @@ interface SettingsProps {
 import {
   UpdateHearts,
   UpdateExp,
-  UpdateUsername,
+  UpdateDisplayname,
   DeleteUserdata,
   UpdateMalayMod,
   UpdateChineseMod,
@@ -24,6 +24,9 @@ import {
   ResetExp,
   UpdateTimestamp,
   AddHearts,
+  SingleUpdateExp,
+  UpdateUsername,
+  UpdateAvatar,
 } from '../utils/users';
 
 import {deleteAccount} from '../utils/auth';
@@ -31,31 +34,13 @@ import {deleteAccount} from '../utils/auth';
 const Settings = (props: SettingsProps) => {
   const {route, navigation} = props;
 
-  // const [Hearts, setHearts] = useState<number>(5);
-  // const [Exp, setExp] = useState<number>(0);
-  // const [chineseMod, setchineseMod] = useState(0);
-  // const [malayMod, setmalayMod] = useState<number>(0);
-
-  const username = 'new username';
+  const username = 'xianlong';
+  const displayname = 'new displayname';
 
   var score = 1000;
-  var difficulty = 'medium';
-  var module = 1;
-  var topic = 2;
-  // var Hearts = 0;
-  // var chinese = 0;
-  // var malay = 0;
-  // var Exp = 0;
-
-  // const MinusHeart = () => {
-  //   if (Hearts > 0) {
-  //     Hearts--;
-  //   }
-  // };
-
-  // const IncreaseExp = () => {
-  //   Exp = Exp + 100;
-  // };
+  var difficulty = 'hard';
+  var module = 2;
+  var topic = 7;
 
   return (
     <View style={styles.mainContainer}>
@@ -79,7 +64,7 @@ const Settings = (props: SettingsProps) => {
         <Button
           mode="outlined"
           onPress={() => {
-            UpdateExp(difficulty, module, topic, score);
+            UpdateExp(difficulty, score);
           }}>
           Update EXP
         </Button>
@@ -89,6 +74,13 @@ const Settings = (props: SettingsProps) => {
             ResetExp();
           }}>
           Reset EXP
+        </Button>
+        <Button
+          mode="outlined"
+          onPress={() => {
+            UpdateDisplayname(displayname);
+          }}>
+          Update Displayname
         </Button>
         <Button
           mode="outlined"
@@ -111,10 +103,6 @@ const Settings = (props: SettingsProps) => {
         <Button
           mode="outlined"
           onPress={() => {
-            // malay = malay + 1;
-            // UpdateModules(chinese, malay);
-            // console.log('Chinese:' + chinese);
-            // console.log('Malay:' + malay);
             UpdateMalayMod();
           }}>
           Update Malay Modules
@@ -138,7 +126,7 @@ const Settings = (props: SettingsProps) => {
         <Button
           mode="outlined"
           onPress={() => {
-            UpdateTimestamp();
+            UpdateAvatar(5);
           }}>
           Test
         </Button>
