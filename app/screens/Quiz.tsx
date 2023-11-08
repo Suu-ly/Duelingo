@@ -115,7 +115,7 @@ const Quiz = (props: QuizProps) => {
       navigation.addListener(
         'beforeRemove',
         (e: EventArg<'beforeRemove', true, {action: NavigationAction}>) => {
-          if (e.data.action.type != 'GO_BACK') {
+          if (e.data.action.type !== 'GO_BACK') {
             return;
           }
           // Prevent default behavior of leaving the screen
@@ -267,7 +267,10 @@ const Quiz = (props: QuizProps) => {
             </Button>
             <Button
               mode="text"
-              onPress={() => navigation.navigate('HomeScreen')}>
+              onPress={() => {
+                setDialogVisible(false);
+                navigation.navigate('HomeScreen');
+              }}>
               Leave
             </Button>
           </Dialog.Actions>

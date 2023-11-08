@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useCallback, useState} from 'react';
 import {
   View,
   StyleSheet,
@@ -6,11 +6,23 @@ import {
   ScrollView,
   TouchableOpacity,
   Animated,
+  BackHandler,
 } from 'react-native';
-import {Appbar, Button, IconButton, Text} from 'react-native-paper';
+import {
+  Appbar,
+  Button,
+  Dialog,
+  IconButton,
+  Portal,
+  Text,
+  TextInput,
+} from 'react-native-paper';
+import {useFocusEffect} from '@react-navigation/native';
+
 import Theme from '../common/constants/theme.json';
 import Constants from '../common/constants/Constants';
 import Avatar from '../common/Avatar';
+import DuoButton from '../common/DuoButton';
 
 interface EditProfileProps {
   route: any;
@@ -22,10 +34,37 @@ interface EditProfileProps {
 const EditProfile = (props: EditProfileProps) => {
   const {route, navigation, translate, opacity} = props;
   const data = route.params.userData;
+  const [avatar, setAvatar] = useState<number>(data.avatar);
+  const [username, setUsername] = useState<string>(data.username);
+  const [displayName, setDisplayName] = useState<string>(data.displayName);
+  const [error, setError] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [visible, setVisible] = useState(false);
+  const [dialogVisible, setDialogVisible] = useState(false);
 
   const pics = Array(15).fill(0);
+
+  useFocusEffect(
+    useCallback(() => {
+      const subscription = BackHandler.addEventListener(
+        'hardwareBackPress',
+        handleBack,
+      );
+      return () => subscription.remove();
+    }, []),
+  );
+
+  const handleBack = () => {
+    if (
+      username !== data.username ||
+      displayName !== data.displayName ||
+      avatar !== data.avatar
+    ) {
+      setDialogVisible(true);
+      return true;
+    } else return false;
+  };
 
   return (
     <Animated.View
@@ -37,6 +76,70 @@ const EditProfile = (props: EditProfileProps) => {
         <Appbar.BackAction onPress={() => navigation.goBack()} />
         <Appbar.Content title="Edit Profile" />
       </Appbar.Header>
+      <View style={styles.contentContainer}>
+        <View style={styles.inputContainer}>
+          <View>
+            <Avatar index={avatar} style={styles.avatar} />
+            <Button
+              onPress={() => setVisible(true)}
+              icon="pencil-outline"
+              mode="text">
+              Change
+            </Button>
+          </View>
+          <TextInput
+            style={{backgroundColor: Theme.colors.surface, width: '100%'}}
+            mode="outlined"
+            label="Username"
+            placeholder="Set username"
+            value={username}
+            activeOutlineColor={Theme.colors.primary}
+            autoCapitalize="none"
+            onChangeText={name => setUsername(name)}
+          />
+          <TextInput
+            style={{backgroundColor: Theme.colors.surface, width: '100%'}}
+            mode="outlined"
+            label="Display Name"
+            placeholder="Set username"
+            value={displayName}
+            activeOutlineColor={Theme.colors.primary}
+            autoCapitalize="none"
+            onChangeText={name => setDisplayName(name)}
+          />
+        </View>
+        <View style={styles.bottomContainer}>
+          <View style={styles.buttonContainer}>
+            <DuoButton
+              backgroundColor={Theme.colors.surface}
+              borderColor={Theme.colors.outline}
+              stretch={true}
+              filled={false}
+              onPress={handleBack}
+              textColor={Theme.colors.onSurface}>
+              Cancel
+            </DuoButton>
+          </View>
+
+          <View style={styles.buttonContainer}>
+            <DuoButton
+              backgroundColor={Theme.colors.primary}
+              backgroundDark={Theme.colors.primaryDark}
+              stretch={true}
+              disabled={
+                !(
+                  username !== data.username ||
+                  displayName !== data.displayName ||
+                  avatar !== data.avatar
+                )
+              }
+              onPress={() => console.log('Pressed')}
+              textColor={Theme.colors.onPrimary}>
+              Save Changes
+            </DuoButton>
+          </View>
+        </View>
+      </View>
       <Modal
         animationType="slide"
         transparent={true}
@@ -62,8 +165,11 @@ const EditProfile = (props: EditProfileProps) => {
                   style={[styles.picContainer, {width: '33.3333%'}]}>
                   <TouchableOpacity
                     style={styles.button}
-                    onPress={() => console.log(index)}>
-                    <Avatar index={index} style={styles.avatar} />
+                    onPress={() => {
+                      setVisible(false);
+                      setAvatar(index);
+                    }}>
+                    <Avatar index={index} style={styles.avatars} />
                   </TouchableOpacity>
                 </View>
               );
@@ -71,9 +177,36 @@ const EditProfile = (props: EditProfileProps) => {
           </View>
         </ScrollView>
       </Modal>
-      <Button mode="outlined" onPress={() => setVisible(true)}>
-        Open
-      </Button>
+      <Portal>
+        <Dialog
+          visible={dialogVisible}
+          dismissable={false}
+          dismissableBackButton={false}>
+          <Dialog.Icon icon={'alert-circle-outline'} />
+          <Dialog.Title style={styles.title}>
+            You have unsaved changes.
+          </Dialog.Title>
+          <Dialog.Content>
+            <Text variant="bodyMedium">
+              You have not yet saved your changes. Are you sure you want to
+              leave?
+            </Text>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button mode="text" onPress={() => setDialogVisible(false)}>
+              Cancel
+            </Button>
+            <Button
+              mode="text"
+              onPress={() => {
+                setDialogVisible(false);
+                navigation.pop();
+              }}>
+              Leave
+            </Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
     </Animated.View>
   );
 };
@@ -84,6 +217,30 @@ const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
     backgroundColor: Theme.colors.surface,
+  },
+  contentContainer: {
+    padding: Constants.edgePadding,
+    paddingTop: 0,
+    flex: 1,
+    justifyContent: 'space-between',
+    gap: Constants.edgePadding,
+  },
+  inputContainer: {
+    gap: Constants.edgePadding,
+    alignItems: 'center',
+  },
+  avatar: {
+    height: 128,
+    width: 128,
+    borderRadius: 128,
+  },
+  bottomContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: Constants.edgePadding,
+  },
+  buttonContainer: {
+    flex: 1,
   },
   header: {
     paddingHorizontal: Constants.smallGap,
@@ -116,10 +273,13 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
-  avatar: {
+  avatars: {
     flex: 1,
     width: '100%',
     height: '100%',
     borderRadius: 256,
+  },
+  title: {
+    textAlign: 'center',
   },
 });

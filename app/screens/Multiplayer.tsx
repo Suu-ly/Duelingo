@@ -506,8 +506,8 @@ const Multiplayer = (props: MultiplayerProps) => {
           </Dialog.Title>
           <Dialog.Content>
             <Text variant="bodyMedium">
-              The match is still in progress and will be recorded as a loss if
-              you leave now. Are you sure you want to leave?
+              The match is still in progress and will end if you leave now. Are
+              you sure you want to leave?
             </Text>
           </Dialog.Content>
           <Dialog.Actions>
@@ -541,7 +541,10 @@ const Multiplayer = (props: MultiplayerProps) => {
           <Dialog.Actions>
             <Button
               mode="text"
-              onPress={() => navigation.navigate('HomeScreen')}>
+              onPress={() => {
+                setPlayerLeft(false);
+                navigation.navigate('HomeScreen');
+              }}>
               Ok
             </Button>
           </Dialog.Actions>
