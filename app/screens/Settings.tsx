@@ -13,8 +13,7 @@ interface SettingsProps {
 }
 
 import {
-  UpdateHearts,
-  UpdateExp,
+  MultiUpdateExp,
   UpdateDisplayname,
   DeleteUserdata,
   UpdateMalayMod,
@@ -22,11 +21,10 @@ import {
   ResetModules,
   ResetHearts,
   ResetExp,
-  UpdateTimestamp,
   AddHearts,
   SingleUpdateExp,
-  UpdateUsername,
   UpdateAvatar,
+  MinusHearts,
 } from '../utils/users';
 
 import {deleteAccount} from '../utils/auth';
@@ -57,14 +55,14 @@ const Settings = (props: SettingsProps) => {
         <Button
           mode="outlined"
           onPress={() => {
-            UpdateHearts();
+            MinusHearts();
           }}>
           Update heart
         </Button>
         <Button
           mode="outlined"
           onPress={() => {
-            UpdateExp(difficulty, score);
+            MultiUpdateExp(difficulty, score);
           }}>
           Update EXP
         </Button>
@@ -82,11 +80,7 @@ const Settings = (props: SettingsProps) => {
           }}>
           Update Displayname
         </Button>
-        <Button
-          mode="outlined"
-          onPress={() => {
-            UpdateUsername(username);
-          }}>
+        <Button mode="outlined" onPress={() => {}}>
           Update Username
         </Button>
         <Button

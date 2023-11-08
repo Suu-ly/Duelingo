@@ -108,7 +108,7 @@ function getHearts(documentSnapshot: any) {
   return documentSnapshot.get('hearts.amount');
 }
 
-export const UpdateHearts = () => {
+export const MinusHearts = () => {
   auth().onAuthStateChanged(user => {
     if (user) {
       const uid = user.uid;
@@ -123,7 +123,7 @@ export const UpdateHearts = () => {
               .collection('Users')
               .doc(uid)
               .update({
-                hearts: {amount: current - 1, timestamp: 0},
+                'hearts.amount': current - 1,
               });
           }
         });
@@ -154,27 +154,27 @@ export const AddHearts = () => {
   });
 };
 
-function getTimestamp(documentSnapshot: any) {
-  return documentSnapshot.get('hearts.timestamp');
-}
+// function getTimestamp(documentSnapshot: any) {
+//   return documentSnapshot.get('hearts.timestamp');
+// }
 
-export const UpdateTimestamp = () => {
-  auth().onAuthStateChanged(user => {
-    if (user) {
-      const uid = user.uid;
-      firestore()
-        .collection('Users')
-        .doc(uid)
-        .get()
-        .then(documentSnapshot => getTimestamp(documentSnapshot))
-        .then(current => {
-          firestore().collection('Users').doc(uid).update({
-            'hearts.timestamp': serverTimestamp(),
-          });
-        });
-    }
-  });
-};
+// export const UpdateTimestamp = () => {
+//   auth().onAuthStateChanged(user => {
+//     if (user) {
+//       const uid = user.uid;
+//       firestore()
+//         .collection('Users')
+//         .doc(uid)
+//         .get()
+//         .then(documentSnapshot => getTimestamp(documentSnapshot))
+//         .then(current => {
+//           firestore().collection('Users').doc(uid).update({
+//             'hearts.timestamp': serverTimestamp(),
+//           });
+//         });
+//     }
+//   });
+// };
 
 export const ResetExp = () => {
   auth().onAuthStateChanged(user => {
@@ -197,13 +197,7 @@ function getExp(documentSnapshot: any) {
   return documentSnapshot.get('exp');
 }
 
-//mulitplier will depend on
-//module(int),topic(int), score(max:1, fraction of 1) (single)
-// topics under modules
-// difficulty(easy,medium,hard),map different mulipliers for each difficulty
-// score(max:5000)(mulitiplayer)
-
-export const UpdateExp = (difficulty: string, score: number) => {
+export const MultiUpdateExp = (difficulty: string, score: number) => {
   auth().onAuthStateChanged(user => {
     if (user) {
       const uid = user.uid;
