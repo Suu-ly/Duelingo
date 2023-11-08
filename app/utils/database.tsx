@@ -140,18 +140,32 @@ export const getUserData = async (userId: string) => {
     });
   return data;
 };
-export const getLeaderboardData = async () => {
-  let leaderboardData: FirebaseFirestoreTypes.DocumentData[] = [];
+export const getallUserData = async () => {
+  let allUserdata: string[] = [];
   await firestore()
     .collection('Users')
-    .orderBy('exp', 'desc')
-    .where('uid', 'in', 'Users')
     .get()
-    .then(querySnapshot =>
+    .then(querySnapshot => {
       querySnapshot.forEach(documentSnapshot => {
-        leaderboardData.push(documentSnapshot.data());
-      }),
-    );
-  return leaderboardData;
+        allUserdata = [...allUserdata, documentSnapshot.id];
+      });
+    });
+  return allUserdata;
+};
+export const getLeaderboardData = async () => {
+  const allUserList = await getallUserData();
+  if (allUserList.length > 0) {
+    let leaderboardData: FirebaseFirestoreTypes.DocumentData[] = [];
+    await firestore()
+      .collection('Users')
+      .orderBy('exp', 'desc')
+      .get()
+      .then(querySnapshot =>
+        querySnapshot.forEach(documentSnapshot => {
+          leaderboardData.push(documentSnapshot.data());
+        }),
+      );
+    return leaderboardData;
+  }
   return [];
 };

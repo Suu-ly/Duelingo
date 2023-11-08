@@ -1,5 +1,6 @@
 import * as React from 'react';
-import {useEffect, useState} from 'react';
+import {useEffect, useState, useCallback} from 'react';
+import {useFocusEffect} from '@react-navigation/native';
 import {View, StyleSheet, Animated, FlatList, Image} from 'react-native';
 import {Text, List} from 'react-native-paper';
 import CustomStatusBar from '../common/CustomStatusBar';
@@ -7,6 +8,7 @@ import Theme from '../common/constants/theme.json';
 import Constants from '../common/constants/Constants';
 import {getLeaderboardData} from '../utils/database';
 import {FirebaseFirestoreTypes} from '@react-native-firebase/firestore';
+import Avatar from '../common/Avatar';
 
 interface LeaderboardProps {
   route: any;
@@ -21,12 +23,17 @@ const Leaderboard = (props: LeaderboardProps) => {
   >(null);
   //color change 1 gold 2 sliver 3 bronze, 4 onwards black
 
-  const getLeaderboard = async () => {
+  const getleaderboardList = async () => {
     let userDetails: FirebaseFirestoreTypes.DocumentData[] =
       await getLeaderboardData();
     setLeaderboardList(userDetails);
   };
 
+  useFocusEffect(
+    useCallback(() => {
+      getleaderboardList();
+    }, []),
+  );
   return (
     <Animated.View
       style={[styles.mainContainer, {transform: [{translateY: translate}]}]}>
@@ -44,11 +51,8 @@ const Leaderboard = (props: LeaderboardProps) => {
           renderItem={({item}) => (
             <View style={styles.friendCardscontainer}>
               <View style={styles.cardContentcontainer}>
-                <Text style={styles.postion1Text}></Text>
-                <Image
-                  source={require('../assets/Avatars/1.png')}
-                  style={styles.avatarpic}
-                />
+                <Text style={styles.postion1Text}>{item.index}</Text>
+                <Avatar index={item.avatar} style={styles.avatarpic} />
                 <View style={styles.cardItems}>
                   <Text style={styles.name}>{item.username}</Text>
                   <Text style={styles.exp}>{item.exp}</Text>
