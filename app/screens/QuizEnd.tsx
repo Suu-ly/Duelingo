@@ -1,13 +1,14 @@
-import {View, StyleSheet, Animated, Easing, BackHandler} from 'react-native';
+import {View, StyleSheet, Animated, Easing} from 'react-native';
 import {Text} from 'react-native-paper';
 import {CountUp} from 'use-count-up';
-import {useCallback, useRef} from 'react';
+import React, {useEffect, useRef} from 'react';
 
 import Theme from '../common/constants/theme.json';
 import CustomStatusBar from '../common/CustomStatusBar';
 import Constants from '../common/constants/Constants';
 import DuoButton from '../common/DuoButton';
-import {useFocusEffect} from '@react-navigation/native';
+import {updatedNumberOfCompletedModules} from '../utils/firestore';
+import auth from '@react-native-firebase/auth';
 
 interface QuizEndProps {
   route: any;
@@ -20,30 +21,29 @@ const QuizEnd = (props: QuizEndProps) => {
   const timeTaken = route.params.timeElapsed;
   const score = route.params.score;
   const totalScoreableQuestions = route.params.totalScoreableQuestions;
+  const isLastCompletedTopic = route.params.isLastCompletedTopic;
+  const language = route.params.language;
 
   const animationValue = useRef(new Animated.Value(0)).current;
 
   const scale = animationValue.interpolate({
-    inputRange: [20, 50, 80],
+    inputRange: [15, 50, 85],
     outputRange: [1, 1.2, 1],
     extrapolate: 'clamp',
   });
 
-  useFocusEffect(
-    useCallback(() => {
-      const onBackPress = () => {
-        navigation.navigate('HomeScreen');
-        return true;
-      };
-
-      const subscription = BackHandler.addEventListener(
-        'hardwareBackPress',
-        onBackPress,
-      );
-
-      return () => subscription.remove();
-    }, []),
-  );
+  useEffect(() => {
+    const setUpdatedNumberOfCompletedModules = async () => {
+      const user = auth().currentUser;
+      if (user && isLastCompletedTopic) {
+        updatedNumberOfCompletedModules(
+          user.uid,
+          language === 'Chinese' ? 'chinese' : 'malay',
+        );
+      }
+    };
+    setUpdatedNumberOfCompletedModules();
+  });
 
   return (
     <View style={styles.mainContainer}>
@@ -72,7 +72,7 @@ const QuizEnd = (props: QuizEndProps) => {
                       Animated.timing(animationValue, {
                         toValue: 100,
                         duration: 1000,
-                        easing: Easing.bezier(0, 0.9, 1, 0.1),
+                        easing: Easing.bezier(0, 0.75, 1, 0.15),
                         useNativeDriver: false,
                       }),
                     ).start();
@@ -114,7 +114,7 @@ const QuizEnd = (props: QuizEndProps) => {
             backgroundColor={Theme.colors.primary}
             backgroundDark={Theme.colors.primaryDark}
             stretch={true}
-            onPress={() => navigation.navigate('HomeScreen')}
+            onPress={() => navigation.navigate('Debug')}
             textColor={Theme.colors.onPrimary}>
             Back to Home
           </DuoButton>

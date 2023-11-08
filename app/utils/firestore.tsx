@@ -1,4 +1,4 @@
-import firestore from '@react-native-firebase/firestore';
+import firestore, {firebase} from '@react-native-firebase/firestore';
 import TopicColors from '../common/constants/TopicColors';
 
 // To get all modulesNames from selected language
@@ -128,5 +128,26 @@ export const numberOfCompletedModules = async (
     }
   } catch (error) {
     console.error('Error getting user data to Firestore:', error);
+  }
+};
+
+export const updatedNumberOfCompletedModules = async (
+  userID: string,
+  language: string,
+) => {
+  try {
+    firestore()
+      .collection('Users')
+      .doc(userID)
+      .update({[language]: firebase.firestore.FieldValue.increment(1)})
+      .then(() => {
+        console.log(userID);
+        console.log('number of completed ' + language + ' modules updated!');
+      });
+  } catch (error) {
+    console.error(
+      'Error updating number of completed Modules to Firestore:',
+      error,
+    );
   }
 };

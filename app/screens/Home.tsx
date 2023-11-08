@@ -143,6 +143,12 @@ const Home = (props: HomeProps) => {
                   (selectedLanguage.id === 1
                     ? numberOfCompletedChineseModules + 1
                     : numberOfCompletedMalayModules + 1);
+                //Find out whether the current topic is the last completed topic
+                const isLastCompletedTopic =
+                  overallIndex ===
+                  (selectedLanguage.id === 1
+                    ? numberOfCompletedChineseModules
+                    : numberOfCompletedMalayModules);
                 //Find out whether the current topic being rendered is completed
                 const isCompleted =
                   overallIndex <
@@ -171,6 +177,7 @@ const Home = (props: HomeProps) => {
                             selectedLanguage.id == 1 ? 'Chinese' : 'Malay',
                           module: 'Module' + (section.id + 1),
                           topic: 'Topic' + (section.data.indexOf(item) + 1),
+                          isLastCompletedTopic: isLastCompletedTopic,
                         });
                       }}>
                       {item}

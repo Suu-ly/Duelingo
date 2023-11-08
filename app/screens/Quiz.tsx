@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   StyleSheet,
@@ -21,9 +21,12 @@ import QuizButtons from '../common/QuizButtons';
 import TeachingButtons from '../common/TeachingButton';
 import DuoButton from '../common/DuoButton';
 import Constants from '../common/constants/Constants';
+import Questions from '../data/Translation Questions.json';
 import QuizHeader from '../common/QuizHeader';
 import QuizFooter from '../common/QuizFooter';
 import useTimeElapsed from '../utils/useTimeElapsed';
+import {getQuiz} from '../utils/database';
+import {getQuestions} from '../utils/firestore';
 import firestore from '@react-native-firebase/firestore';
 
 interface QuizProps {
@@ -43,6 +46,7 @@ const Quiz = (props: QuizProps) => {
   const language = route.params.language;
   const module = route.params.module;
   const topic = route.params.topic;
+  const isLastCompletedTopic = route.params.isLastCompletedTopic;
 
   const [isLoading, setIsLoading] = useState(true);
   const [questionNo, setQuestionNo] = useState(1);
@@ -67,9 +71,10 @@ const Quiz = (props: QuizProps) => {
   const [dialogVisible, setDialogVisible] = useState(false);
 
   const loadQuestions = async () => {
-    let tempScoreQns = 0;
-    let numQns = 0;
-    let qns: Record<string, any>[] = [];
+    console.log('Heloo');
+    var tempScoreQns = 0;
+    var numQns = 0;
+    var qns: Record<string, any>[] = [];
     const collecton = await firestore()
       .collection('Quiz')
       .doc(language)
@@ -86,6 +91,7 @@ const Quiz = (props: QuizProps) => {
         tempScoreQns = tempScoreQns + 1;
       }
     });
+    console.log(qns);
     setQuestions(qns);
     setScoreableQns(tempScoreQns);
     setQuestionTotal(numQns);
@@ -131,7 +137,6 @@ const Quiz = (props: QuizProps) => {
     if (questions.length === 0) loadQuestions();
   });
 
-  //Navigates to end screen after remaining questions reach 0, else go to next question
   const handleSubmit = () => {
     //Animates the diff
     LayoutAnimation.configureNext({
@@ -140,6 +145,7 @@ const Quiz = (props: QuizProps) => {
       update: {type: 'spring', springDamping: 100},
       delete: {type: 'easeOut', property: 'opacity'},
     });
+    //Navigates to end screen after remaining questions reach 0, else go to next question
     if (submit) {
       //Quiz end
       if (questionNo === questionTotal) {
@@ -151,6 +157,8 @@ const Quiz = (props: QuizProps) => {
             answer === questions[questionNo - 1].correct_answer
               ? score + 1
               : score,
+          isLastCompletedTopic: isLastCompletedTopic,
+          language: language,
         });
       } else {
         //Next question
@@ -161,16 +169,29 @@ const Quiz = (props: QuizProps) => {
           setScore(score + 1);
         }
         setSubmit(false);
-        setAnswer('');
         setQuestionNo(questionNo + 1);
+        setAnswer('');
+        // navigation.push('Quiz', {
+        //   language: language,
+        //   difficulty: difficulty,
+        //   questionNo: questionNo + 1,
+        //   remaining: remaining,
+        //   totalQuestions: totalQuestions,
+        //   timeElapsed: timePassed,
+        //   score: answer === question.correct_answer ? score + 1 : score,
+        // });
       }
     } else {
+      //Go to submitted state
+      setSubmit(true);
       //if the current question has a gameFormat of 0, questionNo = questionNo + 1
       if (questions[questionNo - 1].gameFormat === 0) {
         setQuestionNo(questionNo + 1);
+        //if the next question has a gameFormat of 1, set submit to false
+        if (questions[questionNo].gameFormat === 1) {
+          setSubmit(false);
+        }
       } else {
-        //Go to submitted state
-        setSubmit(true);
         if (answer !== questions[questionNo - 1].correct_answer) {
           setLives(lives - 1);
         }
@@ -182,7 +203,7 @@ const Quiz = (props: QuizProps) => {
     <View style={styles.mainContainer}>
       <CustomStatusBar backgroundColor={Theme.colors.elevation.level1} />
       {isLoading ? (
-        <View style={styles.loading}>
+        <View>
           <ActivityIndicator />
         </View>
       ) : (
@@ -265,9 +286,7 @@ const Quiz = (props: QuizProps) => {
             <Button mode="text" onPress={() => setDialogVisible(false)}>
               Cancel
             </Button>
-            <Button
-              mode="text"
-              onPress={() => navigation.navigate('HomeScreen')}>
+            <Button mode="text" onPress={() => navigation.navigate('Debug')}>
               Leave
             </Button>
           </Dialog.Actions>
@@ -305,10 +324,5 @@ const styles = StyleSheet.create({
   },
   title: {
     textAlign: 'center',
-  },
-  loading: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 });
