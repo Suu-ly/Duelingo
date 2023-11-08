@@ -93,7 +93,8 @@ const OtherProfile = (props: OtherProfileProps) => {
                 {data.username}
               </Text>
               <Text variant="titleMedium" style={{color: Theme.colors.primary}}>
-                {numFriends} Friends
+                {numFriends}
+                {numFriends === 0 || numFriends === 1 ? ' Friend' : ' Friends'}
               </Text>
             </View>
             <DuoButton
