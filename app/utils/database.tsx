@@ -169,3 +169,7 @@ export const getLeaderboardData = async () => {
   }
   return [];
 };
+
+export const numUsers = async () => {
+  await firestore().collection('Users').count();
+};

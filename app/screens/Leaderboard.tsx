@@ -1,12 +1,19 @@
 import * as React from 'react';
 import {useEffect, useState, useCallback} from 'react';
 import {useFocusEffect} from '@react-navigation/native';
-import {View, StyleSheet, Animated, FlatList, Image} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Animated,
+  FlatList,
+  Image,
+  RefreshControl,
+} from 'react-native';
 import {Text, List} from 'react-native-paper';
 import CustomStatusBar from '../common/CustomStatusBar';
 import Theme from '../common/constants/theme.json';
 import Constants from '../common/constants/Constants';
-import {getLeaderboardData} from '../utils/database';
+import {getLeaderboardData, numUsers} from '../utils/database';
 import {FirebaseFirestoreTypes} from '@react-native-firebase/firestore';
 import Avatar from '../common/Avatar';
 
@@ -29,11 +36,18 @@ const Leaderboard = (props: LeaderboardProps) => {
     setLeaderboardList(userDetails);
   };
 
+  const onEndReached = () => console.log('End reached');
+
   useFocusEffect(
     useCallback(() => {
       getleaderboardList();
     }, []),
   );
+
+  const getIndex = () => {
+    for (let i = 0; i < numUsers; i++) {}
+    return i;
+  };
   return (
     <Animated.View
       style={[styles.mainContainer, {transform: [{translateY: translate}]}]}>
@@ -51,7 +65,7 @@ const Leaderboard = (props: LeaderboardProps) => {
           renderItem={({item}) => (
             <View style={styles.friendCardscontainer}>
               <View style={styles.cardContentcontainer}>
-                <Text style={styles.postion1Text}>{item.index}</Text>
+                <View style={styles.numContainer}></View>
                 <Avatar index={item.avatar} style={styles.avatarpic} />
                 <View style={styles.cardItems}>
                   <Text style={styles.name}>{item.username}</Text>
@@ -61,6 +75,7 @@ const Leaderboard = (props: LeaderboardProps) => {
             </View>
           )}
           keyExtractor={item => item.id}
+          onEndReached={onEndReached}
         />
       </View>
     </Animated.View>
@@ -181,20 +196,18 @@ const styles = StyleSheet.create({
     lineHeight: 24, // 150% line-height
     letterSpacing: 0.5,
   },
+  numContainer: {},
+  nameexpContainer: {},
 });
-//<React.Fragment>
-//    <View style={styles.friendCardscontainer}>
-//       <View style={styles.cardContentcontainer}>
-//        <Text style={styles.postion1Text}>1</Text>
-//        <Image
-//          source={require('../assets/Avatars/1.png')}
-//          style={styles.avatarpic}
-//      />
-//    <View style={styles.cardItems}>
-//         <Text style={styles.name}>Lance</Text>
-//        <Text style={styles.exp}>438 exp</Text>
-//     </View>
-//  </View>
-// </View>
-//</React.Fragment>
-//);
+
+const getStyleForIndex = index => {
+  if (index === 0) {
+    return styles.postion1Text;
+  } else if (index === 1) {
+    return styles.postion2Text;
+  } else if (index === 2) {
+    return styles.postion3Text;
+  } else {
+    return styles.postionText;
+  }
+};
