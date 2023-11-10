@@ -3,16 +3,22 @@ import Theme from './constants/theme.json';
 import Constants from './constants/Constants';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Text} from 'react-native-paper';
-import {useEffect, useRef} from 'react';
+import {useCallback, useEffect, useRef, useState} from 'react';
+import {useFocusEffect} from '@react-navigation/native';
+import {checkTimestamp, getLives, increaseLives} from '../utils/firestore';
+import auth from '@react-native-firebase/auth';
 
-interface HeartProps {
-  lives: number;
-}
+// interface HeartProps {
+//   lives: number;
+// }
 
-const HeartContainer = (props: HeartProps) => {
-  const {lives} = props;
+const HeartContainer = () => {
+  // const {lives} = props;
 
   const animationValue = useRef(new Animated.Value(100)).current;
+  const [lives, setLives] = useState<number>();
+
+  let unsubscribe: (() => void) | undefined;
 
   useEffect(() => {
     Animated.timing(animationValue, {
@@ -29,6 +35,44 @@ const HeartContainer = (props: HeartProps) => {
     return () => clearTimeout(delay);
   }, [lives]);
 
+  useFocusEffect(
+    useCallback(() => {
+      let interval: NodeJS.Timeout;
+      const getHeartLives = async () => {
+        const user = auth().currentUser;
+        if (user) {
+          const userID = user.uid;
+          const unsubscribe = getLives(userID, setLives);
+          console.log('setting heart container lives: ' + lives);
+
+          if (lives! >= 5) {
+            clearInterval(interval);
+            console.log('Reset heart container lives is not required');
+          } else {
+            interval = setInterval(async () => {
+              const isPassedTimestamp = (await checkTimestamp(userID))
+                .isPassedTimestamp;
+              if (isPassedTimestamp) {
+                clearInterval(interval);
+                await increaseLives(userID);
+              }
+            }, 10000);
+            console.log('Interval in heart container is running');
+          }
+        }
+      };
+      getHeartLives();
+
+      return () => {
+        clearInterval(interval);
+        // Unsubscribe from the real-time listener when the component unmounts
+        if (unsubscribe) {
+          unsubscribe();
+        }
+      };
+    }, [lives]),
+  );
+
   const color = animationValue.interpolate({
     inputRange: [0, 10, 60, 100],
     outputRange: [
@@ -39,6 +83,7 @@ const HeartContainer = (props: HeartProps) => {
     ],
     extrapolate: 'clamp',
   });
+  console.log('heart container lives: ' + lives);
   return (
     <Animated.View style={[styles.container, {borderColor: color}]}>
       <Icon name="heart" color={Theme.colors.error} size={24} />

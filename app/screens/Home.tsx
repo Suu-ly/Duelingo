@@ -12,9 +12,15 @@ import Theme from '../common/constants/theme.json';
 
 import Constants from '../common/constants/Constants';
 import TopicButton from '../common/TopicButton';
-import {getSectionListData, numberOfCompletedModules} from '../utils/firestore';
+import {
+  checkTimestamp,
+  getLives,
+  getSectionListData,
+  numberOfCompletedModules,
+} from '../utils/firestore';
 import auth from '@react-native-firebase/auth';
 import {useFocusEffect} from '@react-navigation/native';
+import HeartDialog from '../common/HeartDialog';
 
 interface HomeProps {
   route: any;
@@ -26,6 +32,44 @@ interface HomeProps {
 
 const Home = (props: HomeProps) => {
   const {route, navigation, translate, opacity, selectedLanguage} = props;
+
+  //wait for firestore data before loading the homescreen
+  const [isLoading, setIsLoading] = useState(true);
+
+  //set the chinese dataset for the section list
+  const [mandarinResult, setMandarinResult] = useState<
+    | {
+        id: number;
+        title: any;
+        data: string[];
+        backgroundColor: string;
+      }[]
+    | null
+  >(null);
+  //set the malay dataset for the section list
+  const [malayResult, setMalayResult] = useState<
+    | {
+        id: number;
+        title: any;
+        data: string[];
+        backgroundColor: string;
+      }[]
+    | null
+  >(null);
+  //set the number of Completed Chinese Modules from the firestore
+  const [numberOfCompletedChineseModules, setNumberOfCompletedChineseModules] =
+    useState(0);
+  //set the number of Completed Chinese Modules from the firestore
+  const [numberOfCompletedMalayModules, setNumberOfCompletedMalayModules] =
+    useState(0);
+  //set the number of lives from the firestore
+  const [lives, setLives] = useState<number | undefined>(undefined);
+  //Decides whether to show the run out of hearts dialog
+  const [dialogVisible, setDialogVisible] = useState(false);
+  //Set the timestamp text in the heart dialog
+  const [timestampDifference, setTimestampDifference] = useState('');
+
+  let unsubscribe: (() => void) | undefined;
 
   //calculate the index of the topic in the entire language
   const calculateOverallIndex = (
@@ -41,36 +85,12 @@ const Home = (props: HomeProps) => {
     return overallIndex;
   };
 
-  const [isLoading, setIsLoading] = useState(true);
-  const [mandarinResult, setMandarinResult] = useState<
-    | {
-        id: number;
-        title: any;
-        data: string[];
-        backgroundColor: string;
-      }[]
-    | null
-  >(null);
-  const [malayResult, setMalayResult] = useState<
-    | {
-        id: number;
-        title: any;
-        data: string[];
-        backgroundColor: string;
-      }[]
-    | null
-  >(null);
-  const [numberOfCompletedChineseModules, setNumberOfCompletedChineseModules] =
-    useState(0);
-  const [numberOfCompletedMalayModules, setNumberOfCompletedMalayModules] =
-    useState(0);
-
   useEffect(() => {
+    //retrieve the chinese and malay data for the sectionlist and the number of chinese and malay modules from firestore
     const getResult = async () => {
       const user = auth().currentUser;
       if (user) {
         const userID = user.uid;
-
         const [
           mandarinResult,
           malayResult,
@@ -86,6 +106,7 @@ const Home = (props: HomeProps) => {
         setMalayResult(malayResult!);
         setNumberOfCompletedChineseModules(numberOfCompletedChineseModules);
         setNumberOfCompletedMalayModules(numberOfCompletedMalayModules);
+        //when data is retrieved from firestore, set isloading to false and allow homescreen to be displayed
         setIsLoading(false);
       } else {
         console.log('User not signed in');
@@ -93,6 +114,21 @@ const Home = (props: HomeProps) => {
     };
     getResult();
   }, []);
+
+  useEffect(() => {
+    //when heart dialog is made visible, check the time difference between the timestamp when lives = 0 and current time
+    const getTimestampDifference = async () => {
+      const user = auth().currentUser;
+      if (user) {
+        const userID = user.uid;
+        const timestampDifference = (await checkTimestamp(userID))
+          .timeDifference;
+        setTimestampDifference(timestampDifference!);
+        console.log('set Time Difference in Home: ' + timestampDifference);
+      }
+    };
+    getTimestampDifference();
+  }, [dialogVisible]);
 
   useFocusEffect(
     useCallback(() => {
@@ -106,8 +142,22 @@ const Home = (props: HomeProps) => {
         onBackPress,
       );
 
-      return () => subscription.remove();
-    }, []),
+      const getHeartLives = async () => {
+        const user = auth().currentUser;
+        if (user) {
+          const userID = user.uid;
+          const unsubscribe = getLives(userID, setLives);
+          console.log('setting home lives: ' + lives);
+        }
+      };
+
+      getHeartLives();
+
+      return () => {
+        subscription.remove();
+        // Unsubscribe from the real-time listener when the component unmounts
+      };
+    }, [lives]),
   );
 
   return (
@@ -163,6 +213,7 @@ const Home = (props: HomeProps) => {
                   : isCompleted
                   ? 'check-bold'
                   : 'star';
+                console.log('View Home Lives: ' + lives);
                 return (
                   <View style={styles.buttonContainer}>
                     <TopicButton
@@ -172,13 +223,17 @@ const Home = (props: HomeProps) => {
                       icon={icon}
                       textColor={Theme.colors.onSurface}
                       onPress={() => {
-                        navigation.navigate('Quiz', {
-                          language:
-                            selectedLanguage.id == 1 ? 'Chinese' : 'Malay',
-                          module: 'Module' + (section.id + 1),
-                          topic: 'Topic' + (section.data.indexOf(item) + 1),
-                          isLastCompletedTopic: isLastCompletedTopic,
-                        });
+                        if (lives === 0) {
+                          setDialogVisible(true);
+                        } else {
+                          navigation.navigate('Quiz', {
+                            language:
+                              selectedLanguage.id == 1 ? 'Chinese' : 'Malay',
+                            module: 'Module' + (section.id + 1),
+                            topic: 'Topic' + (section.data.indexOf(item) + 1),
+                            isLastCompletedTopic: isLastCompletedTopic,
+                          });
+                        }
                       }}>
                       {item}
                     </TopicButton>
@@ -199,6 +254,11 @@ const Home = (props: HomeProps) => {
             />
           )
         )}
+        <HeartDialog
+          visible={dialogVisible}
+          bodyText={timestampDifference}
+          onDismiss={() => setDialogVisible(false)}
+        />
       </View>
     </Animated.View>
   );

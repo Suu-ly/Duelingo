@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   View,
   StyleSheet,
@@ -13,7 +13,11 @@ import {
   Dialog,
   ActivityIndicator,
 } from 'react-native-paper';
-import {EventArg, NavigationAction} from '@react-navigation/native';
+import {
+  EventArg,
+  NavigationAction,
+  useFocusEffect,
+} from '@react-navigation/native';
 
 import Theme from '../common/constants/theme.json';
 import CustomStatusBar from '../common/CustomStatusBar';
@@ -26,8 +30,10 @@ import QuizHeader from '../common/QuizHeader';
 import QuizFooter from '../common/QuizFooter';
 import useTimeElapsed from '../utils/useTimeElapsed';
 import {getQuiz} from '../utils/database';
-import {getQuestions} from '../utils/firestore';
+import {getLives, resetTimestamp, decreaseLives} from '../utils/firestore';
 import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
+import HeartDialog from '../common/HeartDialog';
 
 interface QuizProps {
   route: any;
@@ -43,6 +49,7 @@ if (Platform.OS === 'android') {
 const Quiz = (props: QuizProps) => {
   const {route, navigation} = props;
   // const language: keyof typeof Questions = route.params.language;
+  // const homeLives = route.params.lives;
   const language = route.params.language;
   const module = route.params.module;
   const topic = route.params.topic;
@@ -55,7 +62,8 @@ const Quiz = (props: QuizProps) => {
   // const [gameFormat, setGameFormat] = useState(0);
   const [questionTotal, setQuestionTotal] = useState(-1);
   const [scoreableQns, setScoreableQns] = useState(0);
-  const [lives, setLives] = useState(5);
+  const [lives, setLives] = useState<number | undefined>(undefined);
+  const [userID, setUserID] = useState<string>('');
 
   //To keep track of the time spent in the quiz
   const {timePassed, stopTimer} = useTimeElapsed(0);
@@ -69,6 +77,10 @@ const Quiz = (props: QuizProps) => {
   const [submit, setSubmit] = useState(false);
   //Decides whether to show the progress won't be saved dialog
   const [dialogVisible, setDialogVisible] = useState(false);
+  //Decides whether to show the heart dialog
+  const [heartDialogVisible, setHeartDialogVisible] = useState(false);
+
+  let unsubscribe: (() => void) | undefined;
 
   const loadQuestions = async () => {
     console.log('Heloo');
@@ -137,6 +149,51 @@ const Quiz = (props: QuizProps) => {
     if (questions.length === 0) loadQuestions();
   });
 
+  useEffect(() => {
+    const getResult = async () => {
+      const user = auth().currentUser;
+      if (user) {
+        const userID = user.uid;
+        setUserID(userID);
+        if (heartDialogVisible) {
+          resetTimestamp(userID);
+        }
+      } else {
+        console.log('User not signed in');
+      }
+    };
+    getResult();
+  }, [heartDialogVisible]);
+
+  useEffect(() => {
+    if (lives === 0) {
+      setHeartDialogVisible(true);
+      console.log('setHeartDialogVisible');
+    }
+  }, [lives]);
+
+  useFocusEffect(
+    useCallback(() => {
+      const getHeartLives = async () => {
+        const user = auth().currentUser;
+        if (user) {
+          const userID = user.uid;
+          const unsubscribe = getLives(userID, setLives);
+          console.log('setting home lives: ' + lives);
+        }
+      };
+
+      getHeartLives();
+
+      return () => {
+        // Unsubscribe from the real-time listener when the component unmounts
+        if (unsubscribe) {
+          unsubscribe();
+        }
+      };
+    }, [lives]),
+  );
+
   const handleSubmit = () => {
     //Animates the diff
     LayoutAnimation.configureNext({
@@ -193,7 +250,10 @@ const Quiz = (props: QuizProps) => {
         }
       } else {
         if (answer !== questions[questionNo - 1].correct_answer) {
-          setLives(lives - 1);
+          setLives(lives! - 1);
+          console.log('setLives to: ' + lives);
+          decreaseLives(userID);
+          console.log('completed setting lives to : ' + lives);
         }
       }
     }
@@ -211,7 +271,7 @@ const Quiz = (props: QuizProps) => {
           <QuizHeader
             questionsRemaining={questionTotal - questionNo}
             totalQuestions={questionTotal}
-            singleplayer={{lives: lives}}
+            singleplayer={{lives: lives!}}
             onPress={() => setDialogVisible(true)}
           />
           <View style={styles.questionContainer}>
@@ -267,6 +327,14 @@ const Quiz = (props: QuizProps) => {
         </>
       )}
 
+      <HeartDialog
+        visible={heartDialogVisible}
+        bodyText="The next heart will be in 10 minutes."
+        onDismiss={() => {
+          setHeartDialogVisible(false);
+          navigation.navigate('Home');
+        }}
+      />
       <Portal>
         <Dialog
           visible={dialogVisible}
