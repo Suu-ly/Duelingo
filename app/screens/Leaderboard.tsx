@@ -22,12 +22,15 @@ interface LeaderboardProps {
   navigation: any;
   translate: Animated.Value;
 }
+type numUser = number;
+const limit = 11;
 
 const Leaderboard = (props: LeaderboardProps) => {
   const {route, navigation, translate} = props;
   const [leaderboardList, setLeaderboardList] = useState<
     FirebaseFirestoreTypes.DocumentData[] | null
   >(null);
+  const [numberUsers, setnumUsers] = useState();
   //color change 1 gold 2 sliver 3 bronze, 4 onwards black
 
   const getleaderboardList = async () => {
@@ -43,11 +46,18 @@ const Leaderboard = (props: LeaderboardProps) => {
       getleaderboardList();
     }, []),
   );
-
-  const getIndex = () => {
-    for (let i = 0; i < numUsers; i++) {}
-    return i;
+  const getStyleForIndex = (i: numUser) => {
+    if (i === 0) {
+      return styles.postion1Text;
+    } else if (i === 1) {
+      return styles.postion2Text;
+    } else if (i === 2) {
+      return styles.postion3Text;
+    } else {
+      return styles.postionText;
+    }
   };
+  const pageNumber = () => {};
   return (
     <Animated.View
       style={[styles.mainContainer, {transform: [{translateY: translate}]}]}>
@@ -62,10 +72,13 @@ const Leaderboard = (props: LeaderboardProps) => {
       <View style={styles.cardContainer}>
         <FlatList
           data={leaderboardList}
-          renderItem={({item}) => (
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({item, index}) => (
             <View style={styles.friendCardscontainer}>
               <View style={styles.cardContentcontainer}>
-                <View style={styles.numContainer}></View>
+                <Text key={index} style={getStyleForIndex(index)}>
+                  {index + 1}
+                </Text>
                 <Avatar index={item.avatar} style={styles.avatarpic} />
                 <View style={styles.cardItems}>
                   <Text style={styles.name}>{item.username}</Text>
@@ -74,7 +87,6 @@ const Leaderboard = (props: LeaderboardProps) => {
               </View>
             </View>
           )}
-          keyExtractor={item => item.id}
           onEndReached={onEndReached}
         />
       </View>
@@ -98,6 +110,7 @@ const styles = StyleSheet.create({
   cardContainer: {
     gap: Constants.largeGap,
     paddingHorizontal: Constants.edgePadding,
+    height: 500,
   },
   friendCardscontainer: {
     flexDirection: 'row',
@@ -112,7 +125,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFF', // Replaces background: var(--light-surface-container-elevation-0, #FFF)
   },
   postion1Text: {
-    width: 14,
+    width: 28,
     flexShrink: 0,
     color: '#E58C06',
     textAlign: 'center',
@@ -124,7 +137,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.15,
   },
   postion2Text: {
-    width: 14,
+    width: 28,
     flexShrink: 0,
     color: '#C0C0C0',
     textAlign: 'center',
@@ -136,7 +149,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.15,
   },
   postion3Text: {
-    width: 14,
+    width: 28,
     flexShrink: 0,
     color: '#CD7F32',
     textAlign: 'center',
@@ -148,7 +161,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.15,
   },
   postionText: {
-    width: 14,
+    width: 28,
     flexShrink: 0,
     color: '#000000',
     textAlign: 'center',
@@ -196,18 +209,4 @@ const styles = StyleSheet.create({
     lineHeight: 24, // 150% line-height
     letterSpacing: 0.5,
   },
-  numContainer: {},
-  nameexpContainer: {},
 });
-
-const getStyleForIndex = index => {
-  if (index === 0) {
-    return styles.postion1Text;
-  } else if (index === 1) {
-    return styles.postion2Text;
-  } else if (index === 2) {
-    return styles.postion3Text;
-  } else {
-    return styles.postionText;
-  }
-};
