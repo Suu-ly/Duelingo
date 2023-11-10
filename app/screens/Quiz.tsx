@@ -211,7 +211,6 @@ const Quiz = (props: QuizProps) => {
               <TeachingButtons
                 question={questions[questionNo - 1]}
                 backgroundColor={styles.mainContainer.backgroundColor}
-                onSelect={ans => setAnswer(ans)}
               />
             )}
           </View>

@@ -8,11 +8,10 @@ import Tts from 'react-native-tts';
 interface TeachingButtonProps {
   question: Record<string, any>;
   backgroundColor: string;
-  onSelect: (callback: string) => void;
 }
 
 const TeachingButtons = (props: TeachingButtonProps) => {
-  const {question, backgroundColor, onSelect} = props;
+  const {question, backgroundColor} = props;
 
   const containsEnglish = (text: string): boolean => {
     // Regular expression to match English characters
@@ -36,7 +35,6 @@ const TeachingButtons = (props: TeachingButtonProps) => {
   };
 
   const selectHandler = (option: string) => {
-    onSelect(option);
     readText(option);
   };
 

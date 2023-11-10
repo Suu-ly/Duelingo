@@ -1,4 +1,4 @@
-import {useCallback, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {
   View,
   StyleSheet,
@@ -6,18 +6,18 @@ import {
   ScrollView,
   TouchableOpacity,
   Animated,
-  BackHandler,
 } from 'react-native';
 import {
   Appbar,
   Button,
   Dialog,
+  HelperText,
   IconButton,
   Portal,
   Text,
   TextInput,
 } from 'react-native-paper';
-import {useFocusEffect} from '@react-navigation/native';
+import {EventArg, NavigationAction} from '@react-navigation/native';
 
 import Theme from '../common/constants/theme.json';
 import Constants from '../common/constants/Constants';
@@ -42,31 +42,29 @@ const EditProfile = (props: EditProfileProps) => {
 
   const [visible, setVisible] = useState(false);
   const [dialogVisible, setDialogVisible] = useState(false);
+  const hasChanges =
+    username !== data.username ||
+    displayName !== data.displayName ||
+    avatar !== data.avatar;
 
   const pics = Array(15).fill(0);
 
-  useFocusEffect(
-    useCallback(() => {
-      const subscription = BackHandler.addEventListener(
-        'hardwareBackPress',
-        handleBack,
-      );
-      return () => subscription.remove();
-    }, [username, displayName, avatar]),
+  useEffect(
+    () =>
+      navigation.addListener(
+        'beforeRemove',
+        (e: EventArg<'beforeRemove', true, {action: NavigationAction}>) => {
+          if (!hasChanges || e.data.action.type !== 'GO_BACK') {
+            return;
+          }
+          // Prevent default behavior of leaving the screen
+          e.preventDefault();
+          // Prompt the user before leaving the screen
+          setDialogVisible(true);
+        },
+      ),
+    [navigation, hasChanges],
   );
-
-  const handleBack = () => {
-    if (
-      username !== data.username ||
-      displayName !== data.displayName ||
-      avatar !== data.avatar
-    ) {
-      setDialogVisible(true);
-    } else {
-      navigation.goBack();
-    }
-    return true;
-  };
 
   return (
     <Animated.View
@@ -75,7 +73,7 @@ const EditProfile = (props: EditProfileProps) => {
         {transform: [{translateY: translate}], opacity: opacity},
       ]}>
       <Appbar.Header mode="large">
-        <Appbar.BackAction onPress={handleBack} />
+        <Appbar.BackAction onPress={() => navigation.goBack()} />
         <Appbar.Content title="Edit Profile" />
       </Appbar.Header>
       <View style={styles.contentContainer}>
@@ -89,18 +87,25 @@ const EditProfile = (props: EditProfileProps) => {
               Change
             </Button>
           </View>
+          <View style={styles.fullWidth}>
+            <TextInput
+              style={{backgroundColor: Theme.colors.surface}}
+              mode="outlined"
+              label="Username"
+              placeholder="Set username"
+              value={username}
+              activeOutlineColor={Theme.colors.primary}
+              autoCapitalize="none"
+              onChangeText={name => setUsername(name)}
+            />
+            {error && (
+              <HelperText type="error" visible={true}>
+                Invalid email address format.
+              </HelperText>
+            )}
+          </View>
           <TextInput
-            style={{backgroundColor: Theme.colors.surface, width: '100%'}}
-            mode="outlined"
-            label="Username"
-            placeholder="Set username"
-            value={username}
-            activeOutlineColor={Theme.colors.primary}
-            autoCapitalize="none"
-            onChangeText={name => setUsername(name)}
-          />
-          <TextInput
-            style={{backgroundColor: Theme.colors.surface, width: '100%'}}
+            style={[styles.fullWidth, {backgroundColor: Theme.colors.surface}]}
             mode="outlined"
             label="Display Name"
             placeholder="Set username"
@@ -117,7 +122,7 @@ const EditProfile = (props: EditProfileProps) => {
               borderColor={Theme.colors.outline}
               stretch={true}
               filled={false}
-              onPress={handleBack}
+              onPress={() => navigation.goBack()}
               textColor={Theme.colors.onSurface}>
               Cancel
             </DuoButton>
@@ -128,13 +133,7 @@ const EditProfile = (props: EditProfileProps) => {
               backgroundColor={Theme.colors.primary}
               backgroundDark={Theme.colors.primaryDark}
               stretch={true}
-              disabled={
-                !(
-                  username !== data.username ||
-                  displayName !== data.displayName ||
-                  avatar !== data.avatar
-                )
-              }
+              disabled={!hasChanges}
               onPress={() => console.log('Pressed')}
               textColor={Theme.colors.onPrimary}>
               Save Changes
@@ -162,11 +161,9 @@ const EditProfile = (props: EditProfileProps) => {
           <View style={styles.picsContainer}>
             {pics.map((data, index) => {
               return (
-                <View
-                  key={index}
-                  style={[styles.picContainer, {width: '33.3333%'}]}>
+                <View key={index} style={[styles.picContainer]}>
                   <TouchableOpacity
-                    style={styles.button}
+                    style={styles.avatarButton}
                     onPress={() => {
                       setVisible(false);
                       setAvatar(index);
@@ -202,7 +199,7 @@ const EditProfile = (props: EditProfileProps) => {
               mode="text"
               onPress={() => {
                 setDialogVisible(false);
-                navigation.goBack();
+                navigation.pop();
               }}>
               Leave
             </Button>
@@ -265,12 +262,13 @@ const styles = StyleSheet.create({
     paddingBottom: Constants.edgePadding,
   },
   picContainer: {
+    width: '33.33333333333%',
     padding: Constants.defaultGap / 2,
     justifyContent: 'center',
     alignItems: 'center',
     aspectRatio: 1,
   },
-  button: {
+  avatarButton: {
     flex: 1,
     width: '100%',
     height: '100%',
@@ -283,5 +281,8 @@ const styles = StyleSheet.create({
   },
   title: {
     textAlign: 'center',
+  },
+  fullWidth: {
+    width: '100%',
   },
 });
