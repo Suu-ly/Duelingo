@@ -6,6 +6,7 @@ import {
   Animated,
   BackHandler,
   ImageSourcePropType,
+  LogBox,
 } from 'react-native';
 import {ActivityIndicator, Text} from 'react-native-paper';
 import Theme from '../common/constants/theme.json';
@@ -15,6 +16,8 @@ import TopicButton from '../common/TopicButton';
 import {getSectionListData, numberOfCompletedModules} from '../utils/firestore';
 import auth from '@react-native-firebase/auth';
 import {useFocusEffect} from '@react-navigation/native';
+
+LogBox.ignoreLogs(['new NativeEventEmitter()']);
 
 interface HomeProps {
   route: any;
