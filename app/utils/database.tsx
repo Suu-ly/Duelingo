@@ -116,17 +116,19 @@ export const getFriendData = async () => {
   const friendList = await getFriendList();
   if (friendList.length > 0) {
     let friendData: FirebaseFirestoreTypes.DocumentData[] = [];
-    await firestore()
-      .collection('Users')
-      .orderBy('exp', 'desc')
-      .where('uid', 'in', friendList)
-      .get()
-      .then(querySnapshot => {
-        querySnapshot.forEach(documentSnapshot => {
-          friendData.push(documentSnapshot.data());
+    while (friendList.length) {
+      const batch = friendList.splice(0, 10);
+      await firestore()
+        .collection('Users')
+        .where('uid', 'in', batch)
+        .get()
+        .then(querySnapshot => {
+          querySnapshot.forEach(documentSnapshot => {
+            friendData.push(documentSnapshot.data());
+          });
         });
-      });
-    return friendData;
+    }
+    return friendData.sort((a, b) => b.exp - a.exp);
   }
   return [];
 };
