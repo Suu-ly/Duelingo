@@ -219,12 +219,20 @@ export const checkTimestamp = async (userID: string) => {
         (currentTime.toDate().getTime() - timestamp.toDate().getTime()) / 1000,
       );
       //currently putting the reset time interval to be 2 minute
-      const oneHourInSeconds = 120;
-      const timeLeft = oneHourInSeconds - differenceInSeconds;
+      const twoMinutesInSeconds = 120;
+      const timeLeft = twoMinutesInSeconds - differenceInSeconds;
       const minutes = Math.floor(timeLeft / 60);
       const seconds = timeLeft % 60;
       //check if difference between current time and timestamp is more than reset time interval
-      isPassedTimestamp = differenceInSeconds >= oneHourInSeconds;
+      isPassedTimestamp = differenceInSeconds >= twoMinutesInSeconds;
+      console.log(
+        'firestore checkTimestamp is running -> isPassedTimestamp: ' +
+          isPassedTimestamp +
+          ', difference in Seconds: ' +
+          differenceInSeconds +
+          ', twoMinutesInSecond: ' +
+          twoMinutesInSeconds,
+      );
       //set the bodyText for the heart dialog
       timeDifference = `The next heart will reset in `;
       minutes > 0
@@ -250,8 +258,10 @@ export const increaseLives = async (userID: string) => {
       const differenceInSeconds = Math.floor(
         (currentTime.toDate().getTime() - timestamp.toDate().getTime()) / 1000,
       );
-      const oneHourInSeconds = 120;
-      const heartsToRefill = Math.floor(differenceInSeconds / oneHourInSeconds);
+      const twoMinutesInSeconds = 120;
+      const heartsToRefill = Math.floor(
+        differenceInSeconds / twoMinutesInSeconds,
+      );
       await firestore()
         .collection('Users')
         .doc(userID)

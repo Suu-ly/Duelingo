@@ -85,6 +85,10 @@ const Home = (props: HomeProps) => {
     return overallIndex;
   };
 
+  const handleTapOutside = () => {
+    setDialogVisible(false);
+  };
+
   useEffect(() => {
     //retrieve the chinese and malay data for the sectionlist and the number of chinese and malay modules from firestore
     const getResult = async () => {
@@ -254,12 +258,15 @@ const Home = (props: HomeProps) => {
             />
           )
         )}
-        <HeartDialog
-          visible={dialogVisible}
-          bodyText={timestampDifference}
-          onDismiss={() => setDialogVisible(false)}
-        />
       </View>
+      <HeartDialog
+        visible={dialogVisible}
+        dismissable={true}
+        dismissableBackButton={true}
+        bodyText={timestampDifference}
+        buttonText="Ok"
+        onDismiss={() => setDialogVisible(false)}
+      />
     </Animated.View>
   );
 };

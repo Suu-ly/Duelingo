@@ -298,13 +298,25 @@ const Quiz = (props: QuizProps) => {
           </View>
 
           {questions[questionNo - 1].gameFormat === 1 ? (
-            <QuizFooter
-              correct={answer === questions[questionNo - 1].correct_answer}
-              explanation={questions[questionNo - 1].explanation}
-              selected={answer !== ''}
-              submit={submit}
-              handleSubmit={handleSubmit}
-            />
+            heartDialogVisible ? (
+              <HeartDialog
+                visible={heartDialogVisible}
+                bodyText="The next heart will be in 2 minutes."
+                buttonText="Back to Home"
+                onDismiss={() => {
+                  setHeartDialogVisible(false);
+                  navigation.navigate('Home');
+                }}
+              />
+            ) : (
+              <QuizFooter
+                correct={answer === questions[questionNo - 1].correct_answer}
+                explanation={questions[questionNo - 1].explanation}
+                selected={answer !== ''}
+                submit={submit}
+                handleSubmit={handleSubmit}
+              />
+            )
           ) : (
             <View style={styles.bottomContainer}>
               <DuoButton
@@ -327,14 +339,6 @@ const Quiz = (props: QuizProps) => {
         </>
       )}
 
-      <HeartDialog
-        visible={heartDialogVisible}
-        bodyText="The next heart will be in 10 minutes."
-        onDismiss={() => {
-          setHeartDialogVisible(false);
-          navigation.navigate('Home');
-        }}
-      />
       <Portal>
         <Dialog
           visible={dialogVisible}
