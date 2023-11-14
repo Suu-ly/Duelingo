@@ -1,57 +1,5 @@
-import firestore from '@react-native-firebase/firestore';
+import firestore, {firebase} from '@react-native-firebase/firestore';
 import TopicColors from '../common/constants/TopicColors';
-
-// To get all modulesNames from selected language
-export const getModules = async (language: string) => {
-  await firestore()
-    .collection('Quiz')
-    .doc(language)
-    .collection('Modules')
-    .get()
-    .then(querySnapshot => {
-      querySnapshot.forEach(documentSnapshot => {
-        console.log(documentSnapshot.data().moduleName);
-      });
-    });
-};
-
-//To get all topics from selected module and language
-export const getTopics = async (language: string, module: string) => {
-  await firestore()
-    .collection('Quiz')
-    .doc(language)
-    .collection('Modules')
-    .doc(module)
-    .collection('Topics')
-    .get()
-    .then(querySnapshot => {
-      querySnapshot.forEach(documentSnapshot => {
-        console.log(documentSnapshot.data().topicName);
-      });
-    });
-};
-
-// To get selected question of selected topic, module and language
-export const getQuestions = (
-  language: string,
-  module: string,
-  topic: string,
-  questionNo: number,
-) => {
-  firestore()
-    .collection('Quiz')
-    .doc(language)
-    .collection('Modules')
-    .doc(module)
-    .collection('Topics')
-    .doc(topic)
-    .collection('Questions')
-    .doc('Question' + questionNo)
-    .get()
-    .then(documentSnapshot => {
-      documentSnapshot.data();
-    });
-};
 
 //get data in the form desired for sectionlist
 export const getSectionListData = async (language: string) => {
@@ -128,5 +76,172 @@ export const numberOfCompletedModules = async (
     }
   } catch (error) {
     console.error('Error getting user data to Firestore:', error);
+  }
+};
+
+export const updatedNumberOfCompletedModules = async (
+  userID: string,
+  language: string,
+) => {
+  try {
+    firestore()
+      .collection('Users')
+      .doc(userID)
+      .update({[language]: firebase.firestore.FieldValue.increment(1)})
+      .then(() => {
+        console.log(userID);
+        console.log('number of completed ' + language + ' modules updated!');
+      });
+  } catch (error) {
+    console.error(
+      'Error updating number of completed Modules to Firestore:',
+      error,
+    );
+  }
+};
+
+// export const getLives = async (userID: string) => {
+//   try {
+//     const documentSnapshot = await firestore()
+//       .collection('Users')
+//       .doc(userID)
+//       .get();
+
+//     var lives = 0;
+//     if (documentSnapshot.exists) {
+//       lives = (documentSnapshot.data()?.hearts || {}).amount || 0;
+//     }
+//     console.log('getLives: ' + lives);
+//     // await firestore()
+//     //   .collection('Users')
+//     //   .doc(userID)
+//     //   .onSnapshot(doc => {
+//     //     if (doc.exists) {
+//     //       const lives = doc.data()?.hearts?.amount || 0;
+//     //       console.log('firestore getting lives: ' + lives);
+//     //     }
+//     //   });
+//     console.log('firestore FINISH getting lives: ' + lives);
+//     return lives;
+//   } catch (error) {
+//     console.error('Error getting lives data from Firestore:', error);
+//   }
+// };
+
+export const getLives = (userID: string, callback: (lives: number) => void) => {
+  const userRef = firestore().collection('Users').doc(userID);
+
+  // Set up a real-time listener
+  const unsubscribe = userRef.onSnapshot(documentSnapshot => {
+    var lives = 0;
+    if (documentSnapshot.exists) {
+      lives = (documentSnapshot.data()?.hearts || {}).amount || 0;
+    }
+
+    // Call the callback function with the updated lives value
+    callback(lives);
+  });
+
+  // Return the unsubscribe function to stop the listener when needed
+  return unsubscribe;
+};
+
+export const decreaseLives = async (userID: string) => {
+  try {
+    await firestore()
+      .collection('Users')
+      .doc(userID)
+      .update({'hearts.amount': firebase.firestore.FieldValue.increment(-1)});
+  } catch (error) {
+    console.error('Error updating lives: ', error);
+  }
+};
+
+// export const resetTimestamp = async (userID: string) => {
+//   const currentTime = Date.now();
+//   const userDoc = await firestore().collection('Users').doc(userID).get();
+//   if (userDoc.exists) {
+//     await firestore()
+//       .collection('Users')
+//       .doc(userID)
+//       .update({'hearts.timestamp': currentTime});
+//   }
+// };
+
+// export const resetLives = async (userID: string) => {
+//   const currentTime = firebase.firestore.Timestamp.now();
+//   const userDoc = await firestore().collection('Users').doc(userID).get();
+
+//   if (userDoc.exists) {
+//     const userData = userDoc.data()!;
+//     if (userData.hearts) {
+//       const timestamp = userData.hearts.timestamp;
+//       const differenceInSeconds = Math.floor(
+//         (currentTime.toDate().getTime() - timestamp.toDate().getTime()) / 1000,
+//       );
+//       // const oneHourInSeconds = 3600;
+//       const oneHourInSeconds = 60;
+
+//       console.log(
+//         'Checking whether current time is 1 hour more than timestamp',
+//       );
+//       if (differenceInSeconds >= oneHourInSeconds) {
+//         await firestore().collection('Users').doc(userID).update({
+//           'hearts.timestamp': currentTime,
+//           'hearts.amount': 2,
+//         });
+//         console.log('reset Lives!');
+//       }
+//     }
+//   }
+// };
+
+export const checkTimestamp = async (userID: string) => {
+  const currentTime = Date.now();
+  const userDoc = await firestore().collection('Users').doc(userID).get();
+  let isPassedTimestamp = false;
+  let timeLeft = 0;
+  let userData = userDoc.data();
+
+  if (userData) {
+    if (userData.hearts) {
+      const timestamp = userData.hearts.timestamp;
+      const differenceInSeconds = Math.floor((currentTime - timestamp) / 1000);
+      //currently putting the reset time interval to be 2 minute
+      const twoMinutesInSeconds = 120;
+      timeLeft = twoMinutesInSeconds - differenceInSeconds;
+      //check if difference between current time and timestamp is more than reset time interval
+      isPassedTimestamp = differenceInSeconds >= twoMinutesInSeconds;
+    }
+  }
+  return {isPassedTimestamp, timeLeft};
+};
+
+//increase lives based on when user last heart refill
+export const increaseLives = async (userID: string) => {
+  const currentTime = Date.now();
+  const userDoc = await firestore().collection('Users').doc(userID).get();
+
+  if (userDoc.exists) {
+    const userData = userDoc.data()!;
+    if (userData.hearts) {
+      const timestamp = userData.hearts.timestamp;
+      const lives = userData.hearts.amount;
+      const differenceInSeconds = Math.floor((currentTime - timestamp) / 1000);
+      const twoMinutesInSeconds = 120;
+      const heartsToRefill = Math.floor(
+        differenceInSeconds / twoMinutesInSeconds,
+      );
+      await firestore()
+        .collection('Users')
+        .doc(userID)
+        .update({
+          'hearts.timestamp': currentTime,
+          //if lives + heartsToRefill is more or equal to five, lives should increased to 5.
+          'hearts.amount': firebase.firestore.FieldValue.increment(
+            lives + heartsToRefill >= 5 ? 5 - lives : heartsToRefill,
+          ),
+        });
+    }
   }
 };

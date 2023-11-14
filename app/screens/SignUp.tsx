@@ -96,7 +96,6 @@ const SignUp = (props: SignUpProps) => {
     setIsLoading(true);
     let exists = await checkUsernameExists(username);
     setUsernameUnavailable(exists);
-    console.log(exists);
     setIsLoading(false);
   };
 

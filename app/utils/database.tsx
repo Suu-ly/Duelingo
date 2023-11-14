@@ -20,7 +20,7 @@ export const createUser = (
       exp: 0,
       hearts: {
         amount: 5,
-        timestamp: 0,
+        timestamp: Date.now(),
       },
       chinese: 0,
       malay: 0,

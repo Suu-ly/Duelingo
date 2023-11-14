@@ -47,6 +47,7 @@ const TabNavigator = () => {
     value: string;
     icon: ImageSourcePropType;
   }>(languageDropDown[0]);
+
   const onSelect = (item: any) => {
     setSelectedItem(item);
   };
@@ -87,7 +88,7 @@ const TabNavigator = () => {
             item={selectedItem}
             onSelect={onSelect}
           />
-          <HeartContainer lives={5} />
+          <HeartContainer animate={false} />
         </View>
       </>
     );

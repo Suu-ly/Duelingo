@@ -10,7 +10,7 @@ interface QuizHeaderProps {
   totalQuestions?: number;
   questionsRemaining: number;
   onPress: () => void;
-  singleplayer?: {lives: number};
+  singleplayer?: boolean;
   multiplayer?: {onEndTime: () => void; timer: boolean};
 }
 
@@ -43,7 +43,7 @@ const QuizHeader = (props: QuizHeaderProps) => {
           />
         </View>
       )}
-      {singleplayer && <HeartContainer lives={singleplayer.lives} />}
+      {singleplayer && <HeartContainer />}
       {multiplayer && (
         <>
           {multiplayer.timer ? (

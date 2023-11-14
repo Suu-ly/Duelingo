@@ -114,7 +114,6 @@ export default QuizFooter;
 
 const styles = StyleSheet.create({
   bottomContainer: {
-    flex: 1,
     justifyContent: 'flex-end',
   },
   innerBottomContainer: {

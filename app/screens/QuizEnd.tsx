@@ -1,12 +1,14 @@
 import {View, StyleSheet, Animated, Easing, BackHandler} from 'react-native';
 import {Text} from 'react-native-paper';
 import {CountUp} from 'use-count-up';
-import {useCallback, useRef} from 'react';
+import React, {useCallback, useEffect, useRef} from 'react';
 
 import Theme from '../common/constants/theme.json';
 import CustomStatusBar from '../common/CustomStatusBar';
 import Constants from '../common/constants/Constants';
 import DuoButton from '../common/DuoButton';
+import {updatedNumberOfCompletedModules} from '../utils/firestore';
+import auth from '@react-native-firebase/auth';
 import {useFocusEffect} from '@react-navigation/native';
 
 interface QuizEndProps {
@@ -20,6 +22,8 @@ const QuizEnd = (props: QuizEndProps) => {
   const timeTaken = route.params.timeElapsed;
   const score = route.params.score;
   const totalScoreableQuestions = route.params.totalScoreableQuestions;
+  const isLastCompletedTopic = route.params.isLastCompletedTopic;
+  const language = route.params.language;
 
   const animationValue = useRef(new Animated.Value(0)).current;
 
@@ -27,6 +31,19 @@ const QuizEnd = (props: QuizEndProps) => {
     inputRange: [20, 50, 80],
     outputRange: [1, 1.2, 1],
     extrapolate: 'clamp',
+  });
+
+  useEffect(() => {
+    const setUpdatedNumberOfCompletedModules = async () => {
+      const user = auth().currentUser;
+      if (user && isLastCompletedTopic) {
+        updatedNumberOfCompletedModules(
+          user.uid,
+          language === 'Chinese' ? 'chinese' : 'malay',
+        );
+      }
+    };
+    setUpdatedNumberOfCompletedModules();
   });
 
   useFocusEffect(
