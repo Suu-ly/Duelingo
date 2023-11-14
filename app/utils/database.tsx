@@ -193,3 +193,33 @@ export const getMultiplayerQuestions = async (
     });
   return questionBank;
 };
+export const getallUserData = async () => {
+  let allUserdata: string[] = [];
+  await firestore()
+    .collection('Users')
+    .get()
+    .then(querySnapshot => {
+      querySnapshot.forEach(documentSnapshot => {
+        allUserdata = [...allUserdata, documentSnapshot.id];
+      });
+    });
+  return allUserdata;
+};
+export const getLeaderboardData = async () => {
+  let leaderboardData: FirebaseFirestoreTypes.DocumentData[] = [];
+  await firestore()
+    .collection('Users')
+    .orderBy('exp', 'desc')
+    .limit(50)
+    .get()
+    .then(querySnapshot =>
+      querySnapshot.forEach(documentSnapshot => {
+        leaderboardData.push(documentSnapshot.data());
+      }),
+    );
+  return leaderboardData;
+};
+
+export const numUsers = async () => {
+  await firestore().collection('Users').count();
+};
