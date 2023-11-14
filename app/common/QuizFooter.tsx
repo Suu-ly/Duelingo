@@ -66,19 +66,15 @@ const QuizFooter = (props: QuizFooterProps) => {
                 }>
                 Explanation:
               </Text>
-              <ScrollView
-                style={styles.explanationScroll}
-                showsHorizontalScrollIndicator={true}>
-                <Text
-                  variant="bodyLarge"
-                  style={
-                    correct
-                      ? {color: Theme.colors.onSecondaryContainer}
-                      : {color: Theme.colors.onErrorContainer}
-                  }>
-                  {explanation}
-                </Text>
-              </ScrollView>
+              <Text
+                variant="bodyLarge"
+                style={
+                  correct
+                    ? {color: Theme.colors.onSecondaryContainer}
+                    : {color: Theme.colors.onErrorContainer}
+                }>
+                {explanation}
+              </Text>
             </View>
           </View>
         )}
@@ -130,7 +126,6 @@ const styles = StyleSheet.create({
   },
   submitContainer: {
     gap: Constants.mediumGap,
-    flexShrink: 1,
   },
   rowContainer: {
     flexDirection: 'row',
@@ -139,10 +134,5 @@ const styles = StyleSheet.create({
   },
   explanation: {
     gap: Constants.smallGap,
-    flexShrink: 1,
-  },
-  explanationScroll: {
-    flexShrink: 1,
-    minHeight: 24 * 1.6,
   },
 });

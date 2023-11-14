@@ -5,6 +5,7 @@ import {
   LayoutAnimation,
   UIManager,
   Platform,
+  ScrollView,
 } from 'react-native';
 import {
   Button,
@@ -50,6 +51,7 @@ const Multiplayer = (props: MultiplayerProps) => {
   const [playerData, setPlayerData] = useState<
     FirebaseFirestoreTypes.DocumentData[]
   >([]);
+  const [oppName, setOppName] = useState('');
   //Remaining number of questions, used to select the question
   const [remaining, setRemaining] = useState(5);
   const language = route.params.language;
@@ -141,11 +143,11 @@ const Multiplayer = (props: MultiplayerProps) => {
 
   const getDisplayName = (
     userId: string,
-    ownName: boolean,
     data: FirebaseFirestoreTypes.DocumentData[],
   ) => {
-    if (data[0].uid === userId && ownName) return data[0].displayName;
-    return data[1].displayName;
+    if (data[0].uid === userId) {
+      setOppName(data[1].displayName);
+    }
   };
 
   //Gets the quiz questions from database
@@ -366,6 +368,7 @@ const Multiplayer = (props: MultiplayerProps) => {
           if (snapshot.val()) {
             tempData = await getUsersData(Object.keys(snapshot.val()));
             setPlayerData(tempData);
+            getDisplayName(userId, tempData);
           }
         });
     }
@@ -548,10 +551,7 @@ const Multiplayer = (props: MultiplayerProps) => {
       </Portal>
       <RequestDialogs
         requestActive={rematchRequest}
-        requestText={
-          getDisplayName(userId, false, playerData) +
-          ' wants a rematch! Go again?'
-        }
+        requestText={oppName + ' wants a rematch! Go again?'}
         requestActiveAccept={() => {
           database()
             .ref('/games/' + gameId)
@@ -604,85 +604,59 @@ const Multiplayer = (props: MultiplayerProps) => {
             }}
             onPress={() => setDialogVisible(true)}
           />
-          {!start && isLoading && playerData.length === 0 ? (
-            <View style={styles.loadingScreen}>
-              <ActivityIndicator />
-              <Text
-                variant="bodyMedium"
-                style={{color: Theme.colors.onSurfaceVariant}}>
-                Loading game data...
-              </Text>
-            </View>
-          ) : !start ? (
-            <View style={styles.entryScreen}>
-              <Text variant="headlineSmall">
-                {language.charAt(0).toUpperCase() + language.slice(1)}:{' '}
-                {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}
-              </Text>
-              <MultiplayerPlayers
-                data={playerData}
-                userId={userId}
-                endPage={false}
-              />
-              <Text
-                variant="bodyMedium"
-                style={{color: Theme.colors.onSurfaceVariant}}>
-                {secondsLeft === 0
-                  ? 'Waiting for both players to be ready...'
-                  : 'Get ready! Duel will begin in ' + secondsLeft + 's...'}
-              </Text>
-            </View>
-          ) : isPlaying && !submit ? (
-            <>
-              <View style={styles.questionContainer}>
-                <Text variant={'headlineSmall'}>
-                  {parseQuestion(question.question, 'header')}
+          <ScrollView
+            style={styles.scroll}
+            contentContainerStyle={{flexGrow: 1}}
+            showsVerticalScrollIndicator={false}>
+            {!start && isLoading && playerData.length === 0 ? (
+              <View style={styles.loadingScreen}>
+                <ActivityIndicator />
+                <Text
+                  variant="bodyMedium"
+                  style={{color: Theme.colors.onSurfaceVariant}}>
+                  Loading game data...
                 </Text>
-                {parseQuestion(question.question, 'box') && (
-                  <View style={styles.innerContainer}>
-                    <Text variant={'headlineSmall'}>
-                      {parseQuestion(question.question, 'box')}
-                    </Text>
-                  </View>
-                )}
-                <QuizButtons
-                  question={question}
-                  backgroundColor={styles.mainContainer.backgroundColor}
-                  reveal={submit}
-                  selected={answer}
-                  onSelect={ans => setAnswer(ans)}
-                />
               </View>
-              <QuizFooter
-                correct={answer === question.correct_answer}
-                explanation={question.explanation}
-                selected={answer !== ''}
-                submit={submit}
-                handleSubmit={handleSubmit}
-                multiplayer={true}
-              />
-            </>
-          ) : isPlaying && submit ? (
-            <View style={styles.loadingScreen}>
-              <ActivityIndicator />
-              <Text
-                variant="bodyMedium"
-                style={{color: Theme.colors.onSurfaceVariant}}>
-                Waiting for opponent to submit an answer...
-              </Text>
-            </View>
-          ) : (
-            !isLoading && (
+            ) : !start ? (
+              <View style={styles.entryScreen}>
+                <Text variant="headlineSmall">
+                  {language.charAt(0).toUpperCase() + language.slice(1)}:{' '}
+                  {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}
+                </Text>
+                <MultiplayerPlayers
+                  data={playerData}
+                  userId={userId}
+                  endPage={false}
+                />
+                <Text
+                  variant="bodyMedium"
+                  style={{color: Theme.colors.onSurfaceVariant}}>
+                  {secondsLeft === 0
+                    ? 'Waiting for both players to be ready...'
+                    : 'Get ready! Duel will begin in ' + secondsLeft + 's...'}
+                </Text>
+              </View>
+            ) : isPlaying && !submit ? (
               <>
-                {points.length !== 0 && (
-                  <MultiplayerQuizStandings
-                    points={points}
-                    oldPoints={oldPoints}
-                    data={playerData}
-                    userId={userId}
-                    secondsLeft={secondsLeft}
+                <View style={styles.questionContainer}>
+                  <Text variant={'headlineSmall'}>
+                    {parseQuestion(question.question, 'header')}
+                  </Text>
+                  {parseQuestion(question.question, 'box') && (
+                    <View style={styles.innerContainer}>
+                      <Text variant={'headlineSmall'}>
+                        {parseQuestion(question.question, 'box')}
+                      </Text>
+                    </View>
+                  )}
+                  <QuizButtons
+                    question={question}
+                    backgroundColor={styles.mainContainer.backgroundColor}
+                    reveal={submit}
+                    selected={answer}
+                    onSelect={ans => setAnswer(ans)}
                   />
-                )}
+                </View>
                 <QuizFooter
                   correct={answer === question.correct_answer}
                   explanation={question.explanation}
@@ -692,8 +666,39 @@ const Multiplayer = (props: MultiplayerProps) => {
                   multiplayer={true}
                 />
               </>
-            )
-          )}
+            ) : isPlaying && submit ? (
+              <View style={styles.loadingScreen}>
+                <ActivityIndicator />
+                <Text
+                  variant="bodyMedium"
+                  style={{color: Theme.colors.onSurfaceVariant}}>
+                  Waiting for opponent to submit an answer...
+                </Text>
+              </View>
+            ) : (
+              !isLoading && (
+                <>
+                  {points.length !== 0 && (
+                    <MultiplayerQuizStandings
+                      points={points}
+                      oldPoints={oldPoints}
+                      data={playerData}
+                      userId={userId}
+                      secondsLeft={secondsLeft}
+                    />
+                  )}
+                  <QuizFooter
+                    correct={answer === question.correct_answer}
+                    explanation={question.explanation}
+                    selected={answer !== ''}
+                    submit={submit}
+                    handleSubmit={handleSubmit}
+                    multiplayer={true}
+                  />
+                </>
+              )
+            )}
+          </ScrollView>
         </>
       )}
     </View>
@@ -734,5 +739,9 @@ const styles = StyleSheet.create({
   },
   title: {
     textAlign: 'center',
+  },
+  scroll: {
+    flex: 1,
+    backgroundColor: Theme.colors.surface,
   },
 });

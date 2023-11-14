@@ -62,7 +62,10 @@ const Friends = (props: FriendsProps) => {
         stickyHeaderIndices={[1]}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{flexGrow: 1}}>
-        <Appbar.Header mode="large" statusBarHeight={0}>
+        <Appbar.Header
+          mode="large"
+          statusBarHeight={0}
+          style={{marginBottom: -Constants.edgePadding}}>
           <Appbar.BackAction
             onPress={() => {
               navigation.goBack();
@@ -136,7 +139,7 @@ const styles = StyleSheet.create({
   },
   searchBar: {
     padding: Constants.edgePadding,
-    paddingTop: 0,
+    // paddingTop: 0,
     backgroundColor: Theme.colors.surface,
   },
   cardsContainer: {
