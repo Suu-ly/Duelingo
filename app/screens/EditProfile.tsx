@@ -72,75 +72,86 @@ const EditProfile = (props: EditProfileProps) => {
         styles.mainContainer,
         {transform: [{translateY: translate}], opacity: opacity},
       ]}>
-      <Appbar.Header mode="large">
+      <Appbar.Header mode="small">
         <Appbar.BackAction onPress={() => navigation.goBack()} />
-        <Appbar.Content title="Edit Profile" />
       </Appbar.Header>
-      <View style={styles.contentContainer}>
-        <View style={styles.inputContainer}>
-          <View>
-            <Avatar index={avatar} style={styles.avatar} />
-            <Button
-              onPress={() => setVisible(true)}
-              icon="pencil-outline"
-              mode="text">
-              Change
-            </Button>
-          </View>
-          <View style={styles.fullWidth}>
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={{flexGrow: 1}}
+        showsVerticalScrollIndicator={false}>
+        <Text variant="headlineMedium" style={styles.headerText}>
+          Edit profile
+        </Text>
+        <View style={styles.contentContainer}>
+          <View style={styles.inputContainer}>
+            <View>
+              <Avatar index={avatar} style={styles.avatar} />
+              <Button
+                onPress={() => setVisible(true)}
+                icon="pencil-outline"
+                mode="text">
+                Change
+              </Button>
+            </View>
+            <View style={styles.fullWidth}>
+              <TextInput
+                style={{backgroundColor: Theme.colors.surface}}
+                mode="outlined"
+                label="Username"
+                placeholder="Set username"
+                value={username}
+                activeOutlineColor={Theme.colors.primary}
+                autoCapitalize="none"
+                onChangeText={name => setUsername(name)}
+              />
+              {error && (
+                <HelperText type="error" visible={true}>
+                  Invalid email address format.
+                </HelperText>
+              )}
+            </View>
             <TextInput
-              style={{backgroundColor: Theme.colors.surface}}
+              style={[
+                styles.fullWidth,
+                {backgroundColor: Theme.colors.surface},
+              ]}
               mode="outlined"
-              label="Username"
+              label="Display Name"
               placeholder="Set username"
-              value={username}
+              value={displayName}
               activeOutlineColor={Theme.colors.primary}
               autoCapitalize="none"
-              onChangeText={name => setUsername(name)}
+              onChangeText={name => setDisplayName(name)}
             />
-            {error && (
-              <HelperText type="error" visible={true}>
-                Invalid email address format.
-              </HelperText>
-            )}
           </View>
-          <TextInput
-            style={[styles.fullWidth, {backgroundColor: Theme.colors.surface}]}
-            mode="outlined"
-            label="Display Name"
-            placeholder="Set username"
-            value={displayName}
-            activeOutlineColor={Theme.colors.primary}
-            autoCapitalize="none"
-            onChangeText={name => setDisplayName(name)}
-          />
-        </View>
-        <View style={styles.bottomContainer}>
-          <View style={styles.buttonContainer}>
-            <DuoButton
-              backgroundColor={Theme.colors.surface}
-              borderColor={Theme.colors.outline}
-              stretch={true}
-              filled={false}
-              onPress={() => navigation.goBack()}
-              textColor={Theme.colors.onSurface}>
-              Cancel
-            </DuoButton>
-          </View>
+          <View style={styles.bottomContainer}>
+            <View style={styles.buttonContainer}>
+              <DuoButton
+                backgroundColor={Theme.colors.surface}
+                borderColor={Theme.colors.outline}
+                stretch={true}
+                filled={false}
+                onPress={() => navigation.goBack()}
+                textColor={Theme.colors.onSurface}>
+                Cancel
+              </DuoButton>
+            </View>
 
-          <View style={styles.buttonContainer}>
-            <DuoButton
-              backgroundColor={Theme.colors.primary}
-              backgroundDark={Theme.colors.primaryDark}
-              stretch={true}
-              disabled={!hasChanges}
-              onPress={() => console.log('Pressed')}
-              textColor={Theme.colors.onPrimary}>
-              Save Changes
-            </DuoButton>
+            <View style={styles.buttonContainer}>
+              <DuoButton
+                backgroundColor={Theme.colors.primary}
+                backgroundDark={Theme.colors.primaryDark}
+                stretch={true}
+                disabled={!hasChanges}
+                onPress={() => console.log('Pressed')}
+                textColor={Theme.colors.onPrimary}>
+                Save Changes
+              </DuoButton>
+            </View>
           </View>
         </View>
-      </View>
+      </ScrollView>
+
       <Modal
         animationType="slide"
         transparent={true}
@@ -284,5 +295,10 @@ const styles = StyleSheet.create({
   },
   fullWidth: {
     width: '100%',
+  },
+  headerText: {
+    paddingTop: 32,
+    paddingBottom: 28,
+    paddingHorizontal: Constants.edgePadding,
   },
 });

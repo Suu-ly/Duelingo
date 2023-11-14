@@ -7,9 +7,9 @@ import {
   LayoutAnimation,
   Platform,
   UIManager,
+  ScrollView,
 } from 'react-native';
 
-import CustomStatusBar from '../common/CustomStatusBar';
 import Constants from '../common/constants/Constants';
 import DuoButton from '../common/DuoButton';
 import theme from '../common/constants/theme.json';
@@ -86,140 +86,149 @@ const SignUp = (props: SignUpProps) => {
 
   return (
     <View style={styles.mainContainer}>
-      <Appbar.Header mode="large">
+      <Appbar.Header mode="small">
         <Appbar.BackAction
           onPress={() => {
             navigation.goBack();
           }}
         />
-        <Appbar.Content title="Create your account" />
       </Appbar.Header>
-      <View style={styles.container}>
-        <TextInput
-          style={{backgroundColor: theme.colors.surface}}
-          mode="outlined"
-          label="Username"
-          placeholder="Username"
-          value={username}
-          activeOutlineColor={theme.colors.primary}
-          autoCapitalize="none"
-          onChangeText={username => setUsername(username)}
-        />
-        <TextInput
-          style={{backgroundColor: theme.colors.surface}}
-          mode="outlined"
-          label="Display Name"
-          placeholder="Display Name"
-          value={displayName}
-          activeOutlineColor={theme.colors.primary}
-          autoCapitalize="none"
-          onChangeText={displayName => setDisplayName(displayName)}
-        />
-        <View>
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={{flexGrow: 1}}
+        showsVerticalScrollIndicator={false}>
+        <Text variant="headlineMedium" style={styles.title}>
+          Create your profile
+        </Text>
+        <View style={styles.container}>
           <TextInput
             style={{backgroundColor: theme.colors.surface}}
             mode="outlined"
-            label="Email"
-            placeholder="Email"
-            value={email}
+            label="Username"
+            placeholder="Username"
+            value={username}
             activeOutlineColor={theme.colors.primary}
             autoCapitalize="none"
-            error={emailError}
-            onFocus={() => {
-              animate();
-              setEmailError(false);
-            }}
-            onBlur={validateEmail}
-            onChangeText={email => setEmail(email)}
+            onChangeText={username => setUsername(username)}
           />
-          {emailError && (
-            <HelperText type="error" visible={true}>
-              Invalid email address format.
-            </HelperText>
-          )}
-        </View>
-        <View>
           <TextInput
             style={{backgroundColor: theme.colors.surface}}
             mode="outlined"
-            label="Password"
-            placeholder="Password"
-            value={password}
+            label="Display Name"
+            placeholder="Display Name"
+            value={displayName}
             activeOutlineColor={theme.colors.primary}
             autoCapitalize="none"
-            error={passwordError}
-            onFocus={() => {
-              animate();
-              setPasswordError(false);
-            }}
-            onBlur={validatePassword}
-            secureTextEntry={showPassword}
-            right={
-              <TextInput.Icon
-                icon={passwordIcon}
-                onPress={handlePasswordVisibility}
-              />
-            }
-            onChangeText={password => setPassword(password)}
+            onChangeText={displayName => setDisplayName(displayName)}
           />
-          {passwordError && (
-            <HelperText type="error" visible={true}>
-              Password must be at least 6 characters.
-            </HelperText>
-          )}
+          <View>
+            <TextInput
+              style={{backgroundColor: theme.colors.surface}}
+              mode="outlined"
+              label="Email"
+              placeholder="Email"
+              value={email}
+              activeOutlineColor={theme.colors.primary}
+              autoCapitalize="none"
+              error={emailError}
+              onFocus={() => {
+                animate();
+                setEmailError(false);
+              }}
+              onBlur={validateEmail}
+              onChangeText={email => setEmail(email)}
+            />
+            {emailError && (
+              <HelperText type="error" visible={true}>
+                Invalid email address format.
+              </HelperText>
+            )}
+          </View>
+          <View>
+            <TextInput
+              style={{backgroundColor: theme.colors.surface}}
+              mode="outlined"
+              label="Password"
+              placeholder="Password"
+              value={password}
+              activeOutlineColor={theme.colors.primary}
+              autoCapitalize="none"
+              error={passwordError}
+              onFocus={() => {
+                animate();
+                setPasswordError(false);
+              }}
+              onBlur={validatePassword}
+              secureTextEntry={showPassword}
+              right={
+                <TextInput.Icon
+                  icon={passwordIcon}
+                  onPress={handlePasswordVisibility}
+                />
+              }
+              onChangeText={password => setPassword(password)}
+            />
+            {passwordError && (
+              <HelperText type="error" visible={true}>
+                Password must be at least 6 characters.
+              </HelperText>
+            )}
+          </View>
+          <View>
+            <TextInput
+              style={{backgroundColor: theme.colors.surface}}
+              mode="outlined"
+              label="Confirm Password"
+              placeholder="Confirm Password"
+              value={confirmPassword}
+              activeOutlineColor={theme.colors.primary}
+              autoCapitalize="none"
+              error={passwordConfirmError}
+              onFocus={() => {
+                animate();
+                setPasswordConfirmError(false);
+              }}
+              onBlur={validateConfirmPassword}
+              secureTextEntry={showConfirmPassword}
+              right={
+                <TextInput.Icon
+                  icon={confirmPasswordIcon}
+                  onPress={handleConfirmPasswordVisibility}
+                />
+              }
+              onChangeText={confirmPassword =>
+                setConfirmPassword(confirmPassword)
+              }
+            />
+            {passwordConfirmError && (
+              <HelperText type="error" visible={true}>
+                Password does not match.
+              </HelperText>
+            )}
+          </View>
+          <View style={styles.buttonContainer}>
+            <DuoButton
+              filled={true}
+              disabled={
+                username !== '' &&
+                displayName !== '' &&
+                email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/) &&
+                password.length >= 6 &&
+                password === confirmPassword
+                  ? false
+                  : true
+              }
+              stretch={true}
+              backgroundColor={theme.colors.primary}
+              backgroundDark={theme.colors.primaryDark}
+              borderColor={theme.colors.primary}
+              textColor={theme.colors.onPrimary}
+              onPress={handleOnSubmit}>
+              Create Account
+            </DuoButton>
+          </View>
         </View>
-        <View>
-          <TextInput
-            style={{backgroundColor: theme.colors.surface}}
-            mode="outlined"
-            label="Confirm Password"
-            placeholder="Confirm Password"
-            value={confirmPassword}
-            activeOutlineColor={theme.colors.primary}
-            autoCapitalize="none"
-            error={passwordConfirmError}
-            onFocus={() => {
-              animate();
-              setPasswordConfirmError(false);
-            }}
-            onBlur={validateConfirmPassword}
-            secureTextEntry={showConfirmPassword}
-            right={
-              <TextInput.Icon
-                icon={confirmPasswordIcon}
-                onPress={handleConfirmPasswordVisibility}
-              />
-            }
-            onChangeText={confirmPassword =>
-              setConfirmPassword(confirmPassword)
-            }
-          />
-          {passwordConfirmError && (
-            <HelperText type="error" visible={true}>
-              Password does not match.
-            </HelperText>
-          )}
-        </View>
-        <DuoButton
-          filled={true}
-          disabled={
-            username !== '' &&
-            displayName !== '' &&
-            email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/) &&
-            password.length >= 6 &&
-            password === confirmPassword
-              ? false
-              : true
-          }
-          stretch={true}
-          backgroundColor={theme.colors.primary}
-          backgroundDark={theme.colors.primaryDark}
-          borderColor={theme.colors.primary}
-          textColor={theme.colors.onPrimary}
-          onPress={handleOnSubmit}>
-          Create Account
-        </DuoButton>
-      </View>
+      </ScrollView>
     </View>
   );
 };
@@ -235,5 +244,18 @@ const styles = StyleSheet.create({
     flex: 1,
     gap: Constants.edgePadding,
     paddingHorizontal: Constants.edgePadding,
+  },
+  title: {
+    paddingTop: 32,
+    paddingBottom: 28,
+    paddingHorizontal: Constants.edgePadding,
+  },
+  buttonContainer: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    paddingBottom: Constants.edgePadding * 2,
+  },
+  scroll: {
+    flex: 1,
   },
 });

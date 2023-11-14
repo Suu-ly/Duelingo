@@ -1,12 +1,13 @@
 import {useState} from 'react';
 import {signIn} from '../utils/auth';
-import {Appbar, TextInput, HelperText} from 'react-native-paper';
+import {Appbar, TextInput, HelperText, Text} from 'react-native-paper';
 import {
   View,
   StyleSheet,
   Platform,
   UIManager,
   LayoutAnimation,
+  ScrollView,
 } from 'react-native';
 
 import Constants from '../common/constants/Constants';
@@ -57,71 +58,80 @@ const SignIn = (props: SignInProps) => {
 
   return (
     <View style={styles.mainContainer}>
-      <Appbar.Header mode="large">
+      <Appbar.Header mode="small">
         <Appbar.BackAction
           onPress={() => {
             navigation.goBack();
           }}
         />
-        <Appbar.Content title="Log In" />
       </Appbar.Header>
-      <View style={styles.container}>
-        <View>
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={{flexGrow: 1}}
+        showsVerticalScrollIndicator={false}>
+        <Text variant="headlineMedium" style={styles.title}>
+          Log in
+        </Text>
+        <View style={styles.container}>
+          <View>
+            <TextInput
+              style={{backgroundColor: theme.colors.surface}}
+              mode="outlined"
+              label="Email"
+              placeholder="Email"
+              value={email}
+              activeOutlineColor={theme.colors.primary}
+              autoCapitalize="none"
+              error={error}
+              onFocus={() => {
+                animate();
+                setError(false);
+              }}
+              onBlur={validateEmail}
+              onChangeText={email => setEmail(email)}
+            />
+            {error && (
+              <HelperText type="error" visible={true}>
+                Invalid email address format.
+              </HelperText>
+            )}
+          </View>
           <TextInput
             style={{backgroundColor: theme.colors.surface}}
             mode="outlined"
-            label="Email"
-            placeholder="Email"
-            value={email}
+            label="Password"
+            placeholder="Password"
+            value={password}
             activeOutlineColor={theme.colors.primary}
             autoCapitalize="none"
-            error={error}
-            onFocus={() => {
-              animate();
-              setError(false);
-            }}
-            onBlur={validateEmail}
-            onChangeText={email => setEmail(email)}
+            secureTextEntry={showPassword}
+            right={
+              <TextInput.Icon
+                icon={rightIcon}
+                onPress={handlePasswordVisibility}
+              />
+            }
+            onChangeText={password => setPassword(password)}
           />
-          {error && (
-            <HelperText type="error" visible={true}>
-              Invalid email address format.
-            </HelperText>
-          )}
+          <View style={styles.buttonContainer}>
+            <DuoButton
+              filled={true}
+              disabled={
+                email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/) && password !== ''
+                  ? false
+                  : true
+              }
+              stretch={true}
+              backgroundColor={theme.colors.primary}
+              backgroundDark={theme.colors.primaryDark}
+              borderColor={theme.colors.primary}
+              textColor={theme.colors.onPrimary}
+              onPress={handleOnSubmit}>
+              Log In
+            </DuoButton>
+          </View>
         </View>
-        <TextInput
-          style={{backgroundColor: theme.colors.surface}}
-          mode="outlined"
-          label="Password"
-          placeholder="Password"
-          value={password}
-          activeOutlineColor={theme.colors.primary}
-          autoCapitalize="none"
-          secureTextEntry={showPassword}
-          right={
-            <TextInput.Icon
-              icon={rightIcon}
-              onPress={handlePasswordVisibility}
-            />
-          }
-          onChangeText={password => setPassword(password)}
-        />
-        <DuoButton
-          filled={true}
-          disabled={
-            email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/) && password !== ''
-              ? false
-              : true
-          }
-          stretch={true}
-          backgroundColor={theme.colors.primary}
-          backgroundDark={theme.colors.primaryDark}
-          borderColor={theme.colors.primary}
-          textColor={theme.colors.onPrimary}
-          onPress={handleOnSubmit}>
-          Log In
-        </DuoButton>
-      </View>
+      </ScrollView>
     </View>
   );
 };
@@ -137,5 +147,18 @@ const styles = StyleSheet.create({
     flex: 1,
     gap: Constants.edgePadding,
     paddingHorizontal: Constants.edgePadding,
+  },
+  title: {
+    paddingTop: 32,
+    paddingBottom: 28,
+    paddingHorizontal: Constants.edgePadding,
+  },
+  buttonContainer: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    paddingBottom: Constants.edgePadding * 2,
+  },
+  scroll: {
+    flex: 1,
   },
 });
