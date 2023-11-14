@@ -31,7 +31,7 @@ function AppContainer() {
     //Handles navigation on logging in and out
     const subscriptionAuthState = auth().onAuthStateChanged(userState => {
       if (userState) {
-        navigation.navigate('Debug');
+        if (userState !== user) navigation.navigate('Debug');
         //For presence detection
         if (appStateVisible === 'active') {
           database()
@@ -49,12 +49,12 @@ function AppContainer() {
           .onDisconnect()
           .remove();
       } else {
-        if (user) {
+        if (userState !== user) {
           database()
             .ref('/users/' + user.uid)
             .remove();
+          navigation.navigate('Landing');
         }
-        navigation.navigate('Landing');
       }
       setUser(userState);
 

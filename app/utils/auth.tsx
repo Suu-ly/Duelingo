@@ -1,17 +1,10 @@
 import auth from '@react-native-firebase/auth';
 import firestore, {firebase} from '@react-native-firebase/firestore';
-import {Alert, ToastAndroid} from 'react-native';
-import {createUser} from './users';
+import {Alert} from 'react-native';
+import {createUser} from './database';
 import error from './error.json';
 
-interface AuthProps {
-  route: any;
-  navigation: any;
-}
-
-export const signIn = (props: AuthProps, email: any, password: any) => {
-  const {route, navigation} = props;
-
+export const signIn = (email: any, password: any) => {
   auth()
     .signInWithEmailAndPassword(email, password)
     .catch(err => {
@@ -21,14 +14,11 @@ export const signIn = (props: AuthProps, email: any, password: any) => {
 };
 
 export const signUp = (
-  props: AuthProps,
   email: any,
   password: any,
   username: any,
   displayName: any,
 ) => {
-  const {route, navigation} = props;
-
   firestore()
     .collection('Users')
     .where('username', '==', username)
@@ -41,7 +31,7 @@ export const signUp = (
         auth()
           .createUserWithEmailAndPassword(email, password)
           .then(() => {
-            signIn(props, email, password);
+            signIn(email, password);
             auth().onAuthStateChanged(user => {
               if (user) {
                 const uid = user.uid;

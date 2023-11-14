@@ -1,82 +1,55 @@
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 
-export const createUser = (
-  email: any,
-  username: any,
-  displayName: any,
-  uid: any,
-) => {
-  firestore()
-    .collection('Users')
-    .doc(uid)
-    .set({
-      displayName: displayName,
-      username: username,
-      email: email,
-      exp: 0,
-      hearts: {
-        amount: 5,
-        timestamp: 0,
-      },
-      chinese: 0,
-      malay: 0,
-      avatar: 0,
-    });
-  console.log('User created.');
+export const UpdateDisplayname = (username: string) => {
+  let uid = auth().currentUser?.uid;
+  if (uid) {
+    firestore()
+      .collection('Users')
+      .doc(uid)
+      .update({
+        displayName: username,
+      })
 
-  // Cannot create empty collection, a document must be added
-  firestore().collection('Users').doc(uid).collection('Friends').add({});
-};
-
-export const UpdateDisplayname = (username: any) => {
-  auth().onAuthStateChanged(user => {
-    if (user) {
-      const uid = user.uid;
-      firestore()
-        .collection('Users')
-        .doc(uid)
-        .update({
-          displayName: username,
-        })
-
-        .then(() => {
-          console.log('User updated!');
-        });
-    }
-  });
+      .then(() => {
+        console.log('User updated!');
+      });
+  }
 };
 
 export const UpdateAvatar = (avatar: number) => {
-  auth().onAuthStateChanged(user => {
-    if (user) {
-      const uid = user.uid;
-      firestore().collection('Users').doc(uid).update({
-        avatar: avatar,
-      });
-    }
-  });
+  let uid = auth().currentUser?.uid;
+  if (uid) {
+    firestore().collection('Users').doc(uid).update({
+      avatar: avatar,
+    });
+  }
 };
 
-export const UpdateUsername = (username: any) => {
-  auth().onAuthStateChanged(user => {
-    if (user) {
-      const uid = user.uid;
-      firestore()
-        .collection('Users')
-        .where('username', '==', username)
-        .get()
-        .then(doc => {
-          if (!doc.empty) {
-            console.log('Username taken.');
-          } else {
-            firestore().collection('Users').doc(uid).update({
-              username: username,
-            });
-          }
-        });
-    }
-  });
+export const UpdateUsername = (username: string) => {
+  let uid = auth().currentUser?.uid;
+  if (uid) {
+    firestore().collection('Users').doc(uid).update({
+      username: username,
+    });
+  }
+};
+
+export const checkUsernameExists = (username: string) => {
+  let uid = auth().currentUser?.uid;
+  if (uid) {
+    firestore()
+      .collection('Users')
+      .where('username', '==', username)
+      .get()
+      .then(querySnapshot => {
+        if (querySnapshot.empty) {
+          return true;
+        } else {
+          return false;
+        }
+      });
+  }
 };
 
 export const ResetHearts = () => {

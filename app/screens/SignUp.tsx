@@ -1,6 +1,12 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {signUp} from '../utils/auth';
-import {Appbar, Text, TextInput, HelperText} from 'react-native-paper';
+import {
+  Appbar,
+  Text,
+  TextInput,
+  HelperText,
+  ActivityIndicator,
+} from 'react-native-paper';
 import {
   View,
   StyleSheet,
@@ -13,6 +19,7 @@ import {
 import Constants from '../common/constants/Constants';
 import DuoButton from '../common/DuoButton';
 import theme from '../common/constants/theme.json';
+import {checkUsernameExists} from '../utils/database';
 
 interface SignUpProps {
   route: any;
@@ -21,6 +28,7 @@ interface SignUpProps {
 
 const SignUp = (props: SignUpProps) => {
   const {route, navigation} = props;
+  const [isLoading, setIsLoading] = useState(false);
   const [username, setUsername] = useState('');
   const [displayName, setDisplayName] = useState('');
   const [email, setEmail] = useState('');
@@ -33,6 +41,15 @@ const SignUp = (props: SignUpProps) => {
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
   const [passwordConfirmError, setPasswordConfirmError] = useState(false);
+  const [usernameUnavailable, setUsernameUnavailable] = useState(false);
+  const usernameEmpty = username === '';
+
+  const checkDataValid =
+    username !== '' &&
+    displayName !== '' &&
+    email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/) &&
+    password.length >= 6 &&
+    password === confirmPassword;
 
   if (Platform.OS === 'android') {
     if (UIManager.setLayoutAnimationEnabledExperimental) {
@@ -41,7 +58,7 @@ const SignUp = (props: SignUpProps) => {
   }
 
   const handleOnSubmit = () => {
-    signUp(props, email, password, username, displayName);
+    signUp(email, password, username, displayName);
   };
 
   const handlePasswordVisibility = () => {
@@ -75,6 +92,18 @@ const SignUp = (props: SignUpProps) => {
     );
   };
 
+  const usernameCheck = async () => {
+    setIsLoading(true);
+    let exists = await checkUsernameExists(username);
+    setUsernameUnavailable(exists);
+    console.log(exists);
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    usernameCheck();
+  }, [username]);
+
   const animate = () => {
     LayoutAnimation.configureNext({
       duration: 300,
@@ -101,16 +130,30 @@ const SignUp = (props: SignUpProps) => {
           Create your profile
         </Text>
         <View style={styles.container}>
-          <TextInput
-            style={{backgroundColor: theme.colors.surface}}
-            mode="outlined"
-            label="Username"
-            placeholder="Username"
-            value={username}
-            activeOutlineColor={theme.colors.primary}
-            autoCapitalize="none"
-            onChangeText={username => setUsername(username)}
-          />
+          <View>
+            {isLoading && <ActivityIndicator style={styles.textLoading} />}
+            <TextInput
+              style={{backgroundColor: 'transparent'}}
+              mode="outlined"
+              label="Username"
+              placeholder="Username"
+              value={username}
+              error={usernameUnavailable}
+              activeOutlineColor={theme.colors.primary}
+              autoCapitalize="none"
+              onChangeText={username => setUsername(username)}
+            />
+            {!usernameUnavailable && !isLoading && !usernameEmpty && (
+              <HelperText type="info" visible={true}>
+                Username is available.
+              </HelperText>
+            )}
+            {usernameUnavailable && (
+              <HelperText type="error" visible={true}>
+                Username already exists.
+              </HelperText>
+            )}
+          </View>
           <TextInput
             style={{backgroundColor: theme.colors.surface}}
             mode="outlined"
@@ -123,7 +166,7 @@ const SignUp = (props: SignUpProps) => {
           />
           <View>
             <TextInput
-              style={{backgroundColor: theme.colors.surface}}
+              style={{backgroundColor: 'transparent'}}
               mode="outlined"
               label="Email"
               placeholder="Email"
@@ -146,7 +189,7 @@ const SignUp = (props: SignUpProps) => {
           </View>
           <View>
             <TextInput
-              style={{backgroundColor: theme.colors.surface}}
+              style={{backgroundColor: 'transparent'}}
               mode="outlined"
               label="Password"
               placeholder="Password"
@@ -176,7 +219,7 @@ const SignUp = (props: SignUpProps) => {
           </View>
           <View>
             <TextInput
-              style={{backgroundColor: theme.colors.surface}}
+              style={{backgroundColor: 'transparent'}}
               mode="outlined"
               label="Confirm Password"
               placeholder="Confirm Password"
@@ -209,15 +252,7 @@ const SignUp = (props: SignUpProps) => {
           <View style={styles.buttonContainer}>
             <DuoButton
               filled={true}
-              disabled={
-                username !== '' &&
-                displayName !== '' &&
-                email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/) &&
-                password.length >= 6 &&
-                password === confirmPassword
-                  ? false
-                  : true
-              }
+              disabled={!checkDataValid || usernameUnavailable || isLoading}
               stretch={true}
               backgroundColor={theme.colors.primary}
               backgroundDark={theme.colors.primaryDark}
@@ -257,5 +292,10 @@ const styles = StyleSheet.create({
   },
   scroll: {
     flex: 1,
+  },
+  textLoading: {
+    position: 'absolute',
+    right: 12,
+    top: 20,
   },
 });

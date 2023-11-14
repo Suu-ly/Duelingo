@@ -17,11 +17,7 @@ import {EventArg, NavigationAction} from '@react-navigation/native';
 import database from '@react-native-firebase/database';
 import {FirebaseFirestoreTypes} from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
-import {
-  getQuiz,
-  getUsersData,
-  getMultiplayerQuestions,
-} from '../utils/database';
+import {getUsersData, getMultiplayerQuestions} from '../utils/database';
 
 import Theme from '../common/constants/theme.json';
 import CustomStatusBar from '../common/CustomStatusBar';

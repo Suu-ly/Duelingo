@@ -1,5 +1,4 @@
-import * as React from 'react';
-import {useEffect, useState, useCallback} from 'react';
+import {useState, useCallback} from 'react';
 import {useFocusEffect} from '@react-navigation/native';
 import {View, StyleSheet, Animated, FlatList} from 'react-native';
 import {ActivityIndicator, Text, TouchableRipple} from 'react-native-paper';
@@ -138,13 +137,19 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   postion1Text: {
-    color: '#E58C06',
+    backgroundColor: '#E58C06',
+    borderRadius: Constants.radiusMedium,
+    color: Theme.colors.onPrimary,
   },
   postion2Text: {
-    color: '#6E7D7D',
+    backgroundColor: '#848E8E',
+    borderRadius: Constants.radiusMedium,
+    color: Theme.colors.onPrimary,
   },
   postion3Text: {
-    color: '#CD7F32',
+    backgroundColor: '#BC8054',
+    borderRadius: Constants.radiusMedium,
+    color: Theme.colors.onPrimary,
   },
   avatarpic: {
     borderRadius: 256,

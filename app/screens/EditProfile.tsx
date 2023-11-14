@@ -8,6 +8,7 @@ import {
   Animated,
 } from 'react-native';
 import {
+  ActivityIndicator,
   Appbar,
   Button,
   Dialog,
@@ -18,6 +19,12 @@ import {
   TextInput,
 } from 'react-native-paper';
 import {EventArg, NavigationAction} from '@react-navigation/native';
+import {
+  checkUsernameExists,
+  UpdateAvatar,
+  UpdateDisplayname,
+  UpdateUsername,
+} from '../utils/database';
 
 import Theme from '../common/constants/theme.json';
 import Constants from '../common/constants/Constants';
@@ -46,8 +53,25 @@ const EditProfile = (props: EditProfileProps) => {
     username !== data.username ||
     displayName !== data.displayName ||
     avatar !== data.avatar;
+  const usernameEmpty = username === '';
+  const displayNameEmpty = displayName === '';
 
   const pics = Array(15).fill(0);
+
+  const usernameCheck = async () => {
+    if (username === data.username) {
+      setError(false);
+      return;
+    }
+    setIsLoading(true);
+    let exists = await checkUsernameExists(username);
+    setError(exists);
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    usernameCheck();
+  }, [username]);
 
   useEffect(
     () =>
@@ -65,6 +89,13 @@ const EditProfile = (props: EditProfileProps) => {
       ),
     [navigation, hasChanges],
   );
+
+  const handleSaveChanges = async () => {
+    if (avatar !== data.avatar) await UpdateAvatar(avatar);
+    if (username !== data.username) await UpdateUsername(username);
+    if (displayName !== data.displayName) await UpdateDisplayname(displayName);
+    navigation.pop();
+  };
 
   return (
     <Animated.View
@@ -94,35 +125,55 @@ const EditProfile = (props: EditProfileProps) => {
               </Button>
             </View>
             <View style={styles.fullWidth}>
+              {isLoading && <ActivityIndicator style={styles.textLoading} />}
               <TextInput
-                style={{backgroundColor: Theme.colors.surface}}
+                style={{backgroundColor: 'transparent'}}
                 mode="outlined"
                 label="Username"
                 placeholder="Set username"
                 value={username}
+                error={error || usernameEmpty}
                 activeOutlineColor={Theme.colors.primary}
                 autoCapitalize="none"
                 onChangeText={name => setUsername(name)}
               />
+              {!error &&
+                !isLoading &&
+                !usernameEmpty &&
+                username !== data.username && (
+                  <HelperText type="info" visible={true}>
+                    Username is available.
+                  </HelperText>
+                )}
               {error && (
                 <HelperText type="error" visible={true}>
-                  Invalid email address format.
+                  Username already exists.
+                </HelperText>
+              )}
+              {usernameEmpty && (
+                <HelperText type="error" visible={true}>
+                  Username cannot be empty.
                 </HelperText>
               )}
             </View>
-            <TextInput
-              style={[
-                styles.fullWidth,
-                {backgroundColor: Theme.colors.surface},
-              ]}
-              mode="outlined"
-              label="Display Name"
-              placeholder="Set username"
-              value={displayName}
-              activeOutlineColor={Theme.colors.primary}
-              autoCapitalize="none"
-              onChangeText={name => setDisplayName(name)}
-            />
+            <View style={styles.fullWidth}>
+              <TextInput
+                style={{backgroundColor: 'transparent'}}
+                mode="outlined"
+                label="Display Name"
+                placeholder="Set username"
+                value={displayName}
+                error={displayNameEmpty}
+                activeOutlineColor={Theme.colors.primary}
+                autoCapitalize="none"
+                onChangeText={name => setDisplayName(name)}
+              />
+              {displayNameEmpty && (
+                <HelperText type="error" visible={true}>
+                  Display name cannot be empty.
+                </HelperText>
+              )}
+            </View>
           </View>
           <View style={styles.bottomContainer}>
             <View style={styles.buttonContainer}>
@@ -142,8 +193,14 @@ const EditProfile = (props: EditProfileProps) => {
                 backgroundColor={Theme.colors.primary}
                 backgroundDark={Theme.colors.primaryDark}
                 stretch={true}
-                disabled={!hasChanges}
-                onPress={() => console.log('Pressed')}
+                disabled={
+                  !hasChanges ||
+                  isLoading ||
+                  error ||
+                  usernameEmpty ||
+                  displayNameEmpty
+                }
+                onPress={handleSaveChanges}
                 textColor={Theme.colors.onPrimary}>
                 Save Changes
               </DuoButton>
@@ -300,5 +357,10 @@ const styles = StyleSheet.create({
     paddingTop: 32,
     paddingBottom: 28,
     paddingHorizontal: Constants.edgePadding,
+  },
+  textLoading: {
+    position: 'absolute',
+    right: 12,
+    top: 20,
   },
 });

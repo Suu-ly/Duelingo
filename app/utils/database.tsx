@@ -3,16 +3,6 @@ import firestore, {
 } from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 
-// Get All Quizzes
-export const getAllQuiz = () => {
-  return firestore().collection('Quizzes').get();
-};
-
-// Get Quiz With Specific Language
-export const getQuiz = (language: string) => {
-  return firestore().collection('Quizzes').doc(language).get();
-};
-
 export const createUser = (
   email: string,
   username: string,
@@ -78,6 +68,104 @@ export const deleteFriend = (friendId: string) => {
       .collection('Friends')
       .doc(uid)
       .delete();
+  }
+};
+
+export const UpdateDisplayname = async (username: string) => {
+  let uid = auth().currentUser?.uid;
+  if (uid) {
+    await firestore()
+      .collection('Users')
+      .doc(uid)
+      .update({
+        displayName: username,
+      })
+
+      .then(() => {
+        console.log('User updated!');
+      });
+  }
+};
+
+export const UpdateAvatar = async (avatar: number) => {
+  let uid = auth().currentUser?.uid;
+  if (uid) {
+    await firestore().collection('Users').doc(uid).update({
+      avatar: avatar,
+    });
+  }
+};
+
+export const UpdateUsername = async (username: string) => {
+  let uid = auth().currentUser?.uid;
+  if (uid) {
+    await firestore().collection('Users').doc(uid).update({
+      username: username,
+    });
+  }
+};
+
+export const checkUsernameExists = async (username: string) => {
+  let result = false;
+  await firestore()
+    .collection('Users')
+    .where('username', '==', username)
+    .get()
+    .then(querySnapshot => {
+      if (querySnapshot.empty) {
+        result = false;
+      } else {
+        result = true;
+      }
+    });
+  return result;
+};
+
+export const calculateMultiplayerExp = (difficulty: string, score: number) => {
+  if (difficulty === 'easy') return Math.floor(0.05 * score);
+  if (difficulty === 'intermediate') return Math.floor(0.1 * score);
+  if (difficulty === 'hard') return Math.floor(0.15 * score);
+};
+
+export const MultiUpdateExp = async (exp: number) => {
+  let uid = auth().currentUser?.uid;
+  if (uid) {
+    let userDataDocument = await firestore().collection('Users').doc(uid).get();
+    let userData = userDataDocument.data();
+
+    if (userData) {
+      firestore()
+        .collection('Users')
+        .doc(uid)
+        .update({
+          exp: userData.exp + Math.floor(exp),
+        });
+    }
+  }
+};
+
+export const calculateSingleplayerExp = (
+  module: number,
+  topic: number,
+  score: number,
+) => {
+  return Math.floor(100 * score + module * topic * 10);
+};
+
+export const SingleUpdateExp = async (exp: number) => {
+  let uid = auth().currentUser?.uid;
+  if (uid) {
+    let userDataDocument = await firestore().collection('Users').doc(uid).get();
+    let userData = userDataDocument.data();
+
+    if (userData) {
+      firestore()
+        .collection('Users')
+        .doc(uid)
+        .update({
+          exp: userData.exp + exp,
+        });
+    }
   }
 };
 
@@ -193,18 +281,7 @@ export const getMultiplayerQuestions = async (
     });
   return questionBank;
 };
-export const getallUserData = async () => {
-  let allUserdata: string[] = [];
-  await firestore()
-    .collection('Users')
-    .get()
-    .then(querySnapshot => {
-      querySnapshot.forEach(documentSnapshot => {
-        allUserdata = [...allUserdata, documentSnapshot.id];
-      });
-    });
-  return allUserdata;
-};
+
 export const getLeaderboardData = async () => {
   let leaderboardData: FirebaseFirestoreTypes.DocumentData[] = [];
   await firestore()
@@ -218,8 +295,4 @@ export const getLeaderboardData = async () => {
       }),
     );
   return leaderboardData;
-};
-
-export const numUsers = async () => {
-  await firestore().collection('Users').count();
 };

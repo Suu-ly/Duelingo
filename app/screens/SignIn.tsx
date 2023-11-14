@@ -34,7 +34,7 @@ const SignIn = (props: SignInProps) => {
   }
 
   const handleOnSubmit = () => {
-    signIn(props, email, password);
+    signIn(email, password);
   };
 
   const handlePasswordVisibility = () => {
