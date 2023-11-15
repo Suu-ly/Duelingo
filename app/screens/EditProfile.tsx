@@ -94,7 +94,16 @@ const EditProfile = (props: EditProfileProps) => {
     if (avatar !== data.avatar) await UpdateAvatar(avatar);
     if (username !== data.username) await UpdateUsername(username);
     if (displayName !== data.displayName) await UpdateDisplayname(displayName);
-    navigation.pop();
+    navigation.navigate('Profile', {
+      screen: 'Settings',
+      params: {
+        userData: {
+          avatar: avatar,
+          username: username,
+          displayName: displayName,
+        },
+      },
+    });
   };
 
   return (

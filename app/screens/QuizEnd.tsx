@@ -153,6 +153,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: Constants.defaultGap,
     alignItems: 'center',
+    flex: 1,
   },
   statsContainer: {
     gap: Constants.largeGap,
@@ -168,7 +169,6 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
   },
   bottomContainer: {
-    flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-end',
