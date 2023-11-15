@@ -147,7 +147,7 @@ const Multiplayer = (props: MultiplayerProps) => {
   ) => {
     if (data[0].uid === userId) {
       setOppName(data[1].displayName);
-    }
+    } else setOppName(data[0].displayName);
   };
 
   //Gets the quiz questions from database
@@ -729,6 +729,7 @@ const styles = StyleSheet.create({
   questionContainer: {
     padding: Constants.edgePadding,
     gap: Constants.defaultGap,
+    flex: 1,
   },
   innerContainer: {
     gap: Constants.defaultGap,

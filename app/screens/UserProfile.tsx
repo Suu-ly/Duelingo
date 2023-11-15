@@ -1,10 +1,11 @@
-import {useState, useEffect, useCallback} from 'react';
+import {useState, useCallback} from 'react';
 import {
   View,
   TouchableOpacity,
   StyleSheet,
   Image,
   Animated,
+  ScrollView,
 } from 'react-native';
 import {
   ActivityIndicator,
@@ -31,19 +32,16 @@ interface UserProfileProps {
 
 const UserProfile = (props: UserProfileProps) => {
   const {route, navigation, translate, opacity} = props;
-  const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState<Record<string, any>>({});
   const [numFriends, setNumFriends] = useState(0);
 
   const ownUserId = auth().currentUser?.uid as string;
 
   const loadData = async () => {
-    setIsLoading(true);
     let temp = await getUserData(ownUserId);
     let numTemp = await getFriendList(ownUserId);
     setData(temp);
     setNumFriends(numTemp.length);
-    setIsLoading(false);
   };
 
   useFocusEffect(
@@ -60,7 +58,11 @@ const UserProfile = (props: UserProfileProps) => {
       ]}>
       <CustomStatusBar />
       {Object.keys(data).length !== 0 ? (
-        <>
+        <ScrollView
+          style={styles.scroll}
+          contentContainerStyle={styles.contentContainerScroll}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}>
           <View style={styles.topContainer}>
             <View style={styles.filler} />
             <Avatar index={data.avatar} style={styles.avatar} />
@@ -129,7 +131,7 @@ const UserProfile = (props: UserProfileProps) => {
               </View>
             </View>
           </View>
-        </>
+        </ScrollView>
       ) : (
         <View style={styles.loading}>
           <ActivityIndicator />
@@ -199,5 +201,13 @@ const styles = StyleSheet.create({
   },
   progressBar: {
     flex: 1,
+  },
+  scroll: {
+    flex: 1,
+    backgroundColor: Theme.colors.surface,
+  },
+  contentContainerScroll: {
+    flexGrow: 1,
+    paddingBottom: Constants.edgePadding,
   },
 });

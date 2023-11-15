@@ -78,18 +78,21 @@ const Leaderboard = (props: LeaderboardProps) => {
               <TouchableRipple
                 style={styles.ripple}
                 onPress={() => cardOnPress(item.uid)}>
-                <>
+                <View style={styles.cardContent}>
                   <Text
                     variant="titleMedium"
                     style={[styles.text, getStyleForIndex(index)]}>
                     {index + 1}
                   </Text>
                   <Avatar index={item.avatar} style={styles.avatarpic} />
-                  <View style={styles.cardInfo}>
-                    <Text variant="titleMedium">{item.username}</Text>
-                    <Text variant="bodyLarge">{item.exp + ' exp'}</Text>
-                  </View>
-                </>
+                  <Text
+                    variant="titleMedium"
+                    numberOfLines={1}
+                    style={styles.displayName}>
+                    {item.displayName}
+                  </Text>
+                  <Text variant="bodyLarge">{item.exp + ' exp'}</Text>
+                </View>
               </TouchableRipple>
             </View>
           )}
@@ -128,9 +131,15 @@ const styles = StyleSheet.create({
   },
   ripple: {
     padding: Constants.edgePadding,
+  },
+  cardContent: {
+    justifyContent: 'space-between',
     flexDirection: 'row',
     alignItems: 'center',
     gap: Constants.largeGap,
+  },
+  displayName: {
+    flex: 1,
   },
   text: {
     width: 28,
@@ -155,12 +164,6 @@ const styles = StyleSheet.create({
     borderRadius: 256,
     width: 48,
     height: 48,
-  },
-  cardInfo: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    flex: 1,
   },
   loading: {
     flex: 1,

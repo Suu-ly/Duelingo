@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
   },
   innerContainer: {
     paddingHorizontal: Constants.edgePadding,
-    paddingTop: 154,
+    justifyContent: 'center',
     gap: Constants.defaultGap,
     alignItems: 'center',
   },

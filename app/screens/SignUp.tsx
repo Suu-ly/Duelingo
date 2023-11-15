@@ -124,6 +124,8 @@ const SignUp = (props: SignUpProps) => {
       <ScrollView
         style={styles.scroll}
         contentContainerStyle={{flexGrow: 1}}
+        keyboardShouldPersistTaps="handled"
+        overScrollMode="never"
         showsVerticalScrollIndicator={false}>
         <Text variant="headlineMedium" style={styles.title}>
           Create your profile

@@ -1,6 +1,5 @@
 import {StyleSheet, View, TouchableOpacity} from 'react-native';
 import {Text, TouchableRipple} from 'react-native-paper';
-import {FirebaseFirestoreTypes} from '@react-native-firebase/firestore';
 
 import Theme from './constants/theme.json';
 import Constants from './constants/Constants';
@@ -37,17 +36,21 @@ const ChallengeCard = (props: ChallengeCardProps) => {
   return (
     <View style={styles.card}>
       <TouchableRipple style={styles.ripple} onPress={cardOnPress}>
-        <>
-          <View style={styles.info}>
-            <Avatar index={avatarIndex} style={styles.image} />
-            <View style={styles.text}>
-              <Text
-                variant="labelMedium"
-                style={{color: Theme.colors.onSurfaceVariant}}>
-                {topText}
-              </Text>
-              <Text variant="bodyLarge">{bottomText}</Text>
-            </View>
+        <View style={styles.cardContent}>
+          <Avatar index={avatarIndex} style={styles.image} />
+          <View style={styles.text}>
+            <Text
+              variant="labelMedium"
+              style={{color: Theme.colors.onSurfaceVariant}}
+              numberOfLines={1}>
+              {topText}
+            </Text>
+            <Text
+              variant="bodyLarge"
+              numberOfLines={1}
+              style={{flex: 1, flexDirection: 'row'}}>
+              {bottomText}
+            </Text>
           </View>
           <DuoButton
             filled={false}
@@ -60,7 +63,7 @@ const ChallengeCard = (props: ChallengeCardProps) => {
             textColor={buttonTextColor}>
             {buttonText}
           </DuoButton>
-        </>
+        </View>
       </TouchableRipple>
     </View>
   );
@@ -76,17 +79,16 @@ const styles = StyleSheet.create({
   },
   ripple: {
     padding: Constants.edgePadding,
-    justifyContent: 'space-between',
-    flexDirection: 'row',
-    alignItems: 'center',
   },
-  info: {
+  cardContent: {
+    justifyContent: 'space-between',
     flexDirection: 'row',
     alignItems: 'center',
     gap: Constants.largeGap,
   },
   text: {
     gap: Constants.smallGap,
+    flex: 1,
   },
   image: {
     borderRadius: 256,

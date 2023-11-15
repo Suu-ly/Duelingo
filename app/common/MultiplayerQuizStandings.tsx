@@ -83,7 +83,8 @@ const MultiplayerQuizStandings = (props: TimerProps) => {
               <View style={styles.details}>
                 <Text
                   variant="labelMedium"
-                  style={{color: Theme.colors.onSurfaceVariant}}>
+                  style={{color: Theme.colors.onSurfaceVariant}}
+                  numberOfLines={1}>
                   {data[getDataIndex(value.uid, data)].displayName}
                 </Text>
                 <Text variant="bodyMedium">
@@ -118,6 +119,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Constants.edgePadding,
     alignItems: 'center',
     gap: Constants.defaultGap,
+    flex: 1,
   },
   heading: {
     gap: Constants.mediumGap,
@@ -133,6 +135,7 @@ const styles = StyleSheet.create({
   },
   details: {
     gap: Constants.smallGap,
+    flex: 1,
   },
   avatar: {
     height: 48,

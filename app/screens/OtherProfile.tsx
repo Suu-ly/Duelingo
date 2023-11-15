@@ -1,11 +1,5 @@
 import {useState, useEffect, useCallback} from 'react';
-import {
-  View,
-  TouchableOpacity,
-  StyleSheet,
-  Image,
-  Animated,
-} from 'react-native';
+import {View, StyleSheet, Image, ScrollView} from 'react-native';
 import {
   ActivityIndicator,
   IconButton,
@@ -34,7 +28,6 @@ interface OtherProfileProps {
 
 const OtherProfile = (props: OtherProfileProps) => {
   const {route, navigation} = props;
-  const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState<Record<string, any>>({});
   const [numFriends, setNumFriends] = useState(0);
   const [isFriends, setIsFriends] = useState(false);
@@ -43,7 +36,6 @@ const OtherProfile = (props: OtherProfileProps) => {
   const ownUserId = auth().currentUser!.uid;
 
   const loadData = async () => {
-    setIsLoading(true);
     let temp = await getUserData(userId);
     let numTemp = await getFriendList(userId);
     if (numTemp.includes(ownUserId)) {
@@ -51,7 +43,6 @@ const OtherProfile = (props: OtherProfileProps) => {
     } else setIsFriends(false);
     setData(temp);
     setNumFriends(numTemp.length);
-    setIsLoading(false);
   };
 
   const handleDelete = (friendId: string) => {
@@ -74,7 +65,11 @@ const OtherProfile = (props: OtherProfileProps) => {
     <View style={styles.mainContainer}>
       <CustomStatusBar />
       {Object.keys(data).length !== 0 ? (
-        <>
+        <ScrollView
+          style={styles.scroll}
+          contentContainerStyle={styles.contentContainerScroll}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}>
           <View style={styles.topContainer}>
             <IconButton
               icon={'arrow-left'}
@@ -145,7 +140,7 @@ const OtherProfile = (props: OtherProfileProps) => {
               </View>
             </View>
           </View>
-        </>
+        </ScrollView>
       ) : (
         <View style={styles.loading}>
           <ActivityIndicator />
@@ -217,5 +212,13 @@ const styles = StyleSheet.create({
   },
   progressBar: {
     flex: 1,
+  },
+  scroll: {
+    flex: 1,
+    backgroundColor: Theme.colors.surface,
+  },
+  contentContainerScroll: {
+    flexGrow: 1,
+    paddingBottom: Constants.edgePadding,
   },
 });

@@ -1,25 +1,13 @@
 import {useCallback, useState} from 'react';
 import {useFocusEffect} from '@react-navigation/native';
-import {
-  getFriendData,
-  getUsersData,
-  createFriend,
-  getFriendList,
-} from '../utils/database';
+import {getUsersData, createFriend, getFriendList} from '../utils/database';
 import {FirebaseFirestoreTypes} from '@react-native-firebase/firestore';
-import {
-  Text,
-  Searchbar,
-  TouchableRipple,
-  ActivityIndicator,
-} from 'react-native-paper';
+import {Searchbar, ActivityIndicator} from 'react-native-paper';
 import {View, ScrollView, StyleSheet, Animated} from 'react-native';
 
 import CustomStatusBar from '../common/CustomStatusBar';
 import Constants from '../common/constants/Constants';
-import DuoButton from '../common/DuoButton';
 import Theme from '../common/constants/theme.json';
-import Avatar from '../common/Avatar';
 import ChallengeCard from '../common/ChallengeCards';
 
 interface AddFriendsProps {
@@ -90,6 +78,8 @@ const AddFriends = (props: AddFriendsProps) => {
       <ScrollView
         style={styles.container}
         showsVerticalScrollIndicator={false}
+        keyboardDismissMode="on-drag"
+        keyboardShouldPersistTaps="handled"
         contentContainerStyle={styles.scrollContentContainer}>
         {currentUser && friendList ? (
           <View style={styles.cardsContainer}>

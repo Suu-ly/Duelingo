@@ -211,6 +211,8 @@ const ChallengePlayer = (props: ChallengePlayerProps) => {
       <ScrollView
         stickyHeaderIndices={[1]}
         contentContainerStyle={styles.container}
+        keyboardDismissMode="on-drag"
+        keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
           <Text variant="headlineSmall">Challenge</Text>

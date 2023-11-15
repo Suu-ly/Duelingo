@@ -68,6 +68,8 @@ const SignIn = (props: SignInProps) => {
       <ScrollView
         style={styles.scroll}
         contentContainerStyle={{flexGrow: 1}}
+        keyboardShouldPersistTaps="handled"
+        overScrollMode="never"
         showsVerticalScrollIndicator={false}>
         <Text variant="headlineMedium" style={styles.title}>
           Log in

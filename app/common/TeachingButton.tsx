@@ -1,9 +1,10 @@
 import {StyleSheet, View} from 'react-native';
 import {Text} from 'react-native-paper';
+import Tts from 'react-native-tts';
+
 import DuoButton from './DuoButton';
 import Theme from './constants/theme.json';
 import Constants from './constants/Constants';
-import Tts from 'react-native-tts';
 
 interface TeachingButtonProps {
   question: Record<string, any>;

@@ -109,6 +109,8 @@ const EditProfile = (props: EditProfileProps) => {
       <ScrollView
         style={styles.scroll}
         contentContainerStyle={{flexGrow: 1}}
+        keyboardShouldPersistTaps="handled"
+        overScrollMode="never"
         showsVerticalScrollIndicator={false}>
         <Text variant="headlineMedium" style={styles.headerText}>
           Edit profile

@@ -61,6 +61,8 @@ const Friends = (props: FriendsProps) => {
         style={styles.container}
         stickyHeaderIndices={[1]}
         showsVerticalScrollIndicator={false}
+        keyboardDismissMode="on-drag"
+        keyboardShouldPersistTaps="handled"
         contentContainerStyle={{flexGrow: 1}}>
         <Appbar.Header
           mode="large"
