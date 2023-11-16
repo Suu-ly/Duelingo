@@ -48,7 +48,7 @@ const Dropdown = (props: DropdownProps) => {
         style={styles.chip}
         onPress={() => setShowOption(!showOption)}
         avatar={<Image source={item.icon} resizeMode="cover" />}>
-        {!!item ? item.value : data[0].value}
+        {item ? item.value : data[0].value}
       </Chip>
       <View style={styles.buttonContainer}>
         {data.map((value, index) => {

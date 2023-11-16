@@ -3,7 +3,7 @@ import {useFocusEffect} from '@react-navigation/native';
 import {getUsersData, createFriend, getFriendList} from '../utils/database';
 import {FirebaseFirestoreTypes} from '@react-native-firebase/firestore';
 import {Searchbar, ActivityIndicator} from 'react-native-paper';
-import {View, ScrollView, StyleSheet, Animated} from 'react-native';
+import {View, StyleSheet, Animated, FlatList} from 'react-native';
 
 import CustomStatusBar from '../common/CustomStatusBar';
 import Constants from '../common/constants/Constants';
@@ -75,40 +75,37 @@ const AddFriends = (props: AddFriendsProps) => {
           navigation.goBack();
         }}
       />
-      <ScrollView
-        style={styles.container}
-        showsVerticalScrollIndicator={false}
-        keyboardDismissMode="on-drag"
-        keyboardShouldPersistTaps="handled"
-        contentContainerStyle={styles.scrollContentContainer}>
-        {currentUser && friendList ? (
-          <View style={styles.cardsContainer}>
-            {currentUser.filter(filterFunction).map((user, index) => {
-              return (
-                <ChallengeCard
-                  key={user.uid}
-                  onPress={() => handleCreate(user.uid)}
-                  cardOnPress={() =>
-                    navigation.navigate('OtherProfile', {userId: user.uid})
-                  }
-                  avatarIndex={user.avatar}
-                  topText={user.username}
-                  bottomText={user.displayName}
-                  buttonText={friendList.includes(user.uid) ? 'Added' : 'Add'}
-                  buttonTextColor={Theme.colors.secondary}
-                  buttonBorderColor={Theme.colors.secondary}
-                  buttonWidth={82}
-                  disabled={friendList.includes(user.uid)}
-                />
-              );
-            })}
-          </View>
-        ) : (
-          <View style={styles.loading}>
-            <ActivityIndicator />
-          </View>
-        )}
-      </ScrollView>
+      {currentUser && friendList ? (
+        <FlatList
+          style={styles.container}
+          showsVerticalScrollIndicator={false}
+          keyboardDismissMode="on-drag"
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={styles.scrollContentContainer}
+          data={currentUser.filter(filterFunction)}
+          renderItem={({item, index}) => (
+            <ChallengeCard
+              key={item.uid}
+              onPress={() => handleCreate(item.uid)}
+              cardOnPress={() =>
+                navigation.navigate('OtherProfile', {userId: item.uid})
+              }
+              avatarIndex={item.avatar}
+              topText={item.username}
+              bottomText={item.displayName}
+              buttonText={friendList.includes(item.uid) ? 'Added' : 'Add'}
+              buttonTextColor={Theme.colors.secondary}
+              buttonBorderColor={Theme.colors.secondary}
+              buttonWidth={82}
+              disabled={friendList.includes(item.uid)}
+            />
+          )}
+        />
+      ) : (
+        <View style={styles.loading}>
+          <ActivityIndicator />
+        </View>
+      )}
     </Animated.View>
   );
 };
@@ -124,8 +121,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContentContainer: {
-    padding: Constants.edgePadding,
     flexGrow: 1,
+    padding: Constants.edgePadding,
+    gap: Constants.largeGap,
   },
   card: {
     backgroundColor: Theme.colors.elevation.level0,
@@ -137,9 +135,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     flexDirection: 'row',
     alignItems: 'center',
-  },
-  cardsContainer: {
-    gap: Constants.largeGap,
   },
   info: {
     flexDirection: 'row',

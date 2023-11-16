@@ -1,12 +1,13 @@
-import {Animated, Easing, StyleSheet} from 'react-native';
+import {Animated, Easing, StyleSheet, View} from 'react-native';
 import Theme from './constants/theme.json';
 import Constants from './constants/Constants';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {Text} from 'react-native-paper';
+import {Text, TouchableRipple} from 'react-native-paper';
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {useFocusEffect} from '@react-navigation/native';
 import {checkTimestamp, getLives, increaseLives} from '../utils/firestore';
 import auth from '@react-native-firebase/auth';
+import HeartInfoDialog from './HeartInfoDialog';
 
 interface HeartProps {
   animate?: boolean;
@@ -16,6 +17,7 @@ const HeartContainer = (props: HeartProps) => {
   const {animate = true} = props;
   const animationValue = useRef(new Animated.Value(100)).current;
   const [lives, setLives] = useState<number | undefined>();
+  const [visible, setVisible] = useState(false);
   const userId = auth().currentUser!.uid;
   let interval: NodeJS.Timeout;
 
@@ -71,11 +73,16 @@ const HeartContainer = (props: HeartProps) => {
     extrapolate: 'clamp',
   });
   return (
-    <Animated.View style={[styles.container, {borderColor: color}]}>
-      <Icon name="heart" color={Theme.colors.error} size={24} />
-      <Text variant="titleMedium" style={{color: Theme.colors.error}}>
-        {lives}
-      </Text>
+    <Animated.View style={[styles.mainContainer, {borderColor: color}]}>
+      <TouchableRipple disabled={lives === 5} onPress={() => setVisible(true)}>
+        <View style={styles.container}>
+          <Icon name="heart" color={Theme.colors.error} size={24} />
+          <Text variant="titleMedium" style={{color: Theme.colors.error}}>
+            {lives}
+          </Text>
+        </View>
+      </TouchableRipple>
+      <HeartInfoDialog visible={visible} onDismiss={() => setVisible(false)} />
     </Animated.View>
   );
 };
@@ -83,13 +90,16 @@ const HeartContainer = (props: HeartProps) => {
 export default HeartContainer;
 
 const styles = StyleSheet.create({
+  mainContainer: {
+    borderRadius: Constants.radiusMedium,
+    overflow: 'hidden',
+    backgroundColor: Theme.colors.elevation.level0,
+    borderWidth: 2,
+  },
   container: {
     padding: Constants.mediumGap,
     flexDirection: 'row',
     alignItems: 'center',
     gap: Constants.mediumGap,
-    borderRadius: Constants.radiusMedium,
-    borderWidth: 2,
-    backgroundColor: Theme.colors.elevation.level0,
   },
 });

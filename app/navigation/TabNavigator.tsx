@@ -97,7 +97,11 @@ const TabNavigator = () => {
   return (
     <Tab.Navigator
       screenListeners={listeners}
-      screenOptions={{header: header, freezeOnBlur: true}}
+      screenOptions={{
+        header: header,
+        freezeOnBlur: true,
+        tabBarHideOnKeyboard: true,
+      }}
       backBehavior="history"
       tabBar={({navigation, state, descriptors, insets}) => (
         <BottomNavigation.Bar

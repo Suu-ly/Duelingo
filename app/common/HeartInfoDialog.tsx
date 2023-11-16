@@ -10,24 +10,13 @@ import DuoButton from './DuoButton';
 import useCountdown from '../utils/useCountdown';
 import {checkTimestamp} from '../utils/firestore';
 
-interface heartDialogProps {
+interface heartInfoDialogProps {
   visible: boolean;
-  dismissable?: boolean;
-  dismissableBackButton?: boolean;
-  buttonText: string;
   onDismiss: () => void;
-  onPress: () => void;
 }
 
-const HeartDialog = (props: heartDialogProps) => {
-  const {
-    visible,
-    dismissable = false,
-    dismissableBackButton = false,
-    buttonText,
-    onDismiss,
-    onPress,
-  } = props;
+const HeartInfoDialog = (props: heartInfoDialogProps) => {
+  const {visible, onDismiss} = props;
 
   const [timeToReplenish, setTimeToReplenish] = useState<number | null>(null);
   const userId = auth().currentUser!.uid;
@@ -51,23 +40,23 @@ const HeartDialog = (props: heartDialogProps) => {
       <Modal
         visible={visible}
         onDismiss={onDismiss}
-        dismissable={dismissable}
-        dismissableBackButton={dismissableBackButton}
+        dismissable={true}
+        dismissableBackButton={true}
         style={styles.bottomContainer}>
         <View style={styles.innerBottomContainer}>
           <View style={styles.visibleContainer}>
             <Icon
-              name="heart-broken-outline"
+              name="heart-plus-outline"
               size={Constants.iconMedium}
-              color={Theme.colors.onErrorContainer}
+              color={Theme.colors.onTertiaryContainer}
             />
             <Text variant="headlineSmall" style={styles.titleText}>
-              You have run out of lives.
+              Heart status
             </Text>
             {timeToReplenish !== null ? (
               <Text
                 variant="bodyLarge"
-                style={{color: Theme.colors.onErrorContainer}}>
+                style={{color: Theme.colors.onTertiaryContainer}}>
                 {'Your next heart will replenish in ' +
                   Math.floor(timeToReplenish / 60) +
                   ':' +
@@ -75,16 +64,16 @@ const HeartDialog = (props: heartDialogProps) => {
                   '.'}
               </Text>
             ) : (
-              <ActivityIndicator color={Theme.colors.onErrorContainer} />
+              <ActivityIndicator color={Theme.colors.onTertiaryContainer} />
             )}
           </View>
           <DuoButton
-            backgroundColor={Theme.colors.error}
-            backgroundDark={Theme.colors.errorDark}
+            backgroundColor={Theme.colors.tertiary}
+            backgroundDark={Theme.colors.tertiaryDark}
             stretch={true}
-            textColor={Theme.colors.onPrimary}
-            onPress={onPress}>
-            {buttonText}
+            textColor={Theme.colors.onTertiary}
+            onPress={onDismiss}>
+            Ok
           </DuoButton>
         </View>
       </Modal>
@@ -101,7 +90,7 @@ const styles = StyleSheet.create({
     paddingTop: Constants.defaultGap,
     paddingBottom: 2 * Constants.edgePadding,
     gap: Constants.defaultGap,
-    backgroundColor: Theme.colors.errorContainer,
+    backgroundColor: Theme.colors.tertiaryContainer,
   },
   visibleContainer: {
     gap: Constants.edgePadding,
@@ -109,7 +98,7 @@ const styles = StyleSheet.create({
   },
   titleText: {
     textAlign: 'center',
-    color: Theme.colors.onErrorContainer,
+    color: Theme.colors.onTertiaryContainer,
   },
   bodyText: {
     gap: Constants.smallGap,
@@ -117,4 +106,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HeartDialog;
+export default HeartInfoDialog;

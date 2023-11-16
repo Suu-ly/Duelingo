@@ -146,12 +146,22 @@ export const getLives = (userID: string, callback: (lives: number) => void) => {
   return unsubscribe;
 };
 
-export const decreaseLives = async (userID: string) => {
+export const decreaseLives = async (userID: string, hearts: number) => {
   try {
-    await firestore()
-      .collection('Users')
-      .doc(userID)
-      .update({'hearts.amount': firebase.firestore.FieldValue.increment(-1)});
+    if (hearts === 5) {
+      await firestore()
+        .collection('Users')
+        .doc(userID)
+        .update({
+          'hearts.amount': firebase.firestore.FieldValue.increment(-1),
+          'hearts.timestamp': Date.now(),
+        });
+    } else {
+      await firestore()
+        .collection('Users')
+        .doc(userID)
+        .update({'hearts.amount': firebase.firestore.FieldValue.increment(-1)});
+    }
   } catch (error) {
     console.error('Error updating lives: ', error);
   }

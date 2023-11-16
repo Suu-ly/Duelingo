@@ -32,9 +32,6 @@ interface HomeProps {
 const Home = (props: HomeProps) => {
   const {route, navigation, translate, opacity, selectedLanguage} = props;
 
-  //wait for firestore data before loading the homescreen
-  const [isLoading, setIsLoading] = useState(true);
-
   //set the chinese dataset for the section list
   const [mandarinResult, setMandarinResult] = useState<
     | {
@@ -66,6 +63,8 @@ const Home = (props: HomeProps) => {
   //Decides whether to show the run out of hearts dialog
   const [dialogVisible, setDialogVisible] = useState(false);
 
+  const userId = auth().currentUser!.uid;
+
   //calculate the index of the topic in the entire language
   const calculateOverallIndex = (
     sections: {data: string | any[]}[],
@@ -81,30 +80,43 @@ const Home = (props: HomeProps) => {
   };
 
   //retrieve the chinese and malay data for the sectionlist and the number of chinese and malay modules from firestore
-  const getResult = async () => {
-    let userId = auth().currentUser!.uid;
-    let [
-      mandarinResult,
-      malayResult,
-      numberOfCompletedChineseModules,
-      numberOfCompletedMalayModules,
-    ] = await Promise.all([
-      getSectionListData('Chinese'),
-      getSectionListData('Malay'),
-      numberOfCompletedModules(userId, 'chinese'),
-      numberOfCompletedModules(userId, 'malay'),
-    ]);
-    setMandarinResult(mandarinResult!);
-    setMalayResult(malayResult!);
-    setNumberOfCompletedChineseModules(numberOfCompletedChineseModules);
-    setNumberOfCompletedMalayModules(numberOfCompletedMalayModules);
-    //when data is retrieved from firestore, set isloading to false and allow homescreen to be displayed
-    setIsLoading(false);
+  const getData = async () => {
+    console.log('Running');
+    let data = await getSectionListData(selectedLanguage.value);
+    if (data) {
+      if (selectedLanguage.value === 'Chinese') {
+        setMandarinResult(data);
+      } else {
+        setMalayResult(data);
+      }
+    }
+  };
+
+  const getProgress = async () => {
+    let progress = await numberOfCompletedModules(
+      userId,
+      selectedLanguage.value.toLowerCase(),
+    );
+    if (progress) {
+      if (selectedLanguage.value === 'Chinese') {
+        setNumberOfCompletedChineseModules(progress);
+      } else {
+        setNumberOfCompletedMalayModules(progress);
+      }
+    }
   };
 
   useFocusEffect(
     useCallback(() => {
-      getResult();
+      if (selectedLanguage.value === 'Chinese') {
+        if (mandarinResult === null) getData();
+      } else if (malayResult === null) getData();
+    }, [selectedLanguage]),
+  );
+
+  useFocusEffect(
+    useCallback(() => {
+      getProgress();
       const onBackPress = () => {
         BackHandler.exitApp();
         return true;
@@ -144,93 +156,91 @@ const Home = (props: HomeProps) => {
         {transform: [{translateY: translate}], opacity: opacity},
       ]}>
       <View style={styles.container}>
-        {isLoading ? (
+        {(selectedLanguage.id === 1 && mandarinResult !== null) ||
+        (selectedLanguage.id === 2 && malayResult !== null) ? (
+          <SectionList
+            style={{backgroundColor: Theme.colors.elevation.level1}}
+            contentContainerStyle={{backgroundColor: Theme.colors.surface}}
+            showsVerticalScrollIndicator={false}
+            stickySectionHeadersEnabled={true}
+            sections={
+              selectedLanguage.id === 1 ? mandarinResult! : malayResult!
+            } //if selectedLanguage is chinese, use chinese result array, else use malay resullt array
+            keyExtractor={(item: any, index: any) => item + index}
+            renderItem={({item, index, section}) => {
+              const overallIndex = calculateOverallIndex(
+                selectedLanguage.id === 1 ? mandarinResult! : malayResult!,
+                section.id,
+                index,
+              );
+              //Find out whether the current topic being rendered should be active E.g. If completed modules is 0, 1 module should be active
+              const isActive =
+                overallIndex <
+                (selectedLanguage.id === 1
+                  ? numberOfCompletedChineseModules + 1
+                  : numberOfCompletedMalayModules + 1);
+              //Find out whether the current topic is the last completed topic
+              const isLastCompletedTopic =
+                overallIndex ===
+                (selectedLanguage.id === 1
+                  ? numberOfCompletedChineseModules
+                  : numberOfCompletedMalayModules);
+              //Find out whether the current topic being rendered is completed
+              const isCompleted =
+                overallIndex <
+                (selectedLanguage.id === 1
+                  ? numberOfCompletedChineseModules
+                  : numberOfCompletedMalayModules);
+              //Find out whether the item rendered is the last item of the section
+              const isLastItem =
+                section.data.indexOf(item) === section.data.length - 1;
+              const icon = isLastItem
+                ? 'treasure-chest'
+                : isCompleted
+                ? 'check-bold'
+                : 'star';
+              return (
+                <View style={styles.buttonContainer}>
+                  <TopicButton
+                    disabled={!isActive}
+                    backgroundColor={section.backgroundColor}
+                    borderColor={Theme.colors.onSurface}
+                    icon={icon}
+                    textColor={Theme.colors.onSurface}
+                    onPress={() => {
+                      if (lives === 0) {
+                        setDialogVisible(true);
+                      } else {
+                        navigation.navigate('Quiz', {
+                          language:
+                            selectedLanguage.id == 1 ? 'Chinese' : 'Malay',
+                          module: 'Module' + (section.id + 1),
+                          topic: 'Topic' + (section.data.indexOf(item) + 1),
+                          isLastCompletedTopic: isLastCompletedTopic,
+                        });
+                      }
+                    }}>
+                    {item}
+                  </TopicButton>
+                </View>
+              );
+            }}
+            renderSectionHeader={({section: {title}}) => (
+              <Text style={styles.header} variant={'titleLarge'}>
+                {selectedLanguage.value} {title}
+              </Text>
+            )}
+            ItemSeparatorComponent={() => (
+              <View style={{height: Constants.defaultGap}} />
+            )}
+            SectionSeparatorComponent={() => (
+              <View style={{paddingVertical: Constants.mediumGap}} />
+            )}
+          />
+        ) : (
           <View style={styles.activityIndicatorContainer}>
             <ActivityIndicator />
           </View>
-        ) : (
-          mandarinResult !== null &&
-          malayResult !== null && (
-            <SectionList
-              style={{backgroundColor: Theme.colors.elevation.level1}}
-              contentContainerStyle={{backgroundColor: Theme.colors.surface}}
-              showsVerticalScrollIndicator={false}
-              stickySectionHeadersEnabled={true}
-              sections={
-                selectedLanguage.id === 1 ? mandarinResult : malayResult
-              } //if selectedLanguage is chinese, use chinese result array, else use malay resullt array
-              keyExtractor={(item: any, index: any) => item + index}
-              renderItem={({item, index, section}) => {
-                const overallIndex = calculateOverallIndex(
-                  selectedLanguage.id === 1 ? mandarinResult : malayResult,
-                  section.id,
-                  index,
-                );
-                //Find out whether the current topic being rendered should be active E.g. If completed modules is 0, 1 module should be active
-                const isActive =
-                  overallIndex <
-                  (selectedLanguage.id === 1
-                    ? numberOfCompletedChineseModules + 1
-                    : numberOfCompletedMalayModules + 1);
-                //Find out whether the current topic is the last completed topic
-                const isLastCompletedTopic =
-                  overallIndex ===
-                  (selectedLanguage.id === 1
-                    ? numberOfCompletedChineseModules
-                    : numberOfCompletedMalayModules);
-                //Find out whether the current topic being rendered is completed
-                const isCompleted =
-                  overallIndex <
-                  (selectedLanguage.id === 1
-                    ? numberOfCompletedChineseModules
-                    : numberOfCompletedMalayModules);
-                //Find out whether the item rendered is the last item of the section
-                const isLastItem =
-                  section.data.indexOf(item) === section.data.length - 1;
-                const icon = isLastItem
-                  ? 'treasure-chest'
-                  : isCompleted
-                  ? 'check-bold'
-                  : 'star';
-                return (
-                  <View style={styles.buttonContainer}>
-                    <TopicButton
-                      disabled={!isActive}
-                      backgroundColor={section.backgroundColor}
-                      borderColor={Theme.colors.onSurface}
-                      icon={icon}
-                      textColor={Theme.colors.onSurface}
-                      onPress={() => {
-                        if (lives === 0) {
-                          setDialogVisible(true);
-                        } else {
-                          navigation.navigate('Quiz', {
-                            language:
-                              selectedLanguage.id == 1 ? 'Chinese' : 'Malay',
-                            module: 'Module' + (section.id + 1),
-                            topic: 'Topic' + (section.data.indexOf(item) + 1),
-                            isLastCompletedTopic: isLastCompletedTopic,
-                          });
-                        }
-                      }}>
-                      {item}
-                    </TopicButton>
-                  </View>
-                );
-              }}
-              renderSectionHeader={({section: {title}}) => (
-                <Text style={styles.header} variant={'titleLarge'}>
-                  {selectedLanguage.value} {title}
-                </Text>
-              )}
-              ItemSeparatorComponent={() => (
-                <View style={{height: Constants.defaultGap}} />
-              )}
-              SectionSeparatorComponent={() => (
-                <View style={{paddingVertical: Constants.mediumGap}} />
-              )}
-            />
-          )
         )}
       </View>
       <HeartDialog

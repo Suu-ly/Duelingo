@@ -180,7 +180,7 @@ const Quiz = (props: QuizProps) => {
         if (answer !== questions[questionNo - 1].correct_answer) {
           if (lives === 1) setHeartDialogVisible(true);
           setLives(lives! - 1);
-          decreaseLives(userId);
+          decreaseLives(userId, lives!);
         }
       }
     }
