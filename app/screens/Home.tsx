@@ -108,6 +108,7 @@ const Home = (props: HomeProps) => {
 
   useFocusEffect(
     useCallback(() => {
+      getProgress();
       if (selectedLanguage.value === 'Chinese') {
         if (mandarinResult === null) getData();
       } else if (malayResult === null) getData();
@@ -116,7 +117,6 @@ const Home = (props: HomeProps) => {
 
   useFocusEffect(
     useCallback(() => {
-      getProgress();
       const onBackPress = () => {
         BackHandler.exitApp();
         return true;
