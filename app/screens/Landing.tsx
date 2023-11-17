@@ -23,8 +23,18 @@ const Landing = (props: LandingProps) => {
       <CustomStatusBar />
       <View style={styles.container}>
         <View style={styles.imageContainer}>
-          <Image source={require('../assets/Landing.png')} style={styles.duo} />
+          <Image
+            source={require('../assets/Landing.png')}
+            style={[styles.image, {height: 200}]}
+            resizeMode="contain"
+          />
+          <Image
+            source={require('../assets/Duelingo.png')}
+            style={[styles.image, {height: 50}]}
+            resizeMode="contain"
+          />
         </View>
+
         <Text style={styles.text} variant={'headlineSmall'}>
           Learn through competition.
         </Text>
@@ -61,14 +71,12 @@ export default Landing;
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: theme.colors.surface,
   },
   container: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    gap: Constants.largeGap,
-    paddingHorizontal: Constants.edgePadding,
   },
   bottomContainer: {
     justifyContent: 'flex-end',
@@ -77,17 +85,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: Constants.edgePadding,
   },
   imageContainer: {
-    gap: 45,
-    width: 425,
-    height: 425,
+    width: '40%',
+    gap: 2 * Constants.edgePadding,
   },
-  duo: {
-    width: 425,
-    height: 425,
-  },
-  duelingo: {
-    width: 179,
-    height: 44,
+  image: {
+    width: '100%',
   },
   text: {
     color: theme.colors.primary,
