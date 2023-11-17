@@ -89,7 +89,10 @@ const UserProfile = (props: UserProfileProps) => {
                 <Text
                   variant="titleMedium"
                   style={{color: Theme.colors.primary}}>
-                  {numFriends} Friends
+                  {numFriends}
+                  {numFriends === 0 || numFriends === 1
+                    ? ' Friend'
+                    : ' Friends'}
                 </Text>
               </TouchableOpacity>
             </View>

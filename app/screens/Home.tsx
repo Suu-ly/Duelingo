@@ -6,6 +6,7 @@ import {
   Animated,
   BackHandler,
   ImageSourcePropType,
+  LogBox,
 } from 'react-native';
 import {ActivityIndicator, Text} from 'react-native-paper';
 import Theme from '../common/constants/theme.json';
@@ -20,6 +21,8 @@ import {
 import auth from '@react-native-firebase/auth';
 import {useFocusEffect} from '@react-navigation/native';
 import HeartDialog from '../common/HeartDialog';
+
+LogBox.ignoreLogs(['new NativeEventEmitter()']);
 
 interface HomeProps {
   route: any;
