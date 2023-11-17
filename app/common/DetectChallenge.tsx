@@ -23,11 +23,11 @@ const DetectChallenge = (props: detectProps) => {
   const [dialogVisible, setDialogVisible] = useState(false);
   const [cancelled, setCancelled] = useState(false);
   //Lobby settings
-  const [language, setLanguage] = useState('');
-  const [difficulty, setDifficulty] = useState('');
-  const [challengerName, setChallengerName] = useState('');
+  const [language, setLanguage] = useState(' ');
+  const [difficulty, setDifficulty] = useState('test');
+  const [challengerName, setChallengerName] = useState(' ');
   const [isLoading, setIsLoading] = useState(false);
-  const [lobbyId, setLobbyId] = useState('');
+  const [lobbyId, setLobbyId] = useState(' ');
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
 
   const removeChallenge = () => {
@@ -127,11 +127,9 @@ const DetectChallenge = (props: detectProps) => {
       requestText={
         challengerName +
         ' has challenged you to a battle of ' +
-        language.charAt(0).toUpperCase() +
-        language.slice(1) +
+        language +
         ': ' +
-        difficulty.charAt(0).toUpperCase() +
-        difficulty.slice(1) +
+        difficulty +
         '! Start a duel?'
       }
       requestActiveAccept={handleOnPress}

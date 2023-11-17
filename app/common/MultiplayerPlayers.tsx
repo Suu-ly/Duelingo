@@ -59,11 +59,11 @@ const MultiplayerPlayers = (props: MultiplayerPlayersProps) => {
             : {backgroundColor: Theme.colors.elevation.level2},
         ]}>
         <Avatar style={styles.avatar} index={userAvatar} />
-        <Text variant="titleMedium" numberOfLines={2}>
+        <Text variant="labelLarge" numberOfLines={2}>
           {userName}
         </Text>
         <Text
-          variant="bodyMedium"
+          variant="bodySmall"
           style={{color: Theme.colors.onSurfaceVariant}}>
           {userData} {endPage ? 'points' : 'exp'}
         </Text>
@@ -74,7 +74,7 @@ const MultiplayerPlayers = (props: MultiplayerPlayersProps) => {
           styles.card,
           !endPage
             ? {backgroundColor: Theme.colors.elevation.level0}
-            : !isFirst
+            : !isFirst && !isTie
             ? {
                 backgroundColor: Theme.colors.elevation.level0,
                 borderWidth: 2,
@@ -83,11 +83,11 @@ const MultiplayerPlayers = (props: MultiplayerPlayersProps) => {
             : {backgroundColor: Theme.colors.elevation.level2},
         ]}>
         <Avatar style={styles.avatar} index={oppAvatar} />
-        <Text variant="titleMedium" numberOfLines={1}>
+        <Text variant="labelLarge" numberOfLines={2}>
           {oppName}
         </Text>
         <Text
-          variant="bodyMedium"
+          variant="bodySmall"
           style={{color: Theme.colors.onSurfaceVariant}}>
           {oppData} {points ? 'points' : 'exp'}
         </Text>
@@ -101,7 +101,7 @@ export default MultiplayerPlayers;
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    gap: Constants.edgePadding,
+    gap: Constants.largeGap,
     alignItems: 'center',
   },
   card: {
@@ -110,7 +110,6 @@ const styles = StyleSheet.create({
     gap: Constants.largeGap,
     borderRadius: Constants.radiusLarge,
     alignItems: 'center',
-    // maxWidth: 164,
     flex: 1,
     height: '100%',
   },

@@ -233,7 +233,7 @@ const ChallengePlayer = (props: ChallengePlayerProps) => {
               mode="outlined"
               onPress={() => setDifficultySelect(true)}
               style={{width: 132}}>
-              {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}
+              {difficulty}
             </Button>
           </View>
           <Searchbar

@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import {
   View,
   StyleSheet,
@@ -14,8 +14,12 @@ import {
   Dialog,
   ActivityIndicator,
 } from 'react-native-paper';
-import {EventArg, NavigationAction} from '@react-navigation/native';
-import database from '@react-native-firebase/database';
+import {
+  EventArg,
+  NavigationAction,
+  useFocusEffect,
+} from '@react-navigation/native';
+import database, {firebase} from '@react-native-firebase/database';
 import {FirebaseFirestoreTypes} from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import {getUsersData, getMultiplayerQuestions} from '../utils/database';
@@ -90,6 +94,7 @@ const Multiplayer = (props: MultiplayerProps) => {
   const [end, setEnd] = useState(false);
   //Keeps track of time taken to answer for points
   const [currentTime, setCurrentTime] = useState(-1);
+  const [serverTimeOffset, setServerTimeOffset] = useState(0);
   //Keeps track of seconds left before next screen
   const [secondsLeft, setSecondsLeft] = useState(0);
   const [timeStamp, setTimeStamp] = useState(0);
@@ -265,7 +270,7 @@ const Multiplayer = (props: MultiplayerProps) => {
   };
 
   //When a rematch occurs
-  const resetGame = async () => {
+  const resetGame = async (challenger: boolean) => {
     setIsLoading(true);
     await getPlayerData();
     await database()
@@ -274,7 +279,7 @@ const Multiplayer = (props: MultiplayerProps) => {
     await database()
       .ref('/games/' + gameId + '/isWaiting')
       .update({[userId]: true});
-    if (challengeActive) {
+    if (challenger) {
       await database()
         .ref('/games/' + gameId)
         .update({questions: randomQuestion(5, 19)})
@@ -284,29 +289,33 @@ const Multiplayer = (props: MultiplayerProps) => {
             .update({rematch: 'active'});
         });
     }
-    setRemaining(5);
+
     setQuestionBank([]);
     setOldPoints([]);
     setPoints([]);
     setEnd(false);
     setStart(false);
     setIsPlaying(false);
+    setRemaining(5);
     setIsLoading(false);
     getQuestions();
   };
 
   //Countdown between rounds
   const startCountdown = () => {
+    let timeLeft = Math.ceil(
+      (5000 - (Date.now() - timeStamp + serverTimeOffset)) / 1000,
+    );
     const interval = setInterval(() => {
-      let timeLeft = Math.ceil((5000 - (Date.now() - timeStamp)) / 1000);
-      timeLeft = timeLeft <= 0 ? 0 : timeLeft;
       setSecondsLeft(timeLeft);
-      if (timeLeft === 0) {
+      if (timeLeft <= 0) {
+        timeLeft = 0;
         setSecondsLeft(0);
         clearInterval(interval);
         nextRound();
       }
-    }, 100);
+      timeLeft = timeLeft - 1;
+    }, 1000);
   };
 
   //Controls what is shown
@@ -342,7 +351,6 @@ const Multiplayer = (props: MultiplayerProps) => {
       ),
     [navigation],
   );
-
   useEffect(() => {
     if (timeStamp !== 0 && !isPlaying) startCountdown();
   }, [timeStamp]);
@@ -351,8 +359,7 @@ const Multiplayer = (props: MultiplayerProps) => {
     if (timeUploaded) {
       database()
         .ref('/games/' + gameId)
-        .update({startTimestamp: Date.now()});
-      setTimeStamp(Date.now());
+        .update({startTimestamp: firebase.database.ServerValue.TIMESTAMP});
     }
   }, [timeUploaded]);
 
@@ -365,106 +372,104 @@ const Multiplayer = (props: MultiplayerProps) => {
     });
   }, [isPlaying, submit, points, secondsLeft, end]);
 
-  useEffect(() => {
-    database()
-      .ref('/users/' + userId)
-      .set(false);
-    //Listens to the database for any updates
-    if (questionBank.length === 0) getQuestions();
-    //Get user data
-    if (playerData.length === 0) {
-      getPlayerData();
-    }
-    database()
-      .ref('/games/' + gameId + '/isWaiting')
-      .on('value', snapshot => {
-        if (snapshot.val()) {
-          if (
-            isPlaying &&
-            Object.keys(snapshot.val()).length === 2 &&
-            Object.values(snapshot.val())[0] === true &&
-            Object.values(snapshot.val())[1] === true
-          ) {
-            setIsPlaying(false);
-          }
-          //Waiting in between rounds
-          else if (
-            !isPlaying &&
-            start &&
-            !end &&
-            Object.keys(snapshot.val()).length === 2 &&
-            Object.values(snapshot.val())[0] === false &&
-            Object.values(snapshot.val())[1] === false &&
-            host &&
-            timeUploaded === false
-          ) {
-            setTimeUploaded(true);
-          }
-          //Before the game starts
-          else if (
-            !isPlaying &&
-            !start &&
-            Object.keys(snapshot.val()).length === 2 &&
-            Object.values(snapshot.val())[0] === false &&
-            Object.values(snapshot.val())[1] === false &&
-            host &&
-            timeUploaded === false
-          ) {
-            setTimeUploaded(true);
-          }
-        } else {
-          //One player has left
-          setPlayerLeft(true);
-          if (challengeActive) {
-            setChallengeActive(false);
-            setDeclined(true);
-          }
-          if (rematchRequest) {
-            setRematchRequest(false);
-            setCancelled(true);
-          }
-          setIsLoading(false);
-        }
-      });
-
-    // If two people request at the same time it doesn't work
-    database()
-      .ref('/games/' + gameId + '/rematch')
-      .on('value', snapshot => {
-        if (end && snapshot.val()) {
-          if (snapshot.val() === 'request' && !challengeActive) {
-            setRematchRequest(true);
-          } else if (snapshot.val() === 'accept' && challengeActive) {
-            setTimeout(null);
-            setChallengeActive(false);
-            resetGame();
-          } else if (snapshot.val() === 'decline') {
+  useFocusEffect(
+    useCallback(() => {
+      database()
+        .ref('/users/' + userId)
+        .set(false);
+      if (questionBank.length === 0) getQuestions();
+      //Get user data
+      if (playerData.length === 0) getPlayerData();
+      database()
+        .ref('/games/' + gameId + '/isWaiting')
+        .on('value', snapshot => {
+          if (snapshot.val()) {
+            if (
+              isPlaying &&
+              Object.keys(snapshot.val()).length === 2 &&
+              Object.values(snapshot.val())[0] === true &&
+              Object.values(snapshot.val())[1] === true
+            ) {
+              setIsPlaying(false);
+            }
+            //Waiting in between rounds
+            else if (
+              !isPlaying &&
+              start &&
+              !end &&
+              Object.keys(snapshot.val()).length === 2 &&
+              Object.values(snapshot.val())[0] === false &&
+              Object.values(snapshot.val())[1] === false &&
+              host &&
+              timeUploaded === false
+            ) {
+              setTimeUploaded(true);
+            }
+            //Before the game starts
+            else if (
+              !isPlaying &&
+              !start &&
+              Object.keys(snapshot.val()).length === 2 &&
+              Object.values(snapshot.val())[0] === false &&
+              Object.values(snapshot.val())[1] === false &&
+              host &&
+              timeUploaded === false
+            ) {
+              setTimeUploaded(true);
+            }
+          } else {
+            //One player has left
+            setPlayerLeft(true);
+            setStart(false);
             if (challengeActive) {
-              setTimeout(null);
               setChallengeActive(false);
               setDeclined(true);
             }
-            setPlayerLeft(true);
-          } else if (snapshot.val() === 'cancel' && rematchRequest) {
-            setCancelled(true);
-            setRematchRequest(false);
-          } else if (snapshot.val() === 'active') {
-            resetGame();
-            setRematchRequest(false);
-            database()
-              .ref('/games/' + gameId + '/rematch')
-              .remove();
+            if (rematchRequest) {
+              setRematchRequest(false);
+              setCancelled(true);
+            }
+            setIsLoading(false);
           }
-        }
-      });
+        });
 
-    //Removes lobby on disconnect
-    database()
-      .ref('/games/' + gameId)
-      .onDisconnect()
-      .remove();
+      // If two people request at the same time it doesn't work
+      database()
+        .ref('/games/' + gameId + '/rematch')
+        .on('value', snapshot => {
+          if (end && snapshot.val()) {
+            if (snapshot.val() === 'request' && !challengeActive) {
+              setRematchRequest(true);
+            } else if (snapshot.val() === 'accept' && challengeActive) {
+              setChallengeActive(false);
+              setTimeout(null);
+              resetGame(true);
+            } else if (snapshot.val() === 'decline') {
+              if (challengeActive) {
+                setTimeout(null);
+                setChallengeActive(false);
+                setDeclined(true);
+              }
+              setPlayerLeft(true);
+            } else if (snapshot.val() === 'cancel' && rematchRequest) {
+              setCancelled(true);
+              setRematchRequest(false);
+            } else if (snapshot.val() === 'active') {
+              resetGame(false);
+              setRematchRequest(false);
+              database()
+                .ref('/games/' + gameId + '/rematch')
+                .remove();
+            }
+          }
+        });
 
-    if (!host) {
+      //Removes lobby on disconnect
+      database()
+        .ref('/games/' + gameId)
+        .onDisconnect()
+        .remove();
+
       database()
         .ref('/games/' + gameId + '/startTimestamp')
         .on('value', snapshot => {
@@ -472,23 +477,40 @@ const Multiplayer = (props: MultiplayerProps) => {
             setTimeStamp(snapshot.val());
           }
         });
-    }
 
-    //Turns off listeners on unmount
-    return () => {
       database()
-        .ref('/games/' + gameId + '/isWaiting')
-        .off();
-      if (!host) {
+        .ref('.info/serverTimeOffset')
+        .once('value', snapshot => {
+          setServerTimeOffset(snapshot.val());
+        });
+
+      //Turns off listeners on unmount
+      return () => {
+        database()
+          .ref('/games/' + gameId + '/isWaiting')
+          .off();
         database()
           .ref('/games/' + gameId + '/startTimestamp')
           .off();
-      }
-      database()
-        .ref('/games/' + gameId + '/rematch')
-        .off();
-    };
-  });
+        database()
+          .ref('/games/' + gameId + '/rematch')
+          .off();
+        database().ref('.info/serverTimeOffset').off();
+      };
+    }, [
+      isPlaying,
+      timeUploaded,
+      playerLeft,
+      challengeActive,
+      declined,
+      rematchRequest,
+      cancelled,
+      isLoading,
+      timeStamp,
+      questionBank,
+      playerData,
+    ]),
+  );
 
   return (
     <View style={styles.mainContainer}>
@@ -640,7 +662,7 @@ const Multiplayer = (props: MultiplayerProps) => {
                     : 'Get ready! Duel will begin in ' + secondsLeft + 's...'}
                 </Text>
               </View>
-            ) : isPlaying && !submit ? (
+            ) : isPlaying && !submit && question ? (
               <>
                 <View style={styles.questionContainer}>
                   <Text variant={'headlineSmall'}>

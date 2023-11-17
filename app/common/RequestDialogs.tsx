@@ -64,6 +64,7 @@ const RequestDialogs = (props: RequestDialogProps) => {
           </View>
           <Button
             mode="text"
+            disabled={isLoading}
             onPress={requestActiveDecline}
             style={styles.decline}>
             Decline

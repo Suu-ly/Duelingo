@@ -102,11 +102,13 @@ const MultiplayerQuizStandings = (props: TimerProps) => {
           )
         );
       })}
-      <Text variant="bodyLarge" style={{color: Theme.colors.onSurfaceVariant}}>
-        {secondsLeft !== 0
-          ? 'Next round will begin in ' + secondsLeft + 's...'
-          : ' '}
-      </Text>
+      {secondsLeft !== 0 && (
+        <Text
+          variant="bodyLarge"
+          style={{color: Theme.colors.onSurfaceVariant}}>
+          {'Next round will begin in ' + secondsLeft + 's...'}
+        </Text>
+      )}
     </View>
   );
 };
