@@ -130,7 +130,7 @@ const Multiplayer = (props: MultiplayerProps) => {
   const calculateScore = (timeTaken: number) => {
     if (timeTaken < 1500) return 1000;
     else if (2000 <= timeTaken && timeTaken < 15000)
-      return Math.floor(-8 * Math.sqrt(timeTaken - 1500) + 1000);
+      return Math.floor(-8 * Math.sqrt(timeTaken - 1400) + 1080);
     else return 100;
   };
 

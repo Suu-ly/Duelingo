@@ -1,4 +1,5 @@
-import {StyleSheet, View} from 'react-native';
+import {Animated, Easing, StyleSheet, View} from 'react-native';
+import {useEffect, useRef} from 'react';
 import {Text} from 'react-native-paper';
 import {CountUp} from 'use-count-up';
 import {FirebaseFirestoreTypes} from '@react-native-firebase/firestore';
@@ -19,7 +20,47 @@ const MultiplayerQuizStandings = (props: TimerProps) => {
   const {points, oldPoints, data, userId, secondsLeft} = props;
 
   const isTie = points[0].value === points[1].value;
+  const firstTurn = oldPoints.length === 0;
   const isFirst = points[0].uid === userId;
+  const oldIsFirst = !firstTurn && oldPoints[0].uid === userId;
+
+  const animationValue = useRef(
+    new Animated.Value(
+      isTie || firstTurn || isFirst === oldIsFirst
+        ? 0
+        : isFirst && !oldIsFirst
+        ? 104
+        : -104,
+    ),
+  ).current;
+  const animationValue2 = useRef(
+    new Animated.Value(
+      isTie || firstTurn || isFirst === oldIsFirst
+        ? 0
+        : isFirst && !oldIsFirst
+        ? -104
+        : 104,
+    ),
+  ).current;
+
+  const animate = () => {
+    Animated.parallel([
+      Animated.timing(animationValue, {
+        delay: 500,
+        toValue: 0,
+        duration: 1500,
+        useNativeDriver: true,
+        easing: Easing.bezier(0.8, 0, 0.2, 1.0),
+      }),
+      Animated.timing(animationValue2, {
+        delay: 500,
+        toValue: 0,
+        duration: 1500,
+        useNativeDriver: true,
+        easing: Easing.bezier(0.8, 0, 0.2, 1.0),
+      }),
+    ]).start();
+  };
 
   const getOldValue = (uid: string) => {
     for (let index = 0; index < oldPoints.length; index++) {
@@ -37,6 +78,10 @@ const MultiplayerQuizStandings = (props: TimerProps) => {
     }
     return 0;
   };
+
+  useEffect(() => {
+    animate();
+  }, [isFirst]);
 
   return (
     <View style={styles.container}>
@@ -56,10 +101,18 @@ const MultiplayerQuizStandings = (props: TimerProps) => {
         return (
           typeof value.uid === 'string' &&
           typeof value.value === 'number' && (
-            <View
+            <Animated.View
               key={value.uid}
               style={[
                 styles.card,
+                {
+                  transform: [
+                    {
+                      translateY:
+                        value.uid === userId ? animationValue : animationValue2,
+                    },
+                  ],
+                },
                 !isTie && value.uid === userId && isFirst
                   ? {
                       backgroundColor: Theme.colors.elevation.level0,
@@ -98,7 +151,7 @@ const MultiplayerQuizStandings = (props: TimerProps) => {
                   Points
                 </Text>
               </View>
-            </View>
+            </Animated.View>
           )
         );
       })}
