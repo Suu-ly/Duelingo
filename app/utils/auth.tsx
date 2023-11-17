@@ -25,7 +25,6 @@ export const signUp = (
     .get()
     .then(doc => {
       if (!doc.empty) {
-        console.log('Username taken.');
         Alert.alert('The username is already taken.');
       } else {
         auth()
@@ -40,7 +39,6 @@ export const signUp = (
             });
           })
           .catch(err => {
-            console.log(err);
             Alert.alert(error[err.code as keyof typeof error]);
           });
       }
@@ -51,17 +49,17 @@ export const signOut = () => {
   auth().signOut();
 };
 
-export const deleteAccount = async () => {
-  try {
-    const user = firebase.auth().currentUser;
+// export const deleteAccount = async () => {
+//   try {
+//     const user = firebase.auth().currentUser;
 
-    if (user) {
-      await user.delete();
-      console.log('User deleted successfully');
-    } else {
-      console.log('No user is currently signed in.');
-    }
-  } catch (error) {
-    console.error('Error deleting user:', error);
-  }
-};
+//     if (user) {
+//       await user.delete();
+//       console.log('User deleted successfully');
+//     } else {
+//       console.log('No user is currently signed in.');
+//     }
+//   } catch (error) {
+//     console.error('Error deleting user:', error);
+//   }
+// };

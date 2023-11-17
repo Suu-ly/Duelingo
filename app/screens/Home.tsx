@@ -214,8 +214,8 @@ const Home = (props: HomeProps) => {
                         navigation.navigate('Quiz', {
                           language:
                             selectedLanguage.id == 1 ? 'Chinese' : 'Malay',
-                          module: 'Module' + (section.id + 1),
-                          topic: 'Topic' + (section.data.indexOf(item) + 1),
+                          module: section.id + 1,
+                          topic: section.data.indexOf(item) + 1,
                           isLastCompletedTopic: isLastCompletedTopic,
                         });
                       }

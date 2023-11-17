@@ -1,5 +1,6 @@
 import firestore, {
   FirebaseFirestoreTypes,
+  firebase,
 } from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 
@@ -26,7 +27,6 @@ export const createUser = (
       malay: 0,
       avatar: Math.floor(Math.random() * 15),
     });
-  console.log('User created.');
 };
 
 export const createFriend = (friendId: string) => {
@@ -74,16 +74,9 @@ export const deleteFriend = (friendId: string) => {
 export const UpdateDisplayname = async (username: string) => {
   let uid = auth().currentUser?.uid;
   if (uid) {
-    await firestore()
-      .collection('Users')
-      .doc(uid)
-      .update({
-        displayName: username,
-      })
-
-      .then(() => {
-        console.log('User updated!');
-      });
+    await firestore().collection('Users').doc(uid).update({
+      displayName: username,
+    });
   }
 };
 
@@ -122,25 +115,21 @@ export const checkUsernameExists = async (username: string) => {
 };
 
 export const calculateMultiplayerExp = (difficulty: string, score: number) => {
-  if (difficulty === 'easy') return Math.floor(0.05 * score);
-  if (difficulty === 'intermediate') return Math.floor(0.1 * score);
-  if (difficulty === 'hard') return Math.floor(0.15 * score);
+  if (difficulty === 'easy') return Math.floor(0.6 * 0.05 * score);
+  if (difficulty === 'intermediate') return Math.floor(0.6 * 0.1 * score);
+  if (difficulty === 'hard') return Math.floor(0.6 * 0.15 * score);
+  return 0;
 };
 
-export const MultiUpdateExp = async (exp: number) => {
+export const updateExp = async (exp: number) => {
   let uid = auth().currentUser?.uid;
   if (uid) {
-    let userDataDocument = await firestore().collection('Users').doc(uid).get();
-    let userData = userDataDocument.data();
-
-    if (userData) {
-      firestore()
-        .collection('Users')
-        .doc(uid)
-        .update({
-          exp: userData.exp + Math.floor(exp),
-        });
-    }
+    firestore()
+      .collection('Users')
+      .doc(uid)
+      .update({
+        exp: firebase.firestore.FieldValue.increment(exp),
+      });
   }
 };
 
@@ -150,23 +139,6 @@ export const calculateSingleplayerExp = (
   score: number,
 ) => {
   return Math.floor(100 * score + module * topic * 10);
-};
-
-export const SingleUpdateExp = async (exp: number) => {
-  let uid = auth().currentUser?.uid;
-  if (uid) {
-    let userDataDocument = await firestore().collection('Users').doc(uid).get();
-    let userData = userDataDocument.data();
-
-    if (userData) {
-      firestore()
-        .collection('Users')
-        .doc(uid)
-        .update({
-          exp: userData.exp + exp,
-        });
-    }
-  }
 };
 
 export const getFriendList = async (userId?: string) => {

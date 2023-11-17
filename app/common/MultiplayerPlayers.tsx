@@ -12,10 +12,11 @@ interface MultiplayerPlayersProps {
   userId: string;
   endPage: boolean;
   isFirst?: boolean;
+  isTie?: boolean;
 }
 
 const MultiplayerPlayers = (props: MultiplayerPlayersProps) => {
-  const {points, data, userId, endPage, isFirst} = props;
+  const {points, data, userId, endPage, isFirst, isTie} = props;
 
   const getIndex = (
     id: string,
@@ -49,7 +50,7 @@ const MultiplayerPlayers = (props: MultiplayerPlayersProps) => {
           styles.card,
           !endPage
             ? {backgroundColor: Theme.colors.elevation.level0}
-            : isFirst
+            : isFirst && !isTie
             ? {
                 backgroundColor: Theme.colors.elevation.level0,
                 borderWidth: 2,
@@ -58,7 +59,7 @@ const MultiplayerPlayers = (props: MultiplayerPlayersProps) => {
             : {backgroundColor: Theme.colors.elevation.level2},
         ]}>
         <Avatar style={styles.avatar} index={userAvatar} />
-        <Text variant="titleMedium" numberOfLines={1}>
+        <Text variant="titleMedium" numberOfLines={2}>
           {userName}
         </Text>
         <Text
@@ -109,7 +110,9 @@ const styles = StyleSheet.create({
     gap: Constants.largeGap,
     borderRadius: Constants.radiusLarge,
     alignItems: 'center',
-    maxWidth: 164,
+    // maxWidth: 164,
+    flex: 1,
+    height: '100%',
   },
   avatar: {
     width: 96,

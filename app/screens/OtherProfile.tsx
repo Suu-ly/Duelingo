@@ -6,6 +6,7 @@ import {
   ProgressBar,
   Text,
 } from 'react-native-paper';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import auth from '@react-native-firebase/auth';
 
 import CustomStatusBar from '../common/CustomStatusBar';
@@ -113,6 +114,25 @@ const OtherProfile = (props: OtherProfileProps) => {
               }}>
               {isFriends ? 'Remove Friend' : 'Add As Friend'}
             </DuoButton>
+            <View style={styles.progressContainer}>
+              <Icon
+                name="star-four-points-outline"
+                size={48}
+                color={Theme.colors.tertiary}
+              />
+              <View>
+                <Text
+                  variant="headlineSmall"
+                  style={{color: Theme.colors.tertiary}}>
+                  {data.exp}
+                </Text>
+                <Text
+                  variant="labelLarge"
+                  style={{color: Theme.colors.onSurfaceVariant}}>
+                  Total Exp
+                </Text>
+              </View>
+            </View>
             <View style={styles.progressContainer}>
               <Image
                 source={require('../assets/ChinaFlag.png')}

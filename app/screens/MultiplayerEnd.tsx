@@ -1,9 +1,10 @@
 import {View, StyleSheet, Animated, Easing} from 'react-native';
 import {Text} from 'react-native-paper';
 import {CountUp} from 'use-count-up';
-import {useRef} from 'react';
+import {useEffect, useRef} from 'react';
 import {FirebaseFirestoreTypes} from '@react-native-firebase/firestore';
 
+import {calculateMultiplayerExp, updateExp} from '../utils/database';
 import Theme from '../common/constants/theme.json';
 import CustomStatusBar from '../common/CustomStatusBar';
 import Constants from '../common/constants/Constants';
@@ -17,14 +18,22 @@ interface MultiplayerEndProps {
   onRematchPress: () => void;
   onPress: () => void;
   rematchDisabled: boolean;
+  difficulty: string;
 }
 
 const MultiplayerEnd = (props: MultiplayerEndProps) => {
-  const {points, userId, data, onRematchPress, onPress, rematchDisabled} =
-    props;
+  const {
+    points,
+    userId,
+    data,
+    onRematchPress,
+    onPress,
+    rematchDisabled,
+    difficulty,
+  } = props;
 
+  const isTie = points[0].value === points[1].value;
   const isFirst = points[0].uid === userId;
-
   const animationValue = useRef(new Animated.Value(0)).current;
 
   const scale = animationValue.interpolate({
@@ -35,12 +44,23 @@ const MultiplayerEnd = (props: MultiplayerEndProps) => {
 
   const getExp = (uid: string) => {
     for (let index = 0; index < data.length; index++) {
-      if (data[index].uid === userId) {
+      if (data[index].uid === uid) {
         return data[index].exp;
       }
     }
     return 0;
   };
+
+  const userPoints = points[isFirst ? 0 : 1].value as number;
+
+  const expGained = calculateMultiplayerExp(
+    difficulty.toLowerCase(),
+    userPoints,
+  );
+
+  useEffect(() => {
+    updateExp(expGained);
+  }, [expGained]);
 
   return (
     <View style={styles.mainContainer}>
@@ -49,7 +69,11 @@ const MultiplayerEnd = (props: MultiplayerEndProps) => {
         <Text
           variant="displaySmall"
           style={isFirst && {color: Theme.colors.tertiary}}>
-          {isFirst ? 'You win!' : 'Better luck next time!'}
+          {isTie
+            ? "It's a tie!"
+            : isFirst
+            ? 'You win!'
+            : 'Better luck next time!'}
         </Text>
         <MultiplayerPlayers
           userId={userId}
@@ -57,6 +81,7 @@ const MultiplayerEnd = (props: MultiplayerEndProps) => {
           points={points}
           endPage={true}
           isFirst={isFirst}
+          isTie={isTie}
         />
         <View style={styles.statsContainer}>
           <Text variant="titleMedium" style={{color: Theme.colors.primary}}>
@@ -70,7 +95,7 @@ const MultiplayerEnd = (props: MultiplayerEndProps) => {
                 +
                 <CountUp
                   isCounting
-                  end={52}
+                  end={expGained}
                   decimalPlaces={0}
                   duration={3.5}
                   onComplete={() => {
@@ -87,7 +112,9 @@ const MultiplayerEnd = (props: MultiplayerEndProps) => {
               </Text>
             </Animated.View>
           </View>
-          <Text variant="titleMedium">Total exp: {getExp(userId) + 45}</Text>
+          <Text variant="titleMedium">
+            Total exp: {getExp(userId) + expGained}
+          </Text>
         </View>
       </View>
       <View style={styles.bottomContainer}>

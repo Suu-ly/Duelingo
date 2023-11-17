@@ -165,8 +165,6 @@ const Multiplayer = (props: MultiplayerProps) => {
       await database()
         .ref('/games/' + gameId + '/isWaiting')
         .update({[userId]: false});
-    } else {
-      console.log("Can't retrieve questions");
     }
   };
 
@@ -191,6 +189,19 @@ const Multiplayer = (props: MultiplayerProps) => {
     await database()
       .ref('/games/' + gameId + '/isWaiting')
       .update({[userId]: false});
+  };
+
+  const getPlayerData = async () => {
+    let tempData: FirebaseFirestoreTypes.DocumentData[] = [];
+    database()
+      .ref('/games/' + gameId + '/isWaiting')
+      .once('value', async snapshot => {
+        if (snapshot.val()) {
+          tempData = await getUsersData(Object.keys(snapshot.val()));
+          setPlayerData(tempData);
+          getDisplayName(userId, tempData);
+        }
+      });
   };
 
   const handleSubmit = async () => {
@@ -256,6 +267,7 @@ const Multiplayer = (props: MultiplayerProps) => {
   //When a rematch occurs
   const resetGame = async () => {
     setIsLoading(true);
+    await getPlayerData();
     await database()
       .ref('/games/' + gameId + '/points/')
       .update({[userId]: 0});
@@ -361,16 +373,7 @@ const Multiplayer = (props: MultiplayerProps) => {
     if (questionBank.length === 0) getQuestions();
     //Get user data
     if (playerData.length === 0) {
-      let tempData: FirebaseFirestoreTypes.DocumentData[] = [];
-      database()
-        .ref('/games/' + gameId + '/isWaiting')
-        .once('value', async snapshot => {
-          if (snapshot.val()) {
-            tempData = await getUsersData(Object.keys(snapshot.val()));
-            setPlayerData(tempData);
-            getDisplayName(userId, tempData);
-          }
-        });
+      getPlayerData();
     }
     database()
       .ref('/games/' + gameId + '/isWaiting')
@@ -590,6 +593,7 @@ const Multiplayer = (props: MultiplayerProps) => {
           points={points}
           data={playerData}
           userId={userId}
+          difficulty={difficulty}
           onRematchPress={handleRematch}
           onPress={() => navigation.navigate('HomeScreen')}
           rematchDisabled={playerLeft}

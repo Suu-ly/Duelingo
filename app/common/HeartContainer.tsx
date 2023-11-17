@@ -42,7 +42,6 @@ const HeartContainer = (props: HeartProps) => {
 
       if (lives! >= 5) {
         clearInterval(interval);
-        console.log('Reset heart container lives is not required');
       } else {
         interval = setInterval(async () => {
           const timestamps = await checkTimestamp(userId);

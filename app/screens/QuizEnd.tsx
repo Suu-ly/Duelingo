@@ -8,6 +8,7 @@ import CustomStatusBar from '../common/CustomStatusBar';
 import Constants from '../common/constants/Constants';
 import DuoButton from '../common/DuoButton';
 import {updatedNumberOfCompletedModules} from '../utils/firestore';
+import {calculateSingleplayerExp, updateExp} from '../utils/database';
 import auth from '@react-native-firebase/auth';
 import {useFocusEffect} from '@react-navigation/native';
 
@@ -24,7 +25,13 @@ const QuizEnd = (props: QuizEndProps) => {
   const totalScoreableQuestions = route.params.totalScoreableQuestions;
   const isLastCompletedTopic = route.params.isLastCompletedTopic;
   const language = route.params.language;
-
+  const module = route.params.module;
+  const topic = route.params.topic;
+  const expGained = calculateSingleplayerExp(
+    module,
+    topic,
+    score / totalScoreableQuestions,
+  );
   const animationValue = useRef(new Animated.Value(0)).current;
 
   const scale = animationValue.interpolate({
@@ -43,6 +50,8 @@ const QuizEnd = (props: QuizEndProps) => {
         );
       }
     };
+
+    updateExp(expGained);
     setUpdatedNumberOfCompletedModules();
   });
 
@@ -81,7 +90,7 @@ const QuizEnd = (props: QuizEndProps) => {
                 +
                 <CountUp
                   isCounting
-                  end={52}
+                  end={expGained}
                   decimalPlaces={0}
                   duration={3.5}
                   onComplete={() => {

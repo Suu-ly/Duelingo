@@ -83,9 +83,9 @@ const Quiz = (props: QuizProps) => {
       .collection('Quiz')
       .doc(language)
       .collection('Modules')
-      .doc(module)
+      .doc('Module' + module)
       .collection('Topics')
-      .doc(topic)
+      .doc('Topic' + topic)
       .collection('Questions')
       .get();
     collecton.forEach(documentSnapshot => {
@@ -157,6 +157,8 @@ const Quiz = (props: QuizProps) => {
               : score,
           isLastCompletedTopic: isLastCompletedTopic,
           language: language,
+          module: module,
+          topic: topic,
         });
       } else {
         //Next question

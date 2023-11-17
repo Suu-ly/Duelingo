@@ -87,11 +87,7 @@ export const updatedNumberOfCompletedModules = async (
     firestore()
       .collection('Users')
       .doc(userID)
-      .update({[language]: firebase.firestore.FieldValue.increment(1)})
-      .then(() => {
-        console.log(userID);
-        console.log('number of completed ' + language + ' modules updated!');
-      });
+      .update({[language]: firebase.firestore.FieldValue.increment(1)});
   } catch (error) {
     console.error(
       'Error updating number of completed Modules to Firestore:',
