@@ -621,7 +621,7 @@ const Multiplayer = (props: MultiplayerProps) => {
                   Loading game data...
                 </Text>
               </View>
-            ) : !start ? (
+            ) : !start && playerData.length > 0 ? (
               <View style={styles.entryScreen}>
                 <Text variant="headlineSmall">
                   {language.charAt(0).toUpperCase() + language.slice(1)}:{' '}

@@ -31,7 +31,7 @@ function AppContainer() {
     //Handles navigation on logging in and out
     const subscriptionAuthState = auth().onAuthStateChanged(userState => {
       if (userState) {
-        if (userState !== user) navigation.navigate('Debug');
+        if (userState !== user) navigation.navigate('HomeScreen');
         //For presence detection
         if (appStateVisible === 'active') {
           database()
