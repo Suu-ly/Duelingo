@@ -84,7 +84,6 @@ const Home = (props: HomeProps) => {
 
   //retrieve the chinese and malay data for the sectionlist and the number of chinese and malay modules from firestore
   const getData = async () => {
-    console.log('Running');
     let data = await getSectionListData(selectedLanguage.value);
     if (data) {
       if (selectedLanguage.value === 'Chinese') {
