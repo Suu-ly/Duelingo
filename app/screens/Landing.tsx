@@ -23,11 +23,7 @@ const Landing = (props: LandingProps) => {
       <CustomStatusBar />
       <View style={styles.container}>
         <View style={styles.imageContainer}>
-          <Image source={require('../assets/Duo.png')} style={styles.duo} />
-          <Image
-            source={require('../assets/Duelingo.png')}
-            style={styles.duelingo}
-          />
+          <Image source={require('../assets/Landing.png')} style={styles.duo} />
         </View>
         <Text style={styles.text} variant={'headlineSmall'}>
           Learn through competition.
@@ -82,10 +78,12 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     gap: 45,
+    width: 425,
+    height: 425,
   },
   duo: {
-    width: 185,
-    height: 145,
+    width: 425,
+    height: 425,
   },
   duelingo: {
     width: 179,
