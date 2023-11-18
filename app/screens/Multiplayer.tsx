@@ -98,6 +98,7 @@ const Multiplayer = (props: MultiplayerProps) => {
   //Keeps track of seconds left before next screen
   const [secondsLeft, setSecondsLeft] = useState(0);
   const [timeStamp, setTimeStamp] = useState(0);
+  let interval: NodeJS.Timeout | undefined;
   //Keeps track of points for both players
   const [points, setPoints] = useState<Record<string, unknown>[]>([]);
   const [oldPoints, setOldPoints] = useState<Record<string, unknown>[]>([]);
@@ -129,7 +130,7 @@ const Multiplayer = (props: MultiplayerProps) => {
 
   const calculateScore = (timeTaken: number) => {
     if (timeTaken < 1500) return 1000;
-    else if (2000 <= timeTaken && timeTaken < 15000)
+    else if (1500 <= timeTaken && timeTaken < 15000)
       return Math.floor(-8 * Math.sqrt(timeTaken - 1400) + 1080);
     else return 100;
   };
@@ -210,12 +211,13 @@ const Multiplayer = (props: MultiplayerProps) => {
   };
 
   const handleSubmit = async () => {
+    let score = calculateScore(Date.now() - currentTime);
     setSubmit(true);
     if (answer === question?.correct_answer) {
       await database()
         .ref('/games/' + gameId + '/points/' + userId)
         .transaction(currentPts => {
-          return calculateScore(Date.now() - currentTime) + currentPts;
+          return score + currentPts;
         });
     }
     await database()
@@ -247,6 +249,8 @@ const Multiplayer = (props: MultiplayerProps) => {
     }
     setStart(true);
     setIsPlaying(true);
+    //Start measuring time taken to answer
+    setCurrentTime(Date.now());
     setSubmit(false);
     setAnswer('');
     setTimeStamp(0);
@@ -261,6 +265,7 @@ const Multiplayer = (props: MultiplayerProps) => {
 
   //When the round ends
   const onRoundEnd = () => {
+    setIsPlaying(false);
     if (remaining === 1) {
       setEnd(true);
     } else {
@@ -303,10 +308,11 @@ const Multiplayer = (props: MultiplayerProps) => {
 
   //Countdown between rounds
   const startCountdown = () => {
+    clearInterval(interval);
     let timeLeft = Math.ceil(
       (5000 - (Date.now() - timeStamp + serverTimeOffset)) / 1000,
     );
-    const interval = setInterval(() => {
+    interval = setInterval(() => {
       setSecondsLeft(timeLeft);
       if (timeLeft <= 0) {
         timeLeft = 0;
@@ -317,17 +323,6 @@ const Multiplayer = (props: MultiplayerProps) => {
       timeLeft = timeLeft - 1;
     }, 1000);
   };
-
-  //Controls what is shown
-  useEffect(() => {
-    if (isPlaying) {
-      //Start measuring time taken to answer
-      setCurrentTime(Date.now());
-    } else if (start) {
-      //End of quiz
-      onRoundEnd();
-    }
-  }, [isPlaying]);
 
   useEffect(
     () =>
@@ -341,6 +336,7 @@ const Multiplayer = (props: MultiplayerProps) => {
             database()
               .ref('/users/' + userId)
               .set(true);
+            clearInterval(interval);
             return;
           }
           // Prevent default behavior of leaving the screen
@@ -351,6 +347,7 @@ const Multiplayer = (props: MultiplayerProps) => {
       ),
     [navigation],
   );
+
   useEffect(() => {
     if (timeStamp !== 0 && !isPlaying) startCountdown();
   }, [timeStamp]);
@@ -390,7 +387,7 @@ const Multiplayer = (props: MultiplayerProps) => {
               Object.values(snapshot.val())[0] === true &&
               Object.values(snapshot.val())[1] === true
             ) {
-              setIsPlaying(false);
+              onRoundEnd();
             }
             //Waiting in between rounds
             else if (
