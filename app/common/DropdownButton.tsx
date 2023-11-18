@@ -37,12 +37,7 @@ const Dropdown = (props: DropdownProps) => {
   }, [showOption]);
 
   return (
-    <Animated.View
-      style={{
-        paddingTop: 4,
-        height: height,
-        overflow: 'hidden',
-      }}>
+    <Animated.View style={[styles.mainContainer, {height: height}]}>
       <Chip
         mode="outlined"
         style={styles.chip}
@@ -55,7 +50,7 @@ const Dropdown = (props: DropdownProps) => {
           return (
             <TouchableOpacity
               key={String(index)}
-              hitSlop={{top: 8, bottom: 8, left: 8, right: 8}}
+              hitSlop={{top: 8, bottom: 8, left: 256, right: 512}}
               onPress={() => onSelectedItem(value)}
               style={styles.button}>
               <Image
@@ -73,6 +68,12 @@ const Dropdown = (props: DropdownProps) => {
 };
 
 const styles = StyleSheet.create({
+  mainContainer: {
+    flex: 1,
+    paddingTop: 4,
+    alignItems: 'flex-start',
+    overflow: 'hidden',
+  },
   button: {
     flexDirection: 'row',
     paddingHorizontal: Constants.smallGap,
@@ -81,6 +82,8 @@ const styles = StyleSheet.create({
   buttonContainer: {
     paddingTop: 20,
     gap: Constants.defaultGap,
+    flex: 1,
+    width: '100%',
   },
   dropdown: {
     width: 24,
