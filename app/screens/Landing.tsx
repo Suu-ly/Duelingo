@@ -56,8 +56,8 @@ const Landing = (props: LandingProps) => {
           disabled={false}
           stretch={true}
           backgroundColor={'white'}
-          borderColor={theme.colors.secondary}
-          textColor={theme.colors.secondary}
+          borderColor={theme.colors.outline}
+          textColor={theme.colors.onSurface}
           onPress={() => navigation.navigate('SignIn')}>
           I Already Have An Account
         </DuoButton>
