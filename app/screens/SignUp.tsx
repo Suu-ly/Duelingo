@@ -255,7 +255,12 @@ const SignUp = (props: SignUpProps) => {
           <View style={styles.buttonContainer}>
             <DuoButton
               filled={true}
-              disabled={!checkDataValid || usernameUnavailable || isLoading}
+              disabled={
+                !checkDataValid ||
+                usernameUnavailable ||
+                isLoading ||
+                isCreatingAccount
+              }
               stretch={true}
               backgroundColor={theme.colors.primary}
               backgroundDark={theme.colors.primaryDark}

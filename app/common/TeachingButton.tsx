@@ -16,7 +16,7 @@ const TeachingButtons = (props: TeachingButtonProps) => {
 
   const containsEnglish = (text: string): boolean => {
     // Regular expression to match English characters
-    const englishRegex = /^[A-Za-z]+$/;
+    const englishRegex = /^[a-zA-Z ]/;
     return englishRegex.test(text);
   };
 

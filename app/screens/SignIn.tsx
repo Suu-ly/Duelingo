@@ -1,6 +1,12 @@
 import {useState} from 'react';
 import {signIn} from '../utils/auth';
-import {Appbar, TextInput, HelperText, Text} from 'react-native-paper';
+import {
+  Appbar,
+  TextInput,
+  HelperText,
+  Text,
+  ActivityIndicator,
+} from 'react-native-paper';
 import {
   View,
   StyleSheet,
@@ -26,6 +32,7 @@ const SignIn = (props: SignInProps) => {
   const [showPassword, setShowPassword] = useState(true);
   const [rightIcon, setRightIcon] = useState('eye-off');
   const [error, setError] = useState(false);
+  const [isSigningIn, setIsSingingIn] = useState(false);
 
   if (Platform.OS === 'android') {
     if (UIManager.setLayoutAnimationEnabledExperimental) {
@@ -34,6 +41,7 @@ const SignIn = (props: SignInProps) => {
   }
 
   const handleOnSubmit = () => {
+    setIsSingingIn(true);
     signIn(email, password);
   };
 
@@ -119,9 +127,9 @@ const SignIn = (props: SignInProps) => {
             <DuoButton
               filled={true}
               disabled={
-                email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/) && password !== ''
+                (email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/) && password !== ''
                   ? false
-                  : true
+                  : true) || isSigningIn
               }
               stretch={true}
               backgroundColor={theme.colors.primary}
@@ -129,7 +137,11 @@ const SignIn = (props: SignInProps) => {
               borderColor={theme.colors.primary}
               textColor={theme.colors.onPrimary}
               onPress={handleOnSubmit}>
-              Log In
+              {!isSigningIn ? (
+                'Log In'
+              ) : (
+                <ActivityIndicator color={theme.colors.onPrimary} />
+              )}
             </DuoButton>
           </View>
         </View>
