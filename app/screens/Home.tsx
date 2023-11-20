@@ -99,7 +99,7 @@ const Home = (props: HomeProps) => {
       userId,
       selectedLanguage.value.toLowerCase(),
     );
-    if (progress) {
+    if (progress >= 0) {
       if (selectedLanguage.value === 'Chinese') {
         setNumberOfCompletedChineseModules(progress);
       } else {

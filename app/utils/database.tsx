@@ -4,13 +4,13 @@ import firestore, {
 } from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 
-export const createUser = (
+export const createUser = async (
   email: string,
   username: string,
   displayName: string,
   uid: string,
 ) => {
-  firestore()
+  await firestore()
     .collection('Users')
     .doc(uid)
     .set({
@@ -29,19 +29,19 @@ export const createUser = (
     });
 };
 
-export const createFriend = (friendId: string) => {
+export const createFriend = async (friendId: string) => {
   const user = auth().currentUser;
   if (user) {
     const uid = user.uid;
     // Add friend into own list
-    firestore()
+    await firestore()
       .collection('Users')
       .doc(uid)
       .collection('Friends')
       .doc(friendId)
       .set({});
     // Add ownself into friend's list
-    firestore()
+    await firestore()
       .collection('Users')
       .doc(friendId)
       .collection('Friends')
@@ -50,19 +50,19 @@ export const createFriend = (friendId: string) => {
   }
 };
 
-export const deleteFriend = (friendId: string) => {
+export const deleteFriend = async (friendId: string) => {
   const user = auth().currentUser;
   if (user) {
     const uid = user.uid;
     // Delete from own list
-    firestore()
+    await firestore()
       .collection('Users')
       .doc(uid)
       .collection('Friends')
       .doc(friendId)
       .delete();
     // Delete from friend's list
-    firestore()
+    await firestore()
       .collection('Users')
       .doc(friendId)
       .collection('Friends')

@@ -69,10 +69,11 @@ export const numberOfCompletedModules = async (
       .doc(userUID)
       .get();
 
-    if (documentSnapshot.exists) {
-      return (documentSnapshot.data() as any)[langauge];
+    if (documentSnapshot.data()) {
+      return documentSnapshot.data()![langauge];
     } else {
-      return 6;
+      console.log('Data does not exist');
+      return 0;
     }
   } catch (error) {
     console.error('Error getting user data to Firestore:', error);

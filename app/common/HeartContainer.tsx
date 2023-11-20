@@ -77,7 +77,7 @@ const HeartContainer = (props: HeartProps) => {
         <View style={styles.container}>
           <Icon name="heart" color={Theme.colors.error} size={24} />
           <Text variant="titleMedium" style={{color: Theme.colors.error}}>
-            {lives}
+            {lives ? lives : <View style={styles.placeholder} />}
           </Text>
         </View>
       </TouchableRipple>
@@ -100,5 +100,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Constants.mediumGap,
+  },
+  placeholder: {
+    height: 24,
+    width: 9.5,
+    backgroundColor: Theme.colors.elevation.level0,
   },
 });

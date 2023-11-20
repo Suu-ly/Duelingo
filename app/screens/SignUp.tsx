@@ -29,6 +29,7 @@ interface SignUpProps {
 const SignUp = (props: SignUpProps) => {
   const {route, navigation} = props;
   const [isLoading, setIsLoading] = useState(false);
+  const [isCreatingAccount, setIsCreatingAccount] = useState(false);
   const [username, setUsername] = useState('');
   const [displayName, setDisplayName] = useState('');
   const [email, setEmail] = useState('');
@@ -58,6 +59,7 @@ const SignUp = (props: SignUpProps) => {
   }
 
   const handleOnSubmit = () => {
+    setIsCreatingAccount(true);
     signUp(email, password, username, displayName);
   };
 
@@ -260,7 +262,11 @@ const SignUp = (props: SignUpProps) => {
               borderColor={theme.colors.primary}
               textColor={theme.colors.onPrimary}
               onPress={handleOnSubmit}>
-              Create Account
+              {!isCreatingAccount ? (
+                'Create Account'
+              ) : (
+                <ActivityIndicator color={theme.colors.onPrimary} />
+              )}
             </DuoButton>
           </View>
         </View>

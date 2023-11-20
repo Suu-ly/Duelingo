@@ -13,36 +13,18 @@ export const signIn = (email: any, password: any) => {
     });
 };
 
-export const signUp = (
+export const signUp = async (
   email: any,
   password: any,
   username: any,
   displayName: any,
 ) => {
-  firestore()
-    .collection('Users')
-    .where('username', '==', username)
-    .get()
-    .then(doc => {
-      if (!doc.empty) {
-        Alert.alert('The username is already taken.');
-      } else {
-        auth()
-          .createUserWithEmailAndPassword(email, password)
-          .then(() => {
-            signIn(email, password);
-            auth().onAuthStateChanged(user => {
-              if (user) {
-                const uid = user.uid;
-                createUser(email, username, displayName, uid);
-              }
-            });
-          })
-          .catch(err => {
-            Alert.alert(error[err.code as keyof typeof error]);
-          });
-      }
-    });
+  let userCredential = await auth().createUserWithEmailAndPassword(
+    email,
+    password,
+  );
+  await createUser(email, username, displayName, userCredential.user.uid);
+  signIn(email, password);
 };
 
 export const signOut = () => {
