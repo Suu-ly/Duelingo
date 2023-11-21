@@ -77,7 +77,7 @@ const HeartContainer = (props: HeartProps) => {
         <View style={styles.container}>
           <Icon name="heart" color={Theme.colors.error} size={24} />
           <Text variant="titleMedium" style={{color: Theme.colors.error}}>
-            {lives ? lives : <View style={styles.placeholder} />}
+            {lives !== undefined ? lives : <View style={styles.placeholder} />}
           </Text>
         </View>
       </TouchableRipple>
